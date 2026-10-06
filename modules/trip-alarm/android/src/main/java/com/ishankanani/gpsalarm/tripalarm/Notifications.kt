@@ -141,16 +141,15 @@ object Notifications {
     notify(context, ID_ALARM, n)
   }
 
+  /** Silent warnings go on the quiet trip channel; the warning channel always makes a sound. */
   fun showWarning(context: Context, title: String, text: String, silent: Boolean, openLocationSettings: Boolean = false) {
-    val b = builder(context, CHANNEL_WARNING)
+    val b = builder(context, if (silent) CHANNEL_TRIP else CHANNEL_WARNING)
       .setSmallIcon(android.R.drawable.stat_sys_warning)
       .setContentTitle(title)
       .setContentText(text)
       .setStyle(Notification.BigTextStyle().bigText(text))
       .setAutoCancel(true)
-      .setOnlyAlertOnce(silent)
       .setContentIntent(if (openLocationSettings) locationSettingsIntent(context) else openAppIntent(context))
-    if (silent && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) b.setSilent(true)
     notify(context, ID_WARNING, b.build())
   }
 
