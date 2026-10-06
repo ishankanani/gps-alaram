@@ -60,6 +60,17 @@ jobs:
       - run: npm ci
       - name: Generate the Android project
         run: npx expo prebuild --platform android --no-install
+      - name: Fetch the SDK parts the build needs
+        working-directory: android
+        # Configuring the project installs missing SDK components (NDK, build tools); that
+        # download occasionally fails on the runner, so retry it before the real build.
+        run: |
+          for attempt in 1 2 3; do
+            ./gradlew help --no-daemon -q && exit 0
+            echo "SDK setup attempt $attempt failed, retrying"
+            sleep 20
+          done
+          exit 1
       - name: Build release APK
         working-directory: android
         # Signed with the template's debug key: fine for testers, not for the Play Store.
