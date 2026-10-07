@@ -7,17 +7,22 @@ import { defaultWake, rememberWake, tooShortForTrain, tripOptions, TIME_BACKSTOP
 const place: Place = { id: 'stop:Ulm Hbf', name: 'Ulm Hbf', context: '', latitude: 48.4, longitude: 9.98 };
 
 describe('wake options', () => {
-  it('defaults trains to minutes and buses to distance', () => {
+  it('defaults trains and S-Bahn to minutes, buses, trams and U-Bahn to distance', () => {
     expect(defaultWake('train', DEFAULT_PREFERENCES).wakeBy).toBe('time');
+    expect(defaultWake('sbahn', DEFAULT_PREFERENCES).wakeBy).toBe('time');
+    expect(defaultWake('ubahn', DEFAULT_PREFERENCES).wakeBy).toBe('distance');
+    expect(defaultWake('tram', DEFAULT_PREFERENCES).wakeBy).toBe('distance');
     expect(defaultWake('bus', DEFAULT_PREFERENCES).wakeBy).toBe('distance');
     expect(defaultWake('place', DEFAULT_PREFERENCES).wakeBy).toBe('distance');
   });
 
-  it('warns about 100 or 200 m before a train station only', () => {
+  it('warns about 100 or 200 m before a train or S-Bahn station only', () => {
     const w = { ...defaultWake('train', DEFAULT_PREFERENCES), wakeBy: 'distance' as const, radiusM: 200 };
     expect(tooShortForTrain('train', w)).toBe(true);
+    expect(tooShortForTrain('sbahn', w)).toBe(true);
     expect(tooShortForTrain('train', { ...w, radiusM: 500 })).toBe(false);
     expect(tooShortForTrain('bus', w)).toBe(false);
+    expect(tooShortForTrain('ubahn', w)).toBe(false);
   });
 
   it('turns a time choice into minutes plus a backstop radius', () => {

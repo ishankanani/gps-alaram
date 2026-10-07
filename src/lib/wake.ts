@@ -17,13 +17,16 @@ export const MINUTE_CHOICES = [1, 2, 3, 5, 10, 15];
 /** When waking by time, the radius still rings as a backstop if no time estimate exists yet. */
 export const TIME_BACKSTOP_RADIUS_M = 300;
 
+/** Trains and S-Bahn trains are fast: a few hundred metres is only seconds of warning. */
+const FAST: ReadonlySet<StopKind | 'place'> = new Set(['train', 'sbahn']);
+
 /**
- * Trains are fast, so a few hundred metres is only seconds of warning: they default to time.
- * Buses and trams default to distance, with the user's last choices.
+ * Trains and S-Bahn trains default to time. Buses, trams and U-Bahn default to distance.
+ * Both use the user's last choices.
  */
 export function defaultWake(kind: StopKind | 'place', prefs: Preferences): WakeOptions {
   return {
-    wakeBy: kind === 'train' ? 'time' : 'distance',
+    wakeBy: FAST.has(kind) ? 'time' : 'distance',
     radiusM: prefs.radiusM,
     minutesBefore: prefs.minutesBefore,
     mode: 'arrive',
@@ -31,9 +34,9 @@ export function defaultWake(kind: StopKind | 'place', prefs: Preferences): WakeO
   };
 }
 
-/** Distance of 200 m or less before a train station: the doors open seconds later. */
+/** Distance of 200 m or less before a train or S-Bahn station: the doors open seconds later. */
 export function tooShortForTrain(kind: StopKind | 'place', w: WakeOptions): boolean {
-  return kind === 'train' && w.mode === 'arrive' && w.wakeBy === 'distance' && w.radiusM <= 200;
+  return FAST.has(kind) && w.mode === 'arrive' && w.wakeBy === 'distance' && w.radiusM <= 200;
 }
 
 export function tripOptions(place: Place, w: WakeOptions, useMiles: boolean): TripOptions {

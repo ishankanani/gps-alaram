@@ -20,7 +20,7 @@ before launch is still **20 real trips with zero missed stops**.
 | Offline stop search: *Muenchen*, *München* and *Munchen* all work, as do *Hbf* and *Str.* | Offline map tiles (the map needs a connection; the alarm does not) |
 | Address search, long-press anywhere to drop a pin | Saved routes, multi-stop, weekday schedules (v1.1) |
 | Wake by distance (100 m – 2 km) or time (1–15 min before) | Hard-to-dismiss challenges (type the stop name, shake) |
-| Trains default to minutes, with a warning when 100–200 m is too short | iOS (AlarmKit) |
+| Trains and S-Bahn default to minutes, with a warning when 100–200 m is too short | iOS (AlarmKit) |
 | Deutsch, English, हिन्दी in the app, alarm screen and notifications | Own map and geocoder servers (uses the public OpenFreeMap and Photon) |
 | Live trip map, full-screen lock-screen alarm that rings in silent mode | Play Store signing key |
 | Gentle / Normal / Heavy sleeper, GPS-lost warning, dead-reckoning fallback | |
