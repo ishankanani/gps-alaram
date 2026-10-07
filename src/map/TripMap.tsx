@@ -5,7 +5,8 @@ import { StyleSheet, View } from 'react-native';
 import type { StopKind } from '../lib/stations/text';
 import { Icon } from '../ui/components';
 import { KIND_COLOR, KIND_ICON, useTheme } from '../ui/theme';
-import { boundsOf, circlePolygon, MAP_STYLE } from './geo';
+import { boundsOf, circlePolygon } from './geo';
+import { useMapStyle } from './useMapStyle';
 
 type Point = { latitude: number; longitude: number };
 
@@ -24,6 +25,7 @@ const REFIT_EVERY_MS = 15_000;
 /** The trip at a glance: you, the stop and the circle where the alarm rings. */
 export function TripMap({ destination, kind, radiusM, user }: Props) {
   const t = useTheme();
+  const mapStyle = useMapStyle();
   const camera = useRef<CameraRef>(null);
   const lastFit = useRef(0);
   const touchedAt = useRef(0);
@@ -45,22 +47,24 @@ export function TripMap({ destination, kind, radiusM, user }: Props) {
 
   return (
     <View style={styles.wrap} onTouchStart={() => (touchedAt.current = Date.now())}>
-      <Map style={StyleSheet.absoluteFill} mapStyle={MAP_STYLE} logo={false} compass={false} tintColor={t.primary}>
-        <Camera ref={camera} initialViewState={{ center: [destination.longitude, destination.latitude], zoom: 13 }} />
-        <NativeUserLocation mode="course" />
-        <GeoJSONSource id="trip-radius" data={circle}>
-          <Layer id="trip-radius-fill" type="fill" paint={{ 'fill-color': t.accent, 'fill-opacity': 0.18 }} />
-          <Layer id="trip-radius-line" type="line" paint={{ 'line-color': t.accent, 'line-width': 2.5 }} />
-        </GeoJSONSource>
-        <Marker lngLat={[destination.longitude, destination.latitude]} anchor="bottom">
-          <View style={styles.pin}>
-            <Icon name="map-marker" size={50} color={KIND_COLOR[kind]} />
-            <View style={styles.pinIcon}>
-              <Icon name={KIND_ICON[kind]} size={15} color={KIND_COLOR[kind]} />
+      {mapStyle ? (
+        <Map style={StyleSheet.absoluteFill} mapStyle={mapStyle} logo={false} compass={false} tintColor={t.primary}>
+          <Camera ref={camera} initialViewState={{ center: [destination.longitude, destination.latitude], zoom: 13 }} />
+          <NativeUserLocation mode="course" />
+          <GeoJSONSource id="trip-radius" data={circle}>
+            <Layer id="trip-radius-fill" type="fill" paint={{ 'fill-color': t.accent, 'fill-opacity': 0.18 }} />
+            <Layer id="trip-radius-line" type="line" paint={{ 'line-color': t.accent, 'line-width': 2.5 }} />
+          </GeoJSONSource>
+          <Marker lngLat={[destination.longitude, destination.latitude]} anchor="bottom">
+            <View style={styles.pin}>
+              <Icon name="map-marker" size={50} color={KIND_COLOR[kind]} />
+              <View style={styles.pinIcon}>
+                <Icon name={KIND_ICON[kind]} size={15} color={KIND_COLOR[kind]} />
+              </View>
             </View>
-          </View>
-        </Marker>
-      </Map>
+          </Marker>
+        </Map>
+      ) : null}
     </View>
   );
 }

@@ -9,14 +9,15 @@ import {
   type PressEventWithFeatures,
 } from '@maplibre/maplibre-react-native';
 import type { ExpressionSpecification } from '@maplibre/maplibre-gl-style-spec';
-import { useImperativeHandle, useMemo, useRef, type Ref } from 'react';
+import { useImperativeHandle, useMemo, useRef, useState, type Ref } from 'react';
 import { StyleSheet, View, type NativeSyntheticEvent } from 'react-native';
 
 import type { Place } from '../lib/geocode';
 import type { Bounds, Stop } from '../lib/stations/search';
 import { Icon } from '../ui/components';
 import { KIND_COLOR, KIND_ICON, useTheme } from '../ui/theme';
-import { circlePolygon, GERMANY_CENTER, GERMANY_ZOOM, MAP_STYLE, stopsToGeoJSON } from './geo';
+import { circlePolygon, GERMANY_CENTER, GERMANY_ZOOM, stopsToGeoJSON } from './geo';
+import { useMapStyle } from './useMapStyle';
 
 export type HomeMapHandle = {
   flyTo: (latitude: number, longitude: number, zoom?: number) => void;
@@ -64,7 +65,10 @@ export function HomeMap({
   onViewChange,
 }: Props) {
   const t = useTheme();
+  const mapStyle = useMapStyle();
   const camera = useRef<CameraRef>(null);
+  // Where to open when a fly-to was asked for before the map was on screen.
+  const [startView, setStartView] = useState<{ center: [number, number]; zoom: number } | null>(null);
   const stopsById = useMemo(() => new globalThis.Map(stops.map((s) => [s.id, s])), [stops]);
   const stopData = useMemo(() => stopsToGeoJSON(stops), [stops]);
   const radiusData = useMemo(
@@ -73,8 +77,10 @@ export function HomeMap({
   );
 
   useImperativeHandle(ref, () => ({
-    flyTo: (latitude, longitude, zoom = 15) =>
-      camera.current?.flyTo({ center: [longitude, latitude], zoom, duration: 900 }),
+    flyTo: (latitude, longitude, zoom = 15) => {
+      if (camera.current) camera.current.flyTo({ center: [longitude, latitude], zoom, duration: 900 });
+      else setStartView({ center: [longitude, latitude], zoom });
+    },
   }));
 
   function onStopPress(event: NativeSyntheticEvent<PressEventWithFeatures>) {
@@ -85,10 +91,11 @@ export function HomeMap({
   }
 
   const selectedKind = selected?.kind ?? 'place';
+  if (!mapStyle) return <View style={[StyleSheet.absoluteFill, { backgroundColor: t.surfaceAlt }]} />;
   return (
     <Map
       style={StyleSheet.absoluteFill}
-      mapStyle={MAP_STYLE}
+      mapStyle={mapStyle}
       logo={false}
       compass={false}
       tintColor={t.primary}
@@ -99,9 +106,10 @@ export function HomeMap({
       <Camera
         ref={camera}
         initialViewState={
-          initialCenter
+          startView ??
+          (initialCenter
             ? { center: [initialCenter.longitude, initialCenter.latitude], zoom: 13.5 }
-            : { center: GERMANY_CENTER, zoom: GERMANY_ZOOM }
+            : { center: GERMANY_CENTER, zoom: GERMANY_ZOOM })
         }
       />
       {showUser ? <NativeUserLocation /> : null}
