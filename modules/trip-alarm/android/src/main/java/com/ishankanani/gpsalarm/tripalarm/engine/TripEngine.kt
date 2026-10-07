@@ -155,6 +155,8 @@ class TripEngine(
     val speed = speedEstimator.speedMps()
     val d = distanceM
     return TripStatus(
+      latitude = lastFix?.lat,
+      longitude = lastFix?.lon,
       distanceM = d,
       etaSec = if (d != null) etaSec(d, speed) else null,
       speedMps = speed,

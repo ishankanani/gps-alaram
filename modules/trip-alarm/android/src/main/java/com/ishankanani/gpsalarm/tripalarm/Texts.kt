@@ -6,20 +6,23 @@ import com.ishankanani.gpsalarm.tripalarm.engine.TripStatus
 import java.util.Locale
 import kotlin.math.roundToInt
 
-/** Native-side wording for notifications and the alarm screen. English only for now. */
+/** Native-side wording for notifications and the alarm screen, in the app's language (see L10n). */
 object Texts {
   /** Reasons the alarm screen can show besides the engine's trigger reasons. */
   const val REASON_TEST = "TEST"
   const val REASON_TRACKING_STOPPED = "TRACKING_STOPPED"
 
+  private fun decimal(value: Double, unit: String): String =
+    String.format(Locale.US, "%.1f", value).replace('.', L10n.decimalSeparator) + " " + unit
+
   fun distance(meters: Double, useMiles: Boolean): String {
     if (useMiles) {
       val miles = meters / 1609.344
-      return if (miles < 0.1) "${(meters * 3.28084 / 10).roundToInt() * 10} ft" else String.format(Locale.US, "%.1f mi", miles)
+      return if (miles < 0.1) "${(meters * 3.28084 / 10).roundToInt() * 10} ft" else decimal(miles, "mi")
     }
     return when {
       meters < 1_000 -> "${(meters / 10).roundToInt() * 10} m"
-      meters < 10_000 -> String.format(Locale.US, "%.1f km", meters / 1000)
+      meters < 10_000 -> decimal(meters / 1000, "km")
       else -> "${(meters / 1000).roundToInt()} km"
     }
   }
@@ -34,58 +37,61 @@ object Texts {
   }
 
   fun tripTitle(trip: ActiveTrip): String =
-    if (trip.mode == AlarmMode.LEAVE) "Leaving ${trip.label}" else "To ${trip.label}"
+    L10n.format(if (trip.mode == AlarmMode.LEAVE) "tripLeaving" else "tripTo", "label" to trip.label)
 
   fun ringsWhen(trip: ActiveTrip): String {
     val radius = distance(trip.radiusM, trip.useMiles)
     return when {
-      trip.mode == AlarmMode.LEAVE -> "Rings when you are more than $radius away"
-      trip.minutesBefore != null -> "Rings ${trip.minutesBefore} min before or within $radius"
-      else -> "Rings within $radius"
+      trip.mode == AlarmMode.LEAVE -> L10n.format("ringsLeave", "radius" to radius)
+      trip.minutesBefore != null ->
+        L10n.format("ringsBefore", "minutes" to trip.minutesBefore.toString(), "radius" to radius)
+      else -> L10n.format("ringsWithin", "radius" to radius)
     }
   }
 
   fun statusLine(trip: ActiveTrip, status: TripStatus?): String {
-    if (status == null || status.distanceM == null) return "Waiting for GPS…"
+    if (status == null || status.distanceM == null) return L10n["waitingGps"]
     val parts = mutableListOf<String>()
     if (trip.mode == AlarmMode.LEAVE && !status.armed) {
-      parts += "Waiting until you are inside the area"
+      parts += L10n["waitingInside"]
     } else {
       parts += distance(status.distanceM, trip.useMiles)
       status.etaSec?.let { if (trip.mode == AlarmMode.ARRIVE) parts += duration(it) }
     }
     parts += when (status.health) {
-      GpsHealth.GOOD -> "GPS good"
-      GpsHealth.WEAK -> "GPS weak"
-      GpsHealth.LOST -> "GPS lost, estimating"
-      GpsHealth.WAITING -> "Waiting for GPS"
+      GpsHealth.GOOD -> L10n["gpsGood"]
+      GpsHealth.WEAK -> L10n["gpsWeak"]
+      GpsHealth.LOST -> L10n["gpsLost"]
+      GpsHealth.WAITING -> L10n["waitingGps"]
     }
     return parts.joinToString(" · ")
   }
 
   /** Title and body for the alarm screen. */
   fun alarm(reason: String, trip: ActiveTrip?, status: TripStatus?): Pair<String, String> {
-    val label = trip?.label ?: "your stop"
+    val label = trip?.label ?: L10n["yourStop"]
     val distanceText = status?.distanceM?.let { distance(it, trip?.useMiles == true) }
+    val wake = L10n["wakeUp"]
     return when (reason) {
-      "ARRIVED" -> Pair("Wake up!", "You are ${distanceText ?: "almost"} from $label.")
-      "PASSED_THROUGH" -> Pair("Wake up!", "You are at $label.")
-      "ETA" -> Pair(
-        "Wake up!",
-        "About ${status?.etaSec?.let { duration(it) } ?: "${trip?.minutesBefore} min"} to $label.",
+      "ARRIVED" -> Pair(
+        wake,
+        if (distanceText != null) {
+          L10n.format("arrived", "distance" to distanceText, "label" to label)
+        } else {
+          L10n.format("arrivedNoDistance", "label" to label)
+        },
       )
-      "CLOSEST_POINT_PASSED" -> Pair(
-        "Check where you are",
-        "This is the closest you get to $label${distanceText?.let { " ($it away)" } ?: ""}. Your route does not pass the pin itself.",
-      )
-      "ESTIMATED" -> Pair("Wake up!", "GPS signal lost. By our estimate you are near $label now.")
-      "LEFT_AREA" -> Pair("You left the area", "You are outside $label.")
-      REASON_TRACKING_STOPPED -> Pair(
-        "Tracking stopped",
-        "Your phone stopped the trip to $label. Check where you are, then open the app to start it again.",
-      )
-      REASON_TEST -> Pair("Test alarm", "This is how your alarm will sound and look.")
-      else -> Pair("Wake up!", label)
+      "PASSED_THROUGH" -> Pair(wake, L10n.format("passedThrough", "label" to label))
+      "ETA" -> {
+        val eta = status?.etaSec?.let { duration(it) } ?: "${trip?.minutesBefore ?: ""} min"
+        Pair(wake, L10n.format("eta", "eta" to eta, "label" to label))
+      }
+      "CLOSEST_POINT_PASSED" -> Pair(L10n["closestTitle"], L10n.format("closest", "label" to label))
+      "ESTIMATED" -> Pair(wake, L10n.format("estimated", "label" to label))
+      "LEFT_AREA" -> Pair(L10n["leftTitle"], L10n.format("left", "label" to label))
+      REASON_TRACKING_STOPPED -> Pair(L10n["stoppedTitle"], L10n.format("stopped", "label" to label))
+      REASON_TEST -> Pair(L10n["testTitle"], L10n["test"])
+      else -> Pair(wake, label)
     }
   }
 

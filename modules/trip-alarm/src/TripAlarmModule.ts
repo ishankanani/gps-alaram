@@ -18,6 +18,8 @@ declare class TripAlarmModule extends NativeModule<TripAlarmEvents> {
   snoozeAlarm(): Promise<void>;
   keepTracking(): Promise<void>;
   getActiveTrip(): TripStatus | null;
+  /** Language of the alarm screen and notifications: 'de' | 'en' | 'hi'. */
+  setLanguage(code: string): void;
   testAlarm(strength: AlarmStrength): Promise<void>;
   getSetupStatus(): SetupStatus;
   requestNotificationPermission(): Promise<{ granted: boolean }>;

@@ -9,6 +9,11 @@ describe('format', () => {
     expect(formatDistance(23_600)).toBe('24 km');
   });
 
+  it('uses a decimal comma in German', () => {
+    expect(formatDistance(1234, false, 'de')).toBe('1,2 km');
+    expect(formatDistance(3218.7, true, 'de')).toBe('2,0 mi');
+  });
+
   it('formats distances in miles', () => {
     expect(formatDistance(100, true)).toBe('330 ft');
     expect(formatDistance(3218.7, true)).toBe('2.0 mi');

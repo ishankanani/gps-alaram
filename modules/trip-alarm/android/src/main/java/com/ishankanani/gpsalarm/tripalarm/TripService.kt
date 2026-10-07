@@ -60,6 +60,7 @@ class TripService : Service() {
   override fun onCreate() {
     super.onCreate()
     instance = this
+    L10n.load(this)
     locationManager = getSystemService(LocationManager::class.java)
     Notifications.ensureChannels(this)
   }
@@ -236,7 +237,7 @@ class TripService : Service() {
       }
     } catch (e: SecurityException) {
       Log.e(TAG, "Location permission revoked", e)
-      Notifications.showWarning(this, "Location permission removed", "Open the app to allow location so the trip can continue.", silent = false)
+      Notifications.showWarning(this, L10n["permissionTitle"], L10n["permission"], silent = false)
     } catch (e: IllegalArgumentException) {
       Log.e(TAG, "Location provider unavailable", e)
     }
@@ -276,8 +277,8 @@ class TripService : Service() {
       log?.event(SystemClock.elapsedRealtime(), lastStatus, "location-off")
       Notifications.showWarning(
         this,
-        "Location is turned off",
-        "Your trip cannot be tracked. Tap to turn location back on.",
+        L10n["locationOffTitle"],
+        L10n["locationOff"],
         silent = false,
         openLocationSettings = true,
       )
@@ -311,8 +312,8 @@ class TripService : Service() {
       val near = update.status.tier == Tier.NEAR
       Notifications.showWarning(
         this,
-        "GPS signal lost",
-        if (near) "The alarm will ring by estimate if the signal does not come back." else "Still tracking with what the phone can see.",
+        L10n["gpsLostTitle"],
+        if (near) L10n["gpsLostNear"] else L10n["gpsLostFar"],
         silent = !near,
       )
     }
@@ -450,7 +451,7 @@ class TripService : Service() {
     Notifications.notify(
       this,
       Notifications.ID_ALARM,
-      Notifications.alarmNotification(this, lastTrigger ?: "ARRIVED", title, "The alarm rang for 10 minutes and stopped."),
+      Notifications.alarmNotification(this, lastTrigger ?: "ARRIVED", title, L10n["autoSilenced"]),
     )
   }
 
@@ -467,8 +468,8 @@ class TripService : Service() {
     if (!force && now - lastNotificationMs < NOTIFICATION_THROTTLE_MS) return
     lastNotificationMs = now
     val text = when (state) {
-      TripState.RINGING -> "Alarm ringing"
-      TripState.SNOOZED -> "Snoozed, rings again in a minute"
+      TripState.RINGING -> L10n["alarmRinging"]
+      TripState.SNOOZED -> L10n["snoozed"]
       TripState.TRACKING -> Texts.statusLine(currentTrip, lastStatus)
     }
     Notifications.notify(
@@ -487,6 +488,8 @@ class TripService : Service() {
     return mapOf(
       "trip" to trip?.toMap(),
       "state" to state.name.lowercase(),
+      "latitude" to s?.latitude,
+      "longitude" to s?.longitude,
       "distanceM" to s?.distanceM,
       "etaSec" to s?.etaSec,
       "speedMps" to s?.speedMps,

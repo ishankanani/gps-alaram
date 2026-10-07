@@ -34,15 +34,15 @@ object Notifications {
     val nm = context.getSystemService(NotificationManager::class.java)
 
     nm.createNotificationChannel(
-      NotificationChannel(CHANNEL_TRIP, "Active trip", NotificationManager.IMPORTANCE_LOW).apply {
-        description = "Distance and arrival time while a trip is running"
+      NotificationChannel(CHANNEL_TRIP, L10n["channelTrip"], NotificationManager.IMPORTANCE_LOW).apply {
+        description = L10n["channelTripDesc"]
         setShowBadge(false)
       },
     )
     // The service plays the alarm itself (looping, escalating), so this channel stays silent.
     nm.createNotificationChannel(
-      NotificationChannel(CHANNEL_ALARM, "Arrival alarm", NotificationManager.IMPORTANCE_HIGH).apply {
-        description = "The alarm when you reach your stop"
+      NotificationChannel(CHANNEL_ALARM, L10n["channelAlarm"], NotificationManager.IMPORTANCE_HIGH).apply {
+        description = L10n["channelAlarmDesc"]
         setSound(null, null)
         enableVibration(false)
         setBypassDnd(true)
@@ -51,8 +51,8 @@ object Notifications {
     )
     // Used when the app process is gone, so the notification has to make the noise.
     nm.createNotificationChannel(
-      NotificationChannel(CHANNEL_ALARM_FALLBACK, "Tracking stopped alarm", NotificationManager.IMPORTANCE_HIGH).apply {
-        description = "Rings if your phone stops a trip before you arrive"
+      NotificationChannel(CHANNEL_ALARM_FALLBACK, L10n["channelFallback"], NotificationManager.IMPORTANCE_HIGH).apply {
+        description = L10n["channelFallbackDesc"]
         setSound(alarmSoundUri(), alarmAudioAttributes())
         enableVibration(true)
         vibrationPattern = longArrayOf(0, 900, 500, 900, 500, 900)
@@ -61,8 +61,8 @@ object Notifications {
       },
     )
     nm.createNotificationChannel(
-      NotificationChannel(CHANNEL_WARNING, "Trip warnings", NotificationManager.IMPORTANCE_HIGH).apply {
-        description = "GPS signal lost or location turned off during a trip"
+      NotificationChannel(CHANNEL_WARNING, L10n["channelWarning"], NotificationManager.IMPORTANCE_HIGH).apply {
+        description = L10n["channelWarningDesc"]
         enableVibration(true)
       },
     )
@@ -88,7 +88,7 @@ object Notifications {
       .setOnlyAlertOnce(true)
       .setCategory(Notification.CATEGORY_NAVIGATION)
       .setContentIntent(openAppIntent(context))
-      .addAction(action(context, "Stop trip", TripService.ACTION_STOP, REQ_STOP))
+      .addAction(action(context, L10n["stopTrip"], TripService.ACTION_STOP, REQ_STOP))
       .build()
 
   fun alarmNotification(context: Context, reason: String, title: String, text: String): Notification {
@@ -102,10 +102,10 @@ object Notifications {
       .setVisibility(Notification.VISIBILITY_PUBLIC)
       .setContentIntent(alarmScreenIntent(context, reason))
       .setFullScreenIntent(alarmScreenIntent(context, reason), true)
-      .addAction(action(context, "Dismiss", TripService.ACTION_DISMISS, REQ_DISMISS))
-      .addAction(action(context, "Snooze 1 min", TripService.ACTION_SNOOZE, REQ_SNOOZE))
+      .addAction(action(context, L10n["dismiss"], TripService.ACTION_DISMISS, REQ_DISMISS))
+      .addAction(action(context, L10n["snooze"], TripService.ACTION_SNOOZE, REQ_SNOOZE))
     if (Texts.canKeepTracking(reason)) {
-      b.addAction(action(context, "Not yet", TripService.ACTION_KEEP_TRACKING, REQ_KEEP))
+      b.addAction(action(context, L10n["notYet"], TripService.ACTION_KEEP_TRACKING, REQ_KEEP))
     }
     @Suppress("DEPRECATION")
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) b.setPriority(Notification.PRIORITY_MAX)

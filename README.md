@@ -1,56 +1,72 @@
 # StopWake (working name)
 
-A location alarm that never lets you miss your stop. Pick a destination, fall asleep on the train, and
-the phone wakes you before you get there, even in silent mode and with the screen locked.
+A location alarm that never lets you miss your stop. Pick a stop on the map, fall asleep on the
+train or bus, and the phone wakes you before you get there, even in silent mode and with the
+screen locked.
 
-Android first. iOS follows with v1.1 (see the product plan).
+Built for Germany first: every bus, tram, U-Bahn, S-Bahn and train stop is on the map and in
+the search, offline. Android first; iOS follows with v1.1 (see the product plan).
 
 ## Status
 
-This is the **core engine** milestone from the build plan (weeks 3–5): reliable tracking, the
-trigger rules, the GPS watchdog and the alarm, plus just enough UI to test them on real trips.
-The plan's gate before moving on: **20 real trips with zero missed stops**.
+The core engine milestone (reliable tracking, trigger rules, GPS watchdog, alarm) plus the
+Germany release UI: a real map, all stops, two-tap alarms and three languages. The plan's gate
+before launch is still **20 real trips with zero missed stops**.
 
 | Works now | Not yet |
 | --- | --- |
-| Arrive and Leave alarms, radius 100 m – 5 km | Map picker (search, pasted coordinates and "use where I am" for now) |
-| "Also ring N minutes before arrival" | Saved routes, multi-stop, weekday schedules (v1.1) |
-| Full-screen lock-screen alarm, rings in silent mode | Hard-to-dismiss challenges (type the stop name, shake) |
-| Gentle / Normal / Heavy sleeper (escalating volume, vibration, flashlight) | German and Hindi |
-| GPS-lost warning and dead-reckoning fallback alarm | iOS (AlarmKit) |
-| Adaptive GPS rate for battery | Pro tier, RevenueCat, store listing |
-| Favourites and recent places, setup checklist with a test alarm | Own geocoder (uses the public Photon service) |
-| A CSV log of every trip, shareable from the app | Play Store signing key |
+| Map of Germany with every stop (about 272,000), coloured by type | Pro tier and paywall (RevenueCat): everything is free in test builds |
+| Tap a stop, then **Start alarm**: two taps | Monthly stop updates (the bundled data is from March 2025) |
+| Offline stop search: *Muenchen*, *München* and *Munchen* all work, as do *Hbf* and *Str.* | Offline map tiles (the map needs a connection; the alarm does not) |
+| Address search, long-press anywhere to drop a pin | Saved routes, multi-stop, weekday schedules (v1.1) |
+| Wake by distance (100 m – 2 km) or time (1–15 min before) | Hard-to-dismiss challenges (type the stop name, shake) |
+| Trains default to minutes, with a warning when 100–200 m is too short | iOS (AlarmKit) |
+| Deutsch, English, हिन्दी in the app, alarm screen and notifications | Own map and geocoder servers (uses the public OpenFreeMap and Photon) |
+| Live trip map, full-screen lock-screen alarm that rings in silent mode | Play Store signing key |
+| Gentle / Normal / Heavy sleeper, GPS-lost warning, dead-reckoning fallback | |
+| Favourites, recents, setup checklist with a test alarm, shareable trip log | |
 
 ## Try it on a phone
 
 1. Open the latest **Android** run under the repo's **Actions** tab and download the **StopWake-apk** artifact.
 2. Unzip it and install the APK (allow installs from unknown sources when asked).
-3. Open StopWake, tap **Check setup & test the alarm**, and fix everything marked red or amber.
-4. After each real trip, use **Share trip log** on the last screen. The logs are what we tune on.
+3. On first launch, pick your language, then fix everything the setup checklist marks red and play the test alarm.
+4. Tap a stop on the map (or search for it) and press **Start alarm**.
+5. After each real trip, use **Share trip log** on the last screen. The logs are what we tune on.
 
 ## How it works
 
 ```
  App (Expo / React Native)                Native Android (modules/trip-alarm)
  ─────────────────────────                ────────────────────────────────────
- Search, setup checks,  ── startTrip ──▶  TripService  (foreground service, type "location")
- live status screen     ◀── events ────     │  GPS + network fixes (LocationManager)
-                                            ▼
-                                          TripEngine  (pure Kotlin, unit tested)
+ Map (MapLibre, OpenFreeMap)              TripService  (foreground service, type "location")
+ Stops DB (SQLite, offline)  ─ startTrip ▶  │  GPS + network fixes (LocationManager)
+ Search, sheet, live trip    ◀─ events ──   ▼
+ de / en / hi                             TripEngine  (pure Kotlin, unit tested)
                                             │  trigger rules · adaptive rate · watchdog
                                             ▼
-                                          AlarmPlayer + AlarmActivity
+                                          AlarmPlayer + AlarmActivity  (texts in de / en / hi)
                                             alarm stream, escalating, over the lock screen
 ```
 
 Everything that decides when to ring runs natively, inside a foreground service that keeps
-working with the app closed. JavaScript only draws the screens. There is no backend; nothing
-leaves the phone except place searches.
+working with the app closed. JavaScript draws the screens. There is no backend; nothing leaves
+the phone except map tiles and address searches. Stop search and the stops on the map come from
+a database inside the app, so picking a stop works without a connection.
 
 **Permissions.** The trip starts while the app is open, so Android grants location to the
 service with plain *while using the app* permission. The app never asks for background
 ("all the time") location, which avoids the Play Store's background-location review.
+
+### Stops
+
+`npm run build:stations` turns the [db-hafas-stations](https://github.com/derhuerst/db-hafas-stations)
+list (DB InfraGO and OpenStreetMap data) into `assets/stations/germany-stops.db`, a 20 MB SQLite
+file with a full-text index. Entries with the same name within 400 m are merged into one stop.
+Each stop keeps its transport types (ICE, IC, RE/RB, S, U, tram, bus, ferry) and a rank based on
+how busy it is. The rank decides which stops show at low zoom and breaks ties in search together
+with the distance from you. The file is generated, not committed: run the script after
+`npm install`, and CI runs it before every build.
 
 ### When it rings (arrive mode)
 
@@ -63,7 +79,8 @@ The first of these wins:
 5. GPS went quiet (tunnel, underground) and dead reckoning from the last speed says you have arrived. This alarm also offers **Not yet**.
 
 Coarse cell-tower fixes cannot ring a small circle. For the minutes trigger they count only
-when their error is worth under 30 seconds of travel.
+when their error is worth under 30 seconds of travel. With **wake by time**, a 300 m circle
+around the stop stays armed as a backstop.
 
 ### Tracking rate
 
@@ -82,7 +99,8 @@ after Android killed the app. If the app was killed or the phone rebooted mid-tr
 
 ```bash
 npm install
-npm run check          # typecheck, lint, JS tests
+npm run build:stations # generate the offline stops database (about 5 s)
+npm run check          # typecheck, lint, JS tests (the search tests use the generated database)
 npm run test:engine    # trip engine tests on the JVM, including 1000 simulated trips
 npx expo run:android   # build and run on a connected phone (needs the Android SDK)
 ```
@@ -92,13 +110,34 @@ replay synthetic trips with GPS noise, station stops and tunnels. Any change to 
 rules should keep them green, and a missed stop seen on a real trip should become a new scenario
 in `TripEngineTest`.
 
+**Languages.** The app's texts live in `src/i18n/{en,de,hi}.ts`; `en.ts` defines the keys and
+the other two must have every key with the same `{placeholders}` (a test checks this). The
+alarm screen and notifications are drawn natively, so their texts are in `L10n.kt`. The app
+sends the chosen language to the native side on start and whenever it changes.
+
 ```
 App.tsx                      screen flow
-src/screens/                 Home, Setup, Tracking, Done
-src/lib/                     place search, formatting, local storage
+src/screens/                 Onboarding, Home (map, sheet, search), Setup, Tracking, Done, Settings
+src/map/                     home map, trip map, GeoJSON helpers
+src/lib/stations/            stops database: spelling rules, search, nearest stop
+src/lib/                     address search, wake options, formatting, local storage
+src/i18n/                    English, German, Hindi
+src/ui/                      theme, colours, shared components
+tools/build-stations.ts      builds assets/stations/germany-stops.db
 modules/trip-alarm/
-  android/…/tripalarm/       TripService, AlarmPlayer, AlarmActivity, receivers, JS bridge
+  android/…/tripalarm/       TripService, AlarmPlayer, AlarmActivity, receivers, L10n, JS bridge
   android/…/engine/          TripEngine, SpeedEstimator, Geo (no Android imports)
   engine-tests/              JVM test project for the engine
   src/                       typed JS wrapper
 ```
+
+## Data and credits
+
+- Map © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors, tiles by
+  [OpenFreeMap](https://openfreemap.org) using the OpenMapTiles schema.
+- Stops: DB InfraGO AG ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)) and
+  OpenStreetMap contributors ([ODbL](https://opendatacommons.org/licenses/odbl/)), via
+  db-hafas-stations.
+- Address search: [Photon](https://photon.komoot.io) by Komoot.
+
+The same credits are shown in the app under **Settings → About and data**.

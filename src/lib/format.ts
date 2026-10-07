@@ -1,11 +1,17 @@
-export function formatDistance(meters: number, useMiles = false): string {
+/** German writes 1,2 km. */
+function decimal(value: number, lang: string): string {
+  const text = value.toFixed(1);
+  return lang === 'de' ? text.replace('.', ',') : text;
+}
+
+export function formatDistance(meters: number, useMiles = false, lang = 'en'): string {
   if (useMiles) {
     const miles = meters / 1609.344;
     if (miles < 0.1) return `${Math.round((meters * 3.28084) / 10) * 10} ft`;
-    return `${miles.toFixed(1)} mi`;
+    return `${decimal(miles, lang)} mi`;
   }
   if (meters < 1000) return `${Math.round(meters / 10) * 10} m`;
-  if (meters < 10_000) return `${(meters / 1000).toFixed(1)} km`;
+  if (meters < 10_000) return `${decimal(meters / 1000, lang)} km`;
   return `${Math.round(meters / 1000)} km`;
 }
 
@@ -17,7 +23,7 @@ export function formatDuration(seconds: number): string {
 }
 
 /** Short label for a radius chip: 500 m, 1 km. */
-export function formatRadius(meters: number, useMiles = false): string {
-  if (useMiles) return formatDistance(meters, true);
+export function formatRadius(meters: number, useMiles = false, lang = 'en'): string {
+  if (useMiles) return formatDistance(meters, true, lang);
   return meters < 1000 ? `${meters} m` : `${meters / 1000} km`;
 }

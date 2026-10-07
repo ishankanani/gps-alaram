@@ -1,29 +1,9 @@
 import { File, Paths } from 'expo-file-system';
 
-import type { AlarmMode, AlarmStrength } from '../../modules/trip-alarm/src';
 import type { Place } from './geocode';
+import { DEFAULT_PREFERENCES, type SavedData } from './prefs';
 
-export type Preferences = {
-  radiusM: number;
-  minutesBefore: number | null;
-  strength: AlarmStrength;
-  mode: AlarmMode;
-  useMiles: boolean;
-};
-
-export type SavedData = {
-  favourites: Place[];
-  recents: Place[];
-  preferences: Preferences;
-};
-
-export const DEFAULT_PREFERENCES: Preferences = {
-  radiusM: 500,
-  minutesBefore: null,
-  strength: 'normal',
-  mode: 'arrive',
-  useMiles: false,
-};
+export { DEFAULT_PREFERENCES, type Preferences, type SavedData, type WakeBy } from './prefs';
 
 const EMPTY: SavedData = { favourites: [], recents: [], preferences: DEFAULT_PREFERENCES };
 const MAX_RECENTS = 8;

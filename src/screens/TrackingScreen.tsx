@@ -1,124 +1,185 @@
 import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { TripAlarm, type GpsHealth, type TripStatus } from '../../modules/trip-alarm/src';
+import { useI18n } from '../i18n';
 import { formatDistance, formatDuration, formatRadius } from '../lib/format';
-import { Body, Button, Card, Label, StatusDot } from '../ui/components';
-import { useTheme, type Theme } from '../ui/theme';
+import type { StopKind } from '../lib/stations/text';
+import { TripMap } from '../map/TripMap';
+import { Button, Icon, KindIcon, Label, StatusDot } from '../ui/components';
+import { radius, useTheme, type Theme } from '../ui/theme';
 
-const HEALTH: Record<GpsHealth, { text: string; color: (t: Theme) => string }> = {
-  waiting: { text: 'Waiting for GPS…', color: (t) => t.muted },
-  good: { text: 'GPS good', color: (t) => t.good },
-  weak: { text: 'GPS weak', color: (t) => t.warn },
-  lost: { text: 'GPS lost: the alarm will ring by estimate', color: (t) => t.bad },
+const HEALTH_COLOR: Record<GpsHealth, (t: Theme) => string> = {
+  waiting: (t) => t.muted,
+  good: (t) => t.good,
+  weak: (t) => t.warn,
+  lost: (t) => t.bad,
 };
 
-const TIER_TEXT = {
-  far: 'Saving battery while you are far away',
-  mid: 'Checking every 30 seconds',
-  near: 'High accuracy: you are getting close',
-};
+type Props = { status: TripStatus; kind: StopKind | 'place' };
 
-const REASON_TEXT: Record<string, string> = {
-  ARRIVED: 'You are inside the circle.',
-  PASSED_THROUGH: 'You are at your stop.',
-  ETA: 'You are a few minutes away.',
-  CLOSEST_POINT_PASSED: 'This is the closest your route gets to the pin.',
-  ESTIMATED: 'GPS lost. By our estimate you are there now.',
-  LEFT_AREA: 'You left the area.',
-};
-
-export function TrackingScreen({ status }: { status: TripStatus }) {
+export function TrackingScreen({ status, kind }: Props) {
   const t = useTheme();
+  const { t: tr, lang } = useI18n();
+  const insets = useSafeAreaInsets();
   const trip = status.trip;
   if (!trip || !TripAlarm) return null;
   const native = TripAlarm;
-  const health = HEALTH[status.health ?? 'waiting'];
   const leave = trip.mode === 'leave';
   const ringing = status.state === 'ringing';
+  const snoozed = status.state === 'snoozed';
   const uncertain = status.trigger === 'CLOSEST_POINT_PASSED' || status.trigger === 'ESTIMATED';
+  const health = status.health ?? 'waiting';
+  const user =
+    status.latitude != null && status.longitude != null ? { latitude: status.latitude, longitude: status.longitude } : null;
 
   const rule = leave
-    ? `Rings when you are more than ${formatRadius(trip.radiusM, trip.useMiles)} away`
+    ? tr('place.ruleLeave', { distance: formatRadius(trip.radiusM, trip.useMiles, lang) })
     : trip.minutesBefore
-      ? `Rings ${trip.minutesBefore} min before or within ${formatRadius(trip.radiusM, trip.useMiles)}`
-      : `Rings within ${formatRadius(trip.radiusM, trip.useMiles)}`;
+      ? tr('place.ruleTime', { minutes: trip.minutesBefore })
+      : tr('place.ruleDistance', { distance: formatRadius(trip.radiusM, trip.useMiles, lang) });
 
   function confirmStop() {
-    Alert.alert('Stop this trip?', 'The alarm will not ring.', [
-      { text: 'Keep going', style: 'cancel' },
-      { text: 'Stop', style: 'destructive', onPress: () => void native.stopTrip() },
+    Alert.alert(tr('trip.stopConfirm.title'), tr('trip.stopConfirm.body'), [
+      { text: tr('trip.stopConfirm.keep'), style: 'cancel' },
+      { text: tr('trip.stopConfirm.stop'), style: 'destructive', onPress: () => void native.stopTrip() },
     ]);
   }
 
   return (
-    <ScrollView style={{ backgroundColor: t.background }} contentContainerStyle={styles.container}>
-      <Label>{leave ? 'Leaving' : 'On the way to'}</Label>
-      <Text style={[styles.destination, { color: t.text }]} numberOfLines={2}>
-        {trip.label}
-      </Text>
+    <View style={[styles.root, { backgroundColor: t.background }]}>
+      <View style={styles.map}>
+        <TripMap
+          destination={{ latitude: trip.latitude, longitude: trip.longitude }}
+          kind={kind}
+          radiusM={trip.radiusM}
+          user={user}
+        />
+        <View style={[styles.mapHeader, { top: insets.top + 10, backgroundColor: t.surface, shadowColor: t.shadow }]}>
+          <KindIcon kind={kind} size={38} />
+          <View style={styles.mapHeaderText}>
+            <Label>{tr(leave ? 'trip.leaving' : 'trip.onTheWay')}</Label>
+            <Text style={[styles.destination, { color: t.text }]} numberOfLines={1}>
+              {trip.label}
+            </Text>
+          </View>
+        </View>
+      </View>
 
-      {ringing || status.state === 'snoozed' ? (
-        <Card style={{ borderColor: t.warn, borderWidth: 2 }}>
-          <Text style={[styles.alarmTitle, { color: t.text }]}>
-            {ringing ? 'Wake up!' : 'Snoozed: rings again in a minute'}
-          </Text>
-          {status.trigger ? <Body>{REASON_TEXT[status.trigger] ?? ''}</Body> : null}
-          {ringing ? (
-            <>
-              <Button title="Dismiss" onPress={() => void native.dismissAlarm()} />
-              <Button title="Snooze 1 min" kind="secondary" onPress={() => void native.snoozeAlarm()} />
-            </>
-          ) : null}
-          {uncertain ? (
-            <Button title="Not yet, keep tracking" kind="secondary" onPress={() => void native.keepTracking()} />
-          ) : null}
-        </Card>
-      ) : null}
+      <ScrollView
+        style={[styles.panel, { backgroundColor: t.surface, shadowColor: t.shadow }]}
+        contentContainerStyle={[styles.panelContent, { paddingBottom: insets.bottom + 20 }]}>
+        {ringing || snoozed ? (
+          <View style={[styles.alarm, { backgroundColor: ringing ? t.accent : t.surfaceAlt }]}>
+            <View style={styles.alarmTitleRow}>
+              <Icon name={ringing ? 'alarm-light' : 'sleep'} size={28} color={ringing ? t.onAccent : t.text} />
+              <Text style={[styles.alarmTitle, { color: ringing ? t.onAccent : t.text }]}>
+                {ringing ? tr('trip.wakeUp') : tr('trip.snoozed')}
+              </Text>
+            </View>
+            {status.trigger ? (
+              <Text style={[styles.alarmBody, { color: ringing ? t.onAccent : t.muted }]}>{tr(`reason.${status.trigger}`)}</Text>
+            ) : null}
+            {ringing ? (
+              <>
+                <Button title={tr('trip.dismiss')} kind="primary" icon="check" onPress={() => void native.dismissAlarm()} />
+                <Button title={tr('trip.snooze')} kind="secondary" icon="sleep" onPress={() => void native.snoozeAlarm()} />
+              </>
+            ) : null}
+            {uncertain ? (
+              <Button title={tr('trip.notYet')} kind="secondary" icon="map-marker-path" onPress={() => void native.keepTracking()} />
+            ) : null}
+          </View>
+        ) : null}
 
-      <Card>
-        <View style={styles.bigRow}>
-          <View style={styles.bigCell}>
-            <Label>Distance</Label>
+        <View style={styles.stats}>
+          <View style={styles.stat}>
+            <Label>{tr('trip.distance')}</Label>
             <Text style={[styles.big, { color: t.text }]}>
-              {status.distanceM != null ? formatDistance(status.distanceM, trip.useMiles) : '–'}
+              {status.distanceM != null ? formatDistance(status.distanceM, trip.useMiles, lang) : '–'}
             </Text>
           </View>
           {!leave ? (
-            <View style={styles.bigCell}>
-              <Label>Arrival in</Label>
-              <Text style={[styles.big, { color: t.text }]}>
-                {status.etaSec != null ? formatDuration(status.etaSec) : '–'}
-              </Text>
+            <View style={styles.stat}>
+              <Label>{tr('trip.arrival')}</Label>
+              <Text style={[styles.big, { color: t.text }]}>{status.etaSec != null ? formatDuration(status.etaSec) : '–'}</Text>
             </View>
           ) : null}
         </View>
-        {leave && status.armed === false ? <Body muted>Waiting until you are inside the area.</Body> : null}
-        <View style={styles.row}>
-          <StatusDot color={health.color(t)} />
-          <Body>{health.text}</Body>
+
+        {leave && status.armed === false ? <Text style={[styles.note, { color: t.muted }]}>{tr('trip.waitingInside')}</Text> : null}
+
+        <View style={[styles.pill, { backgroundColor: t.surfaceAlt }]}>
+          <StatusDot color={HEALTH_COLOR[health](t)} />
+          <Text style={[styles.pillText, { color: t.text }]}>{tr(`trip.gps.${health}`)}</Text>
+          {status.accuracyM != null ? (
+            <Text style={[styles.pillMuted, { color: t.muted }]}>{tr('trip.accuracy', { meters: Math.round(status.accuracyM) })}</Text>
+          ) : null}
         </View>
-        {status.accuracyM != null ? <Body muted>Accuracy ±{Math.round(status.accuracyM)} m</Body> : null}
-        {status.tier ? <Body muted>{TIER_TEXT[status.tier]}</Body> : null}
-      </Card>
+        {status.tier ? <Text style={[styles.note, { color: t.muted }]}>{tr(`trip.tier.${status.tier}`)}</Text> : null}
 
-      <Card>
-        <Body>{rule}</Body>
-        <Body muted>
-          You can lock your phone or use other apps. The alarm rings even in silent mode. Keep location turned on.
-        </Body>
-      </Card>
+        <View style={[styles.rule, { borderColor: t.border }]}>
+          <Icon name="bell-ring" size={20} color={t.primary} />
+          <Text style={[styles.ruleText, { color: t.text }]}>{rule}</Text>
+        </View>
+        <Text style={[styles.note, { color: t.muted }]}>{tr('trip.lockHint')}</Text>
 
-      <Button title="Stop trip" kind="danger" onPress={confirmStop} />
-    </ScrollView>
+        <Button title={tr('trip.stop')} kind="ghost" icon="stop-circle-outline" onPress={confirmStop} />
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 16, gap: 14, paddingBottom: 40 },
-  destination: { fontSize: 28, fontWeight: '700' },
-  alarmTitle: { fontSize: 26, fontWeight: '800' },
-  bigRow: { flexDirection: 'row', gap: 12 },
-  bigCell: { flex: 1, gap: 4 },
-  big: { fontSize: 36, fontWeight: '800' },
-  row: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  root: { flex: 1 },
+  map: { flex: 1, minHeight: 240 },
+  mapHeader: {
+    position: 'absolute',
+    left: 14,
+    right: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    padding: 12,
+    borderRadius: radius.lg,
+    shadowOpacity: 0.16,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 6,
+  },
+  mapHeaderText: { flex: 1, gap: 2 },
+  destination: { fontSize: 19, fontWeight: '800' },
+  panel: {
+    flexGrow: 0,
+    maxHeight: '62%',
+    marginTop: -24,
+    borderTopLeftRadius: radius.xl,
+    borderTopRightRadius: radius.xl,
+    shadowOpacity: 0.15,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: -4 },
+    elevation: 14,
+  },
+  panelContent: { padding: 20, gap: 14 },
+  alarm: { borderRadius: radius.lg, padding: 16, gap: 10 },
+  alarmTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  alarmTitle: { fontSize: 26, fontWeight: '900' },
+  alarmBody: { fontSize: 16 },
+  stats: { flexDirection: 'row', gap: 12 },
+  stat: { flex: 1, gap: 2 },
+  big: { fontSize: 38, fontWeight: '900', letterSpacing: -1 },
+  pill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    alignSelf: 'flex-start',
+    borderRadius: radius.pill,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+  },
+  pillText: { fontSize: 14, fontWeight: '700' },
+  pillMuted: { fontSize: 13 },
+  note: { fontSize: 14, lineHeight: 20 },
+  rule: { flexDirection: 'row', alignItems: 'center', gap: 10, borderWidth: 1, borderRadius: radius.md, padding: 12 },
+  ruleText: { flex: 1, fontSize: 15, fontWeight: '600' },
 });

@@ -35,6 +35,7 @@ class AlarmActivity : Activity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     current = WeakReference(this)
+    L10n.load(this)
     showOverLockScreen()
     reason = intent.getStringExtra(EXTRA_REASON) ?: reason
     setContentView(buildContent())
@@ -106,8 +107,8 @@ class AlarmActivity : Activity() {
     root.addView(slideToDismiss(), LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(76)))
 
     val tripAlarm = reason != Texts.REASON_TEST && reason != Texts.REASON_TRACKING_STOPPED
-    if (tripAlarm) root.addView(button("Snooze 1 min") { act(TripService.ACTION_SNOOZE) })
-    if (Texts.canKeepTracking(reason)) root.addView(button("Not yet, keep tracking") { act(TripService.ACTION_KEEP_TRACKING) })
+    if (tripAlarm) root.addView(button(L10n["snooze"]) { act(TripService.ACTION_SNOOZE) })
+    if (Texts.canKeepTracking(reason)) root.addView(button(L10n["notYetLong"]) { act(TripService.ACTION_KEEP_TRACKING) })
     return root
   }
 
@@ -119,7 +120,7 @@ class AlarmActivity : Activity() {
       }
     }
     val label = TextView(this).apply {
-      text = "Slide to dismiss  ›››"
+      text = L10n["slide"]
       textSize = 18f
       setTextColor(Color.WHITE)
       gravity = Gravity.CENTER

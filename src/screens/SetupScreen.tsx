@@ -1,10 +1,12 @@
 import * as Location from 'expo-location';
 import { useCallback, useEffect, useState } from 'react';
 import { AppState, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { TripAlarm, type AlarmStrength, type SettingsKind, type SetupStatus } from '../../modules/trip-alarm/src';
-import { Body, Button, Card, StatusDot, Title } from '../ui/components';
-import { useTheme } from '../ui/theme';
+import { useI18n, type Key } from '../i18n';
+import { Body, Button, Card, Icon, IconButton, Title, type IconName } from '../ui/components';
+import { radius, useTheme } from '../ui/theme';
 
 type Props = {
   strength: AlarmStrength;
@@ -16,35 +18,45 @@ type Props = {
 
 type Item = {
   key: string;
-  title: string;
+  icon: IconName;
+  title: Key;
   why: string;
   ok: boolean;
   required: boolean;
-  fixLabel: string;
+  fixLabel: Key;
   fix: () => void | Promise<void>;
 };
 
-/** Battery savers that are known to kill background apps; dontkillmyapp.com has the details. */
-const OEM_HINTS: Record<string, string> = {
-  samsung: 'Samsung: Settings › Battery › Background usage limits: add StopWake to "Never sleeping apps".',
-  xiaomi: 'Xiaomi: App info › Battery saver › No restrictions, and turn on Autostart.',
-  redmi: 'Xiaomi: App info › Battery saver › No restrictions, and turn on Autostart.',
-  poco: 'Xiaomi: App info › Battery saver › No restrictions, and turn on Autostart.',
-  oppo: 'OPPO: App info › Battery usage › Allow background activity.',
-  realme: 'realme: App info › Battery usage › Allow background activity.',
-  oneplus: 'OnePlus: App info › Battery › Unrestricted.',
-  vivo: 'vivo: Settings › Battery › Background power consumption › allow StopWake.',
-  huawei: 'Huawei: Settings › Battery › App launch › StopWake › Manage manually, all on.',
-};
+/** Battery savers known to kill background apps (see dontkillmyapp.com). */
+const OEM_HINT: [string, Key][] = [
+  ['samsung', 'setup.battery.samsung'],
+  ['xiaomi', 'setup.battery.xiaomi'],
+  ['redmi', 'setup.battery.xiaomi'],
+  ['poco', 'setup.battery.xiaomi'],
+  ['oppo', 'setup.battery.oppo'],
+  ['realme', 'setup.battery.oppo'],
+  ['oneplus', 'setup.battery.oneplus'],
+  ['vivo', 'setup.battery.vivo'],
+  ['huawei', 'setup.battery.huawei'],
+  ['honor', 'setup.battery.huawei'],
+];
+
+/** True when everything a trip cannot run without is in place. */
+export function setupReady(status: SetupStatus | null | undefined): boolean {
+  return !!status && status.location === 'precise' && status.locationServices && status.notifications;
+}
 
 export function SetupScreen({ strength, continueLabel, onContinue, onBack }: Props) {
   const t = useTheme();
+  const { t: tr } = useI18n();
+  const insets = useSafeAreaInsets();
   const [status, setStatus] = useState<SetupStatus | null>(() => TripAlarm?.getSetupStatus() ?? null);
   const [testing, setTesting] = useState(false);
 
   const refresh = useCallback(() => setStatus(TripAlarm?.getSetupStatus() ?? null), []);
 
   useEffect(() => {
+    // Coming back from a system settings page.
     const sub = AppState.addEventListener('change', (s) => {
       if (s === 'active') refresh();
     });
@@ -53,10 +65,10 @@ export function SetupScreen({ strength, continueLabel, onContinue, onBack }: Pro
 
   if (!TripAlarm || !status) {
     return (
-      <View style={[styles.container, { backgroundColor: t.background }]}>
-        <Title>Not supported yet</Title>
-        <Body>Trip alarms run on Android for now. The iPhone version comes next.</Body>
-        <Button title="Back" kind="secondary" onPress={onBack} />
+      <View style={[styles.root, { backgroundColor: t.background, paddingTop: insets.top + 16 }]}>
+        <Title>{tr('setup.unsupported.title')}</Title>
+        <Body>{tr('setup.unsupported.body')}</Body>
+        <Button title={tr('common.back')} kind="secondary" onPress={onBack} />
       </View>
     );
   }
@@ -68,12 +80,8 @@ export function SetupScreen({ strength, continueLabel, onContinue, onBack }: Pro
 
   async function askLocation() {
     const current = await Location.getForegroundPermissionsAsync();
-    if (current.granted && current.android?.accuracy === 'coarse') {
-      // Approximate was chosen; only the settings page can upgrade it to precise.
-      native.openSettings('app');
-      return;
-    }
-    if (!current.granted && !current.canAskAgain) {
+    if ((current.granted && current.android?.accuracy === 'coarse') || (!current.granted && !current.canAskAgain)) {
+      // Only the app's settings page can switch approximate to precise, or undo "don't ask again".
       native.openSettings('app');
       return;
     }
@@ -88,66 +96,72 @@ export function SetupScreen({ strength, continueLabel, onContinue, onBack }: Pro
   }
 
   const manufacturer = status.manufacturer.toLowerCase();
-  const oemHint = Object.entries(OEM_HINTS).find(([k]) => manufacturer.includes(k))?.[1];
+  const oemHint = OEM_HINT.find(([brand]) => manufacturer.includes(brand))?.[1];
 
   const items: Item[] = [
     {
       key: 'location',
-      title: 'Precise location',
-      why: 'Needed to know how far you are from your stop. Used only while a trip is running.',
+      icon: 'map-marker-account',
+      title: 'setup.location.title',
+      why: tr('setup.location.why'),
       ok: status.location === 'precise',
       required: true,
-      fixLabel: status.location === 'approximate' ? 'Switch to precise' : 'Allow',
+      fixLabel: status.location === 'approximate' ? 'setup.switchPrecise' : 'setup.allow',
       fix: askLocation,
     },
     {
       key: 'services',
-      title: 'Location turned on',
-      why: 'Your phone’s location setting is off.',
+      icon: 'crosshairs-gps',
+      title: 'setup.services.title',
+      why: tr('setup.services.why'),
       ok: status.locationServices,
       required: true,
-      fixLabel: 'Turn on',
+      fixLabel: 'setup.turnOn',
       fix: open('location'),
     },
     {
       key: 'notifications',
-      title: 'Notifications',
-      why: 'The trip shows a notification while it runs, and the alarm rings through one.',
+      icon: 'bell-ring-outline',
+      title: 'setup.notifications.title',
+      why: tr('setup.notifications.why'),
       ok: status.notifications,
       required: true,
-      fixLabel: 'Allow',
+      fixLabel: 'setup.allow',
       fix: askNotifications,
     },
     {
       key: 'fullscreen',
-      title: 'Alarm over the lock screen',
-      why: 'Lets the alarm fill the screen when your phone is locked. Without it you only get a banner.',
+      icon: 'cellphone-lock',
+      title: 'setup.fullscreen.title',
+      why: tr('setup.fullscreen.why'),
       ok: status.fullScreenAlarm,
       required: false,
-      fixLabel: 'Allow',
+      fixLabel: 'setup.allow',
       fix: open('fullScreenAlarm'),
     },
     {
       key: 'exact',
-      title: 'Alarms & reminders',
-      why: 'Keeps the GPS-lost backup alarm on time while the phone sleeps.',
+      icon: 'alarm-check',
+      title: 'setup.exact.title',
+      why: tr('setup.exact.why'),
       ok: status.exactAlarms,
       required: false,
-      fixLabel: 'Allow',
+      fixLabel: 'setup.allow',
       fix: open('exactAlarms'),
     },
     {
       key: 'battery',
-      title: 'No battery restrictions',
-      why: oemHint ?? 'Stops the battery saver from closing StopWake in the middle of a trip.',
+      icon: 'battery-heart-variant',
+      title: 'setup.battery.title',
+      why: oemHint ? tr(oemHint) : tr('setup.battery.why'),
       ok: status.batteryUnrestricted,
       required: false,
-      fixLabel: 'Open settings',
+      fixLabel: 'setup.openSettings',
       fix: open('battery'),
     },
   ];
 
-  const ready = items.every((i) => !i.required || i.ok);
+  const ready = setupReady(status);
 
   async function test() {
     setTesting(true);
@@ -159,33 +173,47 @@ export function SetupScreen({ strength, continueLabel, onContinue, onBack }: Pro
   }
 
   return (
-    <ScrollView style={{ backgroundColor: t.background }} contentContainerStyle={styles.container}>
-      <Title>Before you go</Title>
-      <Body muted>StopWake needs a few permissions to wake you reliably. Required ones are marked.</Body>
+    <ScrollView
+      style={{ backgroundColor: t.background }}
+      contentContainerStyle={[styles.root, { paddingTop: insets.top + 12, paddingBottom: insets.bottom + 24 }]}>
+      <IconButton icon="arrow-left" label={tr('common.back')} onPress={onBack} size={44} />
+      <Title>{tr('setup.title')}</Title>
+      <Body muted>{tr('setup.body')}</Body>
 
       {items.map((item) => (
-        <Card key={item.key}>
-          <View style={styles.row}>
-            <StatusDot color={item.ok ? t.good : item.required ? t.bad : t.warn} />
-            <Text style={[styles.itemTitle, { color: t.text }]}>
-              {item.title}
-              {item.required ? '  ·  required' : ''}
-            </Text>
+        <Card key={item.key} style={styles.item}>
+          <View style={styles.itemHeader}>
+            <View style={[styles.itemIcon, { backgroundColor: item.ok ? t.good : item.required ? t.bad : t.warn }]}>
+              <Icon name={item.ok ? 'check' : item.icon} size={20} color="#FFFFFF" />
+            </View>
+            <View style={styles.itemTitle}>
+              <Text style={[styles.itemTitleText, { color: t.text }]}>{tr(item.title)}</Text>
+              <Text style={[styles.itemTag, { color: item.required ? t.bad : t.muted }]}>
+                {item.ok ? tr('setup.allSet') : tr(item.required ? 'setup.required' : 'setup.recommended')}
+              </Text>
+            </View>
           </View>
-          <Body muted>{item.why}</Body>
-          {!item.ok ? <Button title={item.fixLabel} kind="secondary" onPress={() => void item.fix()} /> : null}
+          {!item.ok ? (
+            <>
+              <Body muted>{item.why}</Body>
+              <Button title={tr(item.fixLabel)} kind="secondary" compact onPress={() => void item.fix()} />
+            </>
+          ) : null}
         </Card>
       ))}
 
-      <Button title="Test the alarm" kind="secondary" busy={testing} onPress={test} />
+      <Button title={tr('setup.test')} kind="secondary" icon="volume-high" busy={testing} onPress={test} />
       <Button title={continueLabel} disabled={!ready} onPress={onContinue} />
-      <Button title="Back" kind="secondary" onPress={onBack} />
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 16, gap: 14, paddingBottom: 40 },
-  row: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  itemTitle: { fontSize: 17, fontWeight: '700', flex: 1 },
+  root: { padding: 18, gap: 14 },
+  item: { gap: 10, padding: 16 },
+  itemHeader: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  itemIcon: { width: 38, height: 38, borderRadius: radius.pill, alignItems: 'center', justifyContent: 'center' },
+  itemTitle: { flex: 1, gap: 2 },
+  itemTitleText: { fontSize: 17, fontWeight: '700' },
+  itemTag: { fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.6 },
 });

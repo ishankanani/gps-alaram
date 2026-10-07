@@ -1,8 +1,10 @@
-import { ScrollView, StyleSheet, Text } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { TripAlarm, type TripEndedEvent } from '../../modules/trip-alarm/src';
+import { useI18n } from '../i18n';
 import type { Place } from '../lib/geocode';
-import { Body, Button, Card, Title } from '../ui/components';
+import { Body, Button, Card, Heading, Icon, Title } from '../ui/components';
 import { useTheme } from '../ui/theme';
 
 type Props = {
@@ -13,46 +15,51 @@ type Props = {
   onDone: () => void;
 };
 
-const HEADLINE: Record<string, string> = {
-  dismissed: 'You made it',
-  stopped: 'Trip stopped',
-  error: 'The trip could not start',
-};
-
 export function DoneScreen({ ended, place, isFavourite, onSaveFavourite, onDone }: Props) {
   const t = useTheme();
+  const { t: tr } = useI18n();
+  const insets = useSafeAreaInsets();
   const logName = ended.logName;
-  return (
-    <ScrollView style={{ backgroundColor: t.background }} contentContainerStyle={styles.container}>
-      <Title>{HEADLINE[ended.reason] ?? 'Trip finished'}</Title>
-      {ended.reason === 'error' ? (
-        <Body>{ended.message || 'Check that location and notifications are allowed, then try again.'}</Body>
-      ) : null}
+  const error = ended.reason === 'error';
+  const headline = error ? tr('done.error') : ended.reason === 'dismissed' ? tr('done.dismissed') : tr('done.stopped');
 
-      {place && !isFavourite && ended.reason !== 'error' ? (
+  return (
+    <ScrollView
+      style={{ backgroundColor: t.background }}
+      contentContainerStyle={[styles.root, { paddingTop: insets.top + 40, paddingBottom: insets.bottom + 24 }]}>
+      <View style={[styles.badge, { backgroundColor: error ? t.bad : t.good }]}>
+        <Icon name={error ? 'alert-circle' : ended.reason === 'dismissed' ? 'flag-checkered' : 'stop-circle-outline'} size={44} color="#FFFFFF" />
+      </View>
+      <Title>{headline}</Title>
+      {error ? <Body>{ended.message || tr('done.errorBody')}</Body> : null}
+
+      {place && !isFavourite && !error ? (
         <Card>
-          <Text style={[styles.cardTitle, { color: t.text }]}>Save {place.name}?</Text>
-          <Body muted>Next time it is one tap away.</Body>
-          <Button title="Save to favourites" kind="secondary" onPress={onSaveFavourite} />
+          <Heading>{tr('done.save', { name: place.name })}</Heading>
+          <Body muted>{tr('done.saveBody')}</Body>
+          <Button title={tr('done.saveButton')} kind="secondary" icon="star" onPress={onSaveFavourite} />
         </Card>
       ) : null}
 
       {logName && TripAlarm ? (
         <Card>
-          <Text style={[styles.cardTitle, { color: t.text }]}>Help us test</Text>
-          <Body muted>
-            The trip log has every GPS fix and alarm decision from this trip. Sharing it helps us tune when the alarm rings.
-          </Body>
-          <Button title="Share trip log" kind="secondary" onPress={() => void TripAlarm?.shareTripLog(logName)} />
+          <Heading>{tr('done.log.title')}</Heading>
+          <Body muted>{tr('done.log.body')}</Body>
+          <Button
+            title={tr('done.log.button')}
+            kind="secondary"
+            icon="share-variant"
+            onPress={() => void TripAlarm?.shareTripLog(logName)}
+          />
         </Card>
       ) : null}
 
-      <Button title="Done" onPress={onDone} />
+      <Button title={tr('common.done')} onPress={onDone} />
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 16, gap: 14, paddingBottom: 40 },
-  cardTitle: { fontSize: 18, fontWeight: '700' },
+  root: { padding: 20, gap: 16 },
+  badge: { width: 84, height: 84, borderRadius: 42, alignItems: 'center', justifyContent: 'center' },
 });

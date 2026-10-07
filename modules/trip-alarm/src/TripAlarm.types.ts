@@ -39,6 +39,9 @@ export type ActiveTrip = {
 export type TripStatus = {
   trip: ActiveTrip | null;
   state: TripState;
+  /** Last position fix, for the trip map. */
+  latitude?: number | null;
+  longitude?: number | null;
   distanceM?: number | null;
   etaSec?: number | null;
   speedMps?: number | null;

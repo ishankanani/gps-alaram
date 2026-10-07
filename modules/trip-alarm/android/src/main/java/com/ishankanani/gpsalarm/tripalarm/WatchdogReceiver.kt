@@ -18,6 +18,7 @@ class WatchdogReceiver : BroadcastReceiver() {
       return
     }
     val saved = TripStore.load(context) ?: return
+    L10n.load(context)
     Notifications.showTrackingStopped(context, saved.first)
     TripStore.clear(context)
   }
@@ -39,6 +40,7 @@ class BootReceiver : BroadcastReceiver() {
   override fun onReceive(context: Context, intent: Intent) {
     if (intent.action != Intent.ACTION_BOOT_COMPLETED) return
     val saved = TripStore.load(context) ?: return
+    L10n.load(context)
     Notifications.showTrackingStopped(context, saved.first)
     TripStore.clear(context)
   }

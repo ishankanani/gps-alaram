@@ -1,3 +1,5 @@
+import type { StopKind } from './stations/text';
+
 export type Place = {
   id: string;
   name: string;
@@ -7,7 +9,13 @@ export type Place = {
   longitude: number;
   /** A transit stop or station, from the map data. */
   isStop?: boolean;
+  /** Stops from the offline database: which kind it is and which lines serve it. */
+  kind?: StopKind;
+  modes?: number;
 };
+
+/** [west, south, east, north] around Germany, with a margin for border stations. */
+export const GERMANY_BBOX = [5.5, 47.0, 15.5, 55.2] as const;
 
 const STOP_VALUES = new Set([
   'station',
@@ -111,10 +119,28 @@ export async function searchPlaces(query: string, options: SearchOptions = {}): 
   }
   const lang = (options.language ?? 'en').slice(0, 2);
   if (['en', 'de', 'fr'].includes(lang)) params.lang = lang;
+  params.bbox = GERMANY_BBOX.join(',');
   const qs = Object.entries(params)
     .map(([k, v]) => `${k}=${encodeURIComponent(v)}`)
     .join('&');
   const res = await fetch(`https://photon.komoot.io/api/?${qs}`, { signal: options.signal });
   if (!res.ok) throw new Error(`Search failed (${res.status})`);
   return parsePhoton(await res.json());
+}
+
+/** The address at a point, for a pin dropped on the map. Needs internet; null when unknown. */
+export async function reversePlace(
+  latitude: number,
+  longitude: number,
+  options: { language?: string; signal?: AbortSignal } = {},
+): Promise<Place | null> {
+  const lang = (options.language ?? 'en').slice(0, 2);
+  const langParam = ['en', 'de', 'fr'].includes(lang) ? `&lang=${lang}` : '';
+  const res = await fetch(
+    `https://photon.komoot.io/reverse?lat=${latitude.toFixed(6)}&lon=${longitude.toFixed(6)}&limit=1${langParam}`,
+    { signal: options.signal },
+  );
+  if (!res.ok) return null;
+  const found = parsePhoton(await res.json())[0];
+  return found ? { ...found, latitude, longitude } : null;
 }

@@ -63,6 +63,9 @@ data class TrackingPlan(
 }
 
 data class TripStatus(
+  /** Position of the last usable fix, for drawing the user on the trip map. */
+  val latitude: Double?,
+  val longitude: Double?,
   val distanceM: Double?,
   val etaSec: Double?,
   val speedMps: Double?,

@@ -1,20 +1,29 @@
 import { StatusBar } from 'expo-status-bar';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { Alert, AppState, BackHandler, StyleSheet } from 'react-native';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Alert, AppState, BackHandler, StyleSheet, View } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { TripAlarm, type TripEndedEvent, type TripStatus } from './modules/trip-alarm/src';
+import { deviceLanguage, I18nProvider, translator, type Lang } from './src/i18n';
 import type { Place } from './src/lib/geocode';
+import type { Preferences } from './src/lib/prefs';
 import { loadData, samePlace, saveData, toggleFavourite, withRecent, type SavedData } from './src/lib/storage';
+import { rememberWake, tripOptions, type WakeOptions } from './src/lib/wake';
 import { DoneScreen } from './src/screens/DoneScreen';
-import { HomeScreen, type TripRequest } from './src/screens/HomeScreen';
-import { SetupScreen } from './src/screens/SetupScreen';
+import { HomeScreen } from './src/screens/HomeScreen';
+import { OnboardingScreen } from './src/screens/OnboardingScreen';
+import { SettingsScreen } from './src/screens/SettingsScreen';
+import { SetupScreen, setupReady } from './src/screens/SetupScreen';
 import { TrackingScreen } from './src/screens/TrackingScreen';
 import { useTheme } from './src/ui/theme';
 
+type PendingTrip = { place: Place; wake: WakeOptions };
+
 type Screen =
+  | { name: 'onboarding' }
+  | { name: 'setup'; then: PendingTrip | null }
   | { name: 'home' }
-  | { name: 'setup'; request: TripRequest | null }
+  | { name: 'settings' }
   | { name: 'tracking' }
   | { name: 'done'; ended: TripEndedEvent; place: Place | null };
 
@@ -25,24 +34,38 @@ function isRunning(status: TripStatus | null): status is TripStatus {
 export default function App() {
   const t = useTheme();
   const [data, setData] = useState<SavedData>(loadData);
-  const [screen, setScreen] = useState<Screen>({ name: 'home' });
+  const [screen, setScreen] = useState<Screen>(() => (loadData().preferences.onboarded ? { name: 'home' } : { name: 'onboarding' }));
   const [status, setStatus] = useState<TripStatus | null>(null);
-  const [notice, setNotice] = useState<string | null>(null);
+  const [stoppedNotice, setStoppedNotice] = useState(false);
+  const [starting, setStarting] = useState(false);
   const tripPlace = useRef<Place | null>(null);
+
+  const deviceLang = useMemo(deviceLanguage, []);
+  const lang: Lang = data.preferences.language ?? deviceLang;
+  const i18n = useMemo(() => ({ lang, t: translator(lang) }), [lang]);
+  const tr = i18n.t;
+
+  // The alarm screen and notifications are native: tell them the language too.
+  useEffect(() => {
+    TripAlarm?.setLanguage(lang);
+  }, [lang]);
 
   const update = useCallback((next: SavedData) => {
     setData(next);
     saveData(next);
   }, []);
 
+  const setPreferences = useCallback(
+    (preferences: Preferences) => update({ ...data, preferences }),
+    [data, update],
+  );
+
   // Pick up a trip that is already running (the app was closed while the service tracked).
   const syncWithService = useCallback(() => {
     if (!TripAlarm) return;
     const active = TripAlarm.getActiveTrip();
     if (active?.state === 'stopped') {
-      setNotice(
-        'Your phone stopped the last trip before it finished. A battery saver usually does this: see "Check setup" for how to exempt StopWake.',
-      );
+      setStoppedNotice(true);
       void TripAlarm.stopTrip();
     } else if (isRunning(active)) {
       setStatus(active);
@@ -73,60 +96,78 @@ export default function App() {
     };
   }, [syncWithService]);
 
-  // Android back: go home from setup and done; never leave the tracking screen by accident.
+  // Android back: go home from secondary screens; never leave a running trip by accident.
   useEffect(() => {
     const sub = BackHandler.addEventListener('hardwareBackPress', () => {
-      if (screen.name === 'setup' || screen.name === 'done') {
+      if (screen.name === 'settings' || screen.name === 'done' || (screen.name === 'setup' && data.preferences.onboarded)) {
         setScreen({ name: 'home' });
         return true;
       }
-      return false;
+      return screen.name === 'tracking';
     });
     return () => sub.remove();
-  }, [screen.name]);
+  }, [screen.name, data.preferences.onboarded]);
 
-  async function launch(request: TripRequest) {
+  async function launch({ place, wake }: PendingTrip) {
     const native = TripAlarm;
     if (!native) return;
-    const { place, preferences } = request;
+    const preferences = rememberWake(data.preferences, wake);
     update(withRecent({ ...data, preferences }, place));
     tripPlace.current = place;
+    setStarting(true);
     try {
-      const trip = await native.startTrip({
-        latitude: place.latitude,
-        longitude: place.longitude,
-        radiusM: preferences.radiusM,
-        mode: preferences.mode,
-        minutesBefore: preferences.mode === 'arrive' ? preferences.minutesBefore : null,
-        label: place.name,
-        strength: preferences.strength,
-        useMiles: preferences.useMiles,
-      });
-      setNotice(null);
+      const trip = await native.startTrip(tripOptions(place, wake, preferences.useMiles));
+      setStoppedNotice(false);
       setStatus({ trip, state: 'tracking', health: 'waiting' });
       setScreen({ name: 'tracking' });
     } catch (e) {
-      Alert.alert('Could not start the trip', e instanceof Error ? e.message : String(e));
+      Alert.alert(tr('trip.startFailed'), e instanceof Error ? e.message : String(e));
+    } finally {
+      setStarting(false);
     }
   }
 
-  function start(request: TripRequest) {
-    const setup = TripAlarm?.getSetupStatus();
-    const ready = !!setup && setup.location === 'precise' && setup.locationServices && setup.notifications;
-    if (ready) void launch(request);
-    else setScreen({ name: 'setup', request });
+  function start(place: Place, wake: WakeOptions) {
+    if (setupReady(TripAlarm?.getSetupStatus())) void launch({ place, wake });
+    else setScreen({ name: 'setup', then: { place, wake } });
+  }
+
+  /** The destination's kind for the trip map pin, also after the app was restarted mid-trip. */
+  function tripKind() {
+    const label = status?.trip?.label;
+    const place = tripPlace.current ?? data.recents.find((p) => p.name === label) ?? null;
+    return place?.kind ?? 'place';
   }
 
   let content;
   if (screen.name === 'tracking' && isRunning(status)) {
-    content = <TrackingScreen status={status} />;
+    content = <TrackingScreen status={status} kind={tripKind()} />;
+  } else if (screen.name === 'onboarding') {
+    content = (
+      <OnboardingScreen
+        onLanguage={(language) => setPreferences({ ...data.preferences, language })}
+        onDone={() => {
+          setPreferences({ ...data.preferences, language: lang, onboarded: true });
+          setScreen({ name: 'setup', then: null });
+        }}
+      />
+    );
   } else if (screen.name === 'setup') {
-    const request = screen.request;
+    const pending = screen.then;
     content = (
       <SetupScreen
-        strength={request?.preferences.strength ?? data.preferences.strength}
-        continueLabel={request ? 'Start trip' : 'Done'}
-        onContinue={() => (request ? void launch(request) : setScreen({ name: 'home' }))}
+        strength={pending?.wake.strength ?? data.preferences.strength}
+        continueLabel={pending ? tr('place.start') : tr('common.continue')}
+        onContinue={() => (pending ? void launch(pending) : setScreen({ name: 'home' }))}
+        onBack={() => setScreen({ name: 'home' })}
+      />
+    );
+  } else if (screen.name === 'settings') {
+    content = (
+      <SettingsScreen
+        preferences={data.preferences}
+        onChange={setPreferences}
+        onOpenSetup={() => setScreen({ name: 'setup', then: null })}
         onBack={() => setScreen({ name: 'home' })}
       />
     );
@@ -145,20 +186,22 @@ export default function App() {
     content = (
       <HomeScreen
         data={data}
-        notice={notice}
+        notice={stoppedNotice ? tr('home.stoppedNotice') : null}
+        starting={starting}
+        onDismissNotice={() => setStoppedNotice(false)}
         onToggleFavourite={(place) => update(toggleFavourite(data, place))}
         onStart={start}
-        onOpenSetup={() => setScreen({ name: 'setup', request: null })}
+        onOpenSettings={() => setScreen({ name: 'settings' })}
       />
     );
   }
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={[styles.root, { backgroundColor: t.background }]}>
-        {content}
-      </SafeAreaView>
-      <StatusBar style={t.dark ? 'light' : 'dark'} />
+      <I18nProvider value={i18n}>
+        <View style={[styles.root, { backgroundColor: t.background }]}>{content}</View>
+        <StatusBar style={t.dark ? 'light' : 'dark'} />
+      </I18nProvider>
     </SafeAreaProvider>
   );
 }

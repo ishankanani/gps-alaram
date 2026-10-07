@@ -30,6 +30,12 @@ Run lint and typecheck before declaring any task done.
   The trip engine (`android/.../engine`) is pure Kotlin with no Android imports; keep it that way
   and run `npm run test:engine` after touching it.
 - The UI is a small screen state machine in `App.tsx` (no Expo Router).
+- The offline stops database `assets/stations/germany-stops.db` is generated, not committed:
+  run `npm run build:stations` after `npm install`. Metro bundles it as an asset.
+- Every user-facing text goes through `useI18n()` with keys from `src/i18n/en.ts`, and needs a
+  German and Hindi entry too. Native alarm and notification texts live in `L10n.kt`.
+- Modules that Vitest tests (`src/lib`, `src/map/geo.ts`, `src/ui/colors.ts`) must not import
+  `react-native`; Vitest cannot parse it.
 - Run `npm run check` (typecheck, lint, JS tests) before declaring any task done.
 
 ## Building with EAS

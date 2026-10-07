@@ -49,6 +49,7 @@ class TripAlarmModule : Module() {
     Events(TripEvents.STATUS, TripEvents.ALARM, TripEvents.TRIP_ENDED)
 
     OnCreate {
+      L10n.load(context)
       Notifications.ensureChannels(context)
       TripEvents.sink = { name, body -> sendEvent(name, body) }
     }
@@ -81,6 +82,13 @@ class TripAlarmModule : Module() {
     AsyncFunction<Unit>("keepTracking") { TripService.send(context, TripService.ACTION_KEEP_TRACKING) }
 
     Function("getActiveTrip") { activeTrip() }
+
+    /** Native texts (alarm screen, notifications) follow the language picked in the app. */
+    Function("setLanguage") { code: String ->
+      L10n.set(context, code)
+      // Re-registering channels renames them in the system settings.
+      Notifications.ensureChannels(context)
+    }
 
     AsyncFunction("testAlarm") { strength: String ->
       val ctx = context
@@ -121,7 +129,7 @@ class TripAlarmModule : Module() {
         .setType("text/plain")
         .putExtra(Intent.EXTRA_SUBJECT, name)
         .putExtra(Intent.EXTRA_TEXT, file.readText())
-      val chooser = Intent.createChooser(send, "Share trip log")
+      val chooser = Intent.createChooser(send, L10n["shareLog"])
       val activity = appContext.currentActivity
       if (activity != null) {
         activity.startActivity(chooser)
@@ -145,7 +153,7 @@ class TripAlarmModule : Module() {
     val now = System.currentTimeMillis()
     val trip = ActiveTrip(
       id = now.toString(),
-      label = options.label.trim().ifEmpty { "your stop" },
+      label = options.label.trim().ifEmpty { L10n["yourStop"] },
       latitude = options.latitude,
       longitude = options.longitude,
       radiusM = options.radiusM,

@@ -1,5 +1,7 @@
 import { useColorScheme } from 'react-native';
 
+export { BADGE_COLOR, KIND_COLOR, KIND_ICON } from './colors';
+
 export type Theme = {
   dark: boolean;
   background: string;
@@ -8,43 +10,57 @@ export type Theme = {
   border: string;
   text: string;
   muted: string;
+  primary: string;
+  onPrimary: string;
+  primarySoft: string;
   accent: string;
   onAccent: string;
   good: string;
   warn: string;
   bad: string;
+  shadow: string;
 };
 
 const light: Theme = {
   dark: false,
-  background: '#F4F6FA',
+  background: '#F3F5FA',
   surface: '#FFFFFF',
-  surfaceAlt: '#E9EDF4',
-  border: '#D5DCE7',
-  text: '#0F1B2D',
-  muted: '#5B6B82',
-  accent: '#1E5EFF',
-  onAccent: '#FFFFFF',
-  good: '#178A4C',
-  warn: '#B76E00',
-  bad: '#C62828',
+  surfaceAlt: '#EEF1F7',
+  border: '#DCE2EC',
+  text: '#0E1726',
+  muted: '#5D6B82',
+  primary: '#3352FF',
+  onPrimary: '#FFFFFF',
+  primarySoft: '#E7EBFF',
+  accent: '#FFB020',
+  onAccent: '#2A1B00',
+  good: '#15803D',
+  warn: '#B45309',
+  bad: '#DC2626',
+  shadow: '#0E1726',
 };
 
 const dark: Theme = {
   dark: true,
-  background: '#0B1220',
-  surface: '#141D2E',
-  surfaceAlt: '#1D2940',
-  border: '#2A3953',
-  text: '#EEF2F8',
-  muted: '#9AA8BE',
-  accent: '#5B8CFF',
-  onAccent: '#0B1220',
-  good: '#4CC38A',
-  warn: '#F2B544',
-  bad: '#FF6B6B',
+  background: '#0A0F1C',
+  surface: '#131B2D',
+  surfaceAlt: '#1B2540',
+  border: '#26324F',
+  text: '#EEF2FA',
+  muted: '#9AA7BF',
+  primary: '#7088FF',
+  onPrimary: '#0A0F1C',
+  primarySoft: '#1E2A55',
+  accent: '#FFB547',
+  onAccent: '#2A1B00',
+  good: '#4ADE80',
+  warn: '#FBBF24',
+  bad: '#F87171',
+  shadow: '#000000',
 };
 
 export function useTheme(): Theme {
   return useColorScheme() === 'dark' ? dark : light;
 }
+
+export const radius = { sm: 10, md: 16, lg: 22, xl: 28, pill: 999 };
