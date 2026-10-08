@@ -84,16 +84,28 @@ export function SearchOverlay({ near, favourites, recents, useMiles, onPick, onC
     };
   }, [query, lang]);
 
-  // Android keeps the keyboard up after the search field goes away; it would cover the stop sheet.
-  function pick(place: Place) {
+  // Close the keyboard before leaving. If the focused field simply disappears, Android may keep
+  // the keyboard up over the stop sheet, so wait until it has gone (or half a second at most).
+  function leave(then: () => void) {
+    if (!Keyboard.isVisible()) {
+      then();
+      return;
+    }
+    let done = false;
+    const timer = setTimeout(finish, 500);
+    const sub = Keyboard.addListener('keyboardDidHide', finish);
+    function finish() {
+      if (done) return;
+      done = true;
+      clearTimeout(timer);
+      sub.remove();
+      then();
+    }
     Keyboard.dismiss();
-    onPick(place);
   }
 
-  function close() {
-    Keyboard.dismiss();
-    onClose();
-  }
+  const pick = (place: Place) => leave(() => onPick(place));
+  const close = () => leave(onClose);
 
   async function useMyLocation() {
     setLocating(true);

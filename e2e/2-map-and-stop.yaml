@@ -1,0 +1,37 @@
+# The map around Odeonsplatz, then search and a stop, up to a running trip to München Hbf.
+appId: com.ishankanani.gpsalarm
+---
+- waitForAnimationToEnd:
+    timeout: 20000
+- takeScreenshot: 04-map
+
+- tapOn: "Where are you going\\?"
+- inputText: "Muenchen Hbf"
+- extendedWaitUntil:
+    visible: "München Hbf"
+    timeout: 20000
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: 05-search
+
+- tapOn: "München Hbf"
+- extendedWaitUntil:
+    visible: "Start alarm"
+    timeout: 15000
+- waitForAnimationToEnd:
+    timeout: 20000
+- takeScreenshot: 06-stop
+
+# 100 or 200 m before a train station is only seconds of warning: the sheet says so.
+- tapOn: "Distance"
+- tapOn: "200 m"
+- extendedWaitUntil:
+    visible: "Use 2 min instead"
+    timeout: 5000
+- takeScreenshot: 07-train-warning
+- tapOn: "Use 2 min instead"
+
+- tapOn: "Start alarm"
+- extendedWaitUntil:
+    visible: "On the way to"
+    timeout: 30000

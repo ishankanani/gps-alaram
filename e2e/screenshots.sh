@@ -78,15 +78,18 @@ route 48.1426 11.5775 48.1426 11.5775 0
 feed &
 FEEDER=$!
 run_flow 1-start-trip.yaml
+# The locate button waits for a GPS fix before the map moves there.
+sleep 8
+run_flow 2-map-and-stop.yaml
 
 # Head for the station at bus speed (about 15 km/h), so "2 min before" is still minutes away.
 route 48.1426 11.5775 48.1402 11.5600 300
 sleep 25
-run_flow 2-trip.yaml
+run_flow 3-trip.yaml
 
 # Arrive at München Hbf.
 route 48.1402 11.5600 48.1402 11.5600 0
-run_flow 3-alarm.yaml
+run_flow 4-alarm.yaml
 
 # The alarm is dismissed by dragging the slider from its left end to the right.
 adb shell uiautomator dump /sdcard/ui.xml >/dev/null
@@ -98,5 +101,5 @@ y=$(((y1 + y2) / 2))
 inset=$(((y2 - y1) / 2))
 adb shell input swipe $((x1 + inset)) "$y" $((x2 - inset)) "$y" 900
 
-run_flow 4-after-trip.yaml
+run_flow 5-after-trip.yaml
 ls -la "$OUT"

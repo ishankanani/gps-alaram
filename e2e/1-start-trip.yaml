@@ -1,4 +1,4 @@
-# First start, setup, the map, search and a stop, up to a running trip to München Hbf.
+# First start and setup, up to the map, where it asks for the current position.
 # Run by e2e/screenshots.sh, which puts the phone at Odeonsplatz in Munich first.
 appId: com.ishankanani.gpsalarm
 ---
@@ -34,37 +34,3 @@ appId: com.ishankanani.gpsalarm
     visible: "Where are you going\\?"
     timeout: 20000
 - tapOn: "Use my current location"
-- waitForAnimationToEnd:
-    timeout: 20000
-- takeScreenshot: 04-map
-
-- tapOn: "Where are you going\\?"
-- inputText: "Muenchen Hbf"
-- extendedWaitUntil:
-    visible: "München Hbf"
-    timeout: 20000
-- waitForAnimationToEnd:
-    timeout: 5000
-- takeScreenshot: 05-search
-
-- tapOn: "München Hbf"
-- extendedWaitUntil:
-    visible: "Start alarm"
-    timeout: 15000
-- waitForAnimationToEnd:
-    timeout: 20000
-- takeScreenshot: 06-stop
-
-# 100 or 200 m before a train station is only seconds of warning: the sheet says so.
-- tapOn: "Distance"
-- tapOn: "200 m"
-- extendedWaitUntil:
-    visible: "Use 2 min instead"
-    timeout: 5000
-- takeScreenshot: 07-train-warning
-- tapOn: "Use 2 min instead"
-
-- tapOn: "Start alarm"
-- extendedWaitUntil:
-    visible: "On the way to"
-    timeout: 30000
