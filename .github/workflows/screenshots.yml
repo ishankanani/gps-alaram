@@ -60,6 +60,7 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
       - name: Drive the app and take screenshots
+        id: drive
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 34
@@ -78,7 +79,8 @@ jobs:
         if: always()
         run: |
           ls screenshots/*.png >/dev/null 2>&1 || exit 0
-          rm -rf docs/screenshots
+          # A complete run replaces the set; a failed one only adds its pictures (and debug-*.png).
+          if [ "${{ steps.drive.outcome }}" = success ]; then rm -rf docs/screenshots; fi
           mkdir -p docs/screenshots
           cp screenshots/*.png docs/screenshots/
           git config user.name "github-actions[bot]"

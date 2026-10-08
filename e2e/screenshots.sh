@@ -71,6 +71,10 @@ on_exit() {
 trap on_exit EXIT
 
 adb install -r "$APK"
+# A freshly booted emulator's launcher is sometimes slow to start, and its "isn't responding"
+# dialog would cover the app.
+adb shell settings put global hide_error_dialogs 1 || true
+adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null || true
 adb shell cmd location set-location-enabled true || true
 adb shell appops set "$PKG" SCHEDULE_EXACT_ALARM allow || true
 adb shell appops set "$PKG" USE_FULL_SCREEN_INTENT allow || true
