@@ -7,16 +7,31 @@ APK=$1
 OUT=$2
 PKG=com.ishankanani.gpsalarm
 FLOWS=$(cd "$(dirname "$0")" && pwd)
+RUNS=$(mktemp -d)
 mkdir -p "$OUT"
+
+# Maestro saves screenshots in its own folder for each run; gather the named ones.
+collect() {
+  find "$RUNS" "$HOME/.maestro/tests" -name '[0-9][0-9]-*.png' -exec cp {} "$OUT/" \; 2>/dev/null || true
+}
+
+run_flow() {
+  local dir="$RUNS/${1%.yaml}"
+  mkdir -p "$dir"
+  (cd "$dir" && maestro test "$FLOWS/$1")
+  collect
+}
 
 on_exit() {
   local status=$?
+  collect
   if [ "$status" -ne 0 ]; then
     echo "::group::App log"
     adb logcat -d | grep -E "ReactNativeJS|AndroidRuntime|TripService|TripAlarm|MapLibre|FATAL" | tail -200 || true
     echo "::endgroup::"
-    # Maestro keeps a screenshot of the screen a flow failed on.
-    find "$HOME/.maestro/tests" -name '*.png' -exec cp {} "$OUT/" \; 2>/dev/null || true
+    # Maestro also keeps a picture of the screen a flow failed on.
+    find "$HOME/.maestro/tests" -name '*.png' ! -name '[0-9][0-9]-*.png' -print0 2>/dev/null |
+      while IFS= read -r -d '' f; do cp "$f" "$OUT/debug-$(basename "$f" | tr -cd 'A-Za-z0-9._-')"; done
   fi
 }
 trap on_exit EXIT
@@ -44,11 +59,11 @@ demo notifications -e visible false
 
 # Odeonsplatz in Munich, about 1.3 km from München Hbf.
 geo 48.1426 11.5775
-maestro test -e OUT="$OUT" "$FLOWS/1-start-trip.yaml"
+run_flow 1-start-trip.yaml
 
 # Arrive at München Hbf.
 geo 48.1402 11.5600
-maestro test -e OUT="$OUT" "$FLOWS/2-alarm.yaml"
+run_flow 2-alarm.yaml
 
 # The alarm is dismissed by dragging the slider from its left end to the right.
 adb shell uiautomator dump /sdcard/ui.xml >/dev/null
@@ -60,5 +75,5 @@ y=$(((y1 + y2) / 2))
 inset=$(((y2 - y1) / 2))
 adb shell input swipe $((x1 + inset)) "$y" $((x2 - inset)) "$y" 900
 
-maestro test -e OUT="$OUT" "$FLOWS/3-after-trip.yaml"
+run_flow 3-after-trip.yaml
 ls -la "$OUT"

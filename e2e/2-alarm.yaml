@@ -4,4 +4,4 @@ appId: com.ishankanani.gpsalarm
 - extendedWaitUntil:
     visible: "Slide to dismiss.*"
     timeout: 120000
-- takeScreenshot: ${OUT}/09-alarm
+- takeScreenshot: 09-alarm

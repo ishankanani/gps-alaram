@@ -5,18 +5,22 @@ appId: com.ishankanani.gpsalarm
     visible: "You made it"
     timeout: 30000
 - waitForAnimationToEnd
-- takeScreenshot: ${OUT}/10-done
+- takeScreenshot: 10-done
 
+- scrollUntilVisible:
+    element:
+      text: "Done"
+    direction: DOWN
 - tapOn: "Done"
 - extendedWaitUntil:
     visible: "Where are you going\\?"
     timeout: 15000
 - tapOn: "Settings"
 - extendedWaitUntil:
-    visible: "Language"
+    visible: "Deutsch"
     timeout: 10000
 - waitForAnimationToEnd
-- takeScreenshot: ${OUT}/11-settings
+- takeScreenshot: 11-settings
 
 # German
 - tapOn: "Deutsch"
@@ -35,7 +39,7 @@ appId: com.ishankanani.gpsalarm
     timeout: 15000
 - waitForAnimationToEnd:
     timeout: 20000
-- takeScreenshot: ${OUT}/12-stop-german
+- takeScreenshot: 12-stop-german
 
 # Hindi
 - tapOn: "Schließen"
@@ -51,4 +55,4 @@ appId: com.ishankanani.gpsalarm
     timeout: 15000
 - waitForAnimationToEnd:
     timeout: 20000
-- takeScreenshot: ${OUT}/13-stop-hindi
+- takeScreenshot: 13-stop-hindi

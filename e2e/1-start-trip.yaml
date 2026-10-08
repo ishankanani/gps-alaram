@@ -9,21 +9,21 @@ appId: com.ishankanani.gpsalarm
     visible: "Never miss your stop"
     timeout: 120000
 - waitForAnimationToEnd
-- takeScreenshot: ${OUT}/01-welcome
+- takeScreenshot: 01-welcome
 
 - tapOn: "Continue"
 - extendedWaitUntil:
     visible: "How it works"
     timeout: 10000
 - waitForAnimationToEnd
-- takeScreenshot: ${OUT}/02-how-it-works
+- takeScreenshot: 02-how-it-works
 
 - tapOn: "Let.s set it up"
 - extendedWaitUntil:
     visible: "Before you go"
     timeout: 10000
 - waitForAnimationToEnd
-- takeScreenshot: ${OUT}/03-setup
+- takeScreenshot: 03-setup
 
 - scrollUntilVisible:
     element:
@@ -36,7 +36,7 @@ appId: com.ishankanani.gpsalarm
 - tapOn: "Use my current location"
 - waitForAnimationToEnd:
     timeout: 20000
-- takeScreenshot: ${OUT}/04-map
+- takeScreenshot: 04-map
 
 - tapOn: "Where are you going\\?"
 - inputText: "Muenchen Hbf"
@@ -45,7 +45,7 @@ appId: com.ishankanani.gpsalarm
     timeout: 20000
 - waitForAnimationToEnd:
     timeout: 5000
-- takeScreenshot: ${OUT}/05-search
+- takeScreenshot: 05-search
 
 - tapOn: "München Hbf"
 - extendedWaitUntil:
@@ -53,7 +53,7 @@ appId: com.ishankanani.gpsalarm
     timeout: 15000
 - waitForAnimationToEnd:
     timeout: 20000
-- takeScreenshot: ${OUT}/06-stop
+- takeScreenshot: 06-stop
 
 # 100 or 200 m before a train station is only seconds of warning: the sheet says so.
 - tapOn: "Distance"
@@ -61,7 +61,7 @@ appId: com.ishankanani.gpsalarm
 - extendedWaitUntil:
     visible: "Use 2 min instead"
     timeout: 5000
-- takeScreenshot: ${OUT}/07-train-warning
+- takeScreenshot: 07-train-warning
 - tapOn: "Use 2 min instead"
 
 - tapOn: "Start alarm"
@@ -70,4 +70,4 @@ appId: com.ishankanani.gpsalarm
     timeout: 30000
 - waitForAnimationToEnd:
     timeout: 20000
-- takeScreenshot: ${OUT}/08-trip
+- takeScreenshot: 08-trip
