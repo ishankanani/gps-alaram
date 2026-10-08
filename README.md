@@ -26,6 +26,31 @@ before launch is still **20 real trips with zero missed stops**.
 | Gentle / Normal / Heavy sleeper, GPS-lost warning, dead-reckoning fallback | |
 | Favourites, recents, setup checklist with a test alarm, shareable trip log | |
 
+## Screenshots
+
+From the release APK on an Android 14 emulator, taken by the **Screenshots** workflow while it
+rides a simulated trip through Munich (see `e2e/`). The emulator draws no text on the map, most
+likely a limit of its software graphics; still to be confirmed on a phone.
+
+<p>
+  <img src="docs/screenshots/01-welcome.png" width="180" alt="Welcome and language">
+  <img src="docs/screenshots/04-map.png" width="180" alt="Map with every stop">
+  <img src="docs/screenshots/05-search.png" width="180" alt="Offline stop search">
+  <img src="docs/screenshots/06-stop.png" width="180" alt="A stop, two taps to the alarm">
+</p>
+<p>
+  <img src="docs/screenshots/07-train-warning.png" width="180" alt="200 m before a train station">
+  <img src="docs/screenshots/08-trip.png" width="180" alt="Trip on the way">
+  <img src="docs/screenshots/09-alarm.png" width="180" alt="The alarm">
+  <img src="docs/screenshots/10-done.png" width="180" alt="Arrived">
+</p>
+<p>
+  <img src="docs/screenshots/03-setup.png" width="180" alt="Setup check">
+  <img src="docs/screenshots/11-settings.png" width="180" alt="Settings">
+  <img src="docs/screenshots/12-stop-german.png" width="180" alt="Deutsch">
+  <img src="docs/screenshots/13-stop-hindi.png" width="180" alt="Hindi">
+</p>
+
 ## Try it on a phone
 
 1. Open the latest **Android** run under the repo's **Actions** tab and download the **StopWake-apk** artifact.
@@ -105,6 +130,12 @@ npm run test:engine    # trip engine tests on the JVM, including 1000 simulated 
 npx expo run:android   # build and run on a connected phone (needs the Android SDK)
 ```
 
+**On an emulator.** The **Screenshots** workflow (Actions tab, *Run workflow*) builds the app,
+boots an Android emulator and drives it with [Maestro](https://maestro.dev) through `e2e/`:
+first start, setup, map, search, a trip to München Hbf with a simulated GPS ride, the alarm,
+settings and the other languages. It commits the screenshots to `docs/screenshots/`, and a failed
+step leaves a `debug-*.png` of the screen it stopped on.
+
 The engine tests need only a JDK. They compile the engine sources from the Android module and
 replay synthetic trips with GPS noise, station stops and tunnels. Any change to the trigger
 rules should keep them green, and a missed stop seen on a real trip should become a new scenario
@@ -124,6 +155,7 @@ src/lib/                     address search, wake options, formatting, local sto
 src/i18n/                    English, German, Hindi
 src/ui/                      theme, colours, shared components
 tools/build-stations.ts      builds assets/stations/germany-stops.db
+e2e/                         emulator flows and the screenshot script (Maestro)
 modules/trip-alarm/
   android/…/tripalarm/       TripService, AlarmPlayer, AlarmActivity, receivers, L10n, JS bridge
   android/…/engine/          TripEngine, SpeedEstimator, Geo (no Android imports)
