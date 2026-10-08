@@ -48,7 +48,13 @@ export function TripMap({ destination, kind, radiusM, user }: Props) {
   return (
     <View style={styles.wrap} onTouchStart={() => (touchedAt.current = Date.now())}>
       {mapStyle ? (
-        <Map style={StyleSheet.absoluteFill} mapStyle={mapStyle} logo={false} compass={false} tintColor={t.primary}>
+        <Map
+          style={StyleSheet.absoluteFill}
+          androidView="texture"
+          mapStyle={mapStyle}
+          logo={false}
+          compass={false}
+          tintColor={t.primary}>
           <Camera ref={camera} initialViewState={{ center: [destination.longitude, destination.latitude], zoom: 13 }} />
           <NativeUserLocation mode="course" />
           <GeoJSONSource id="trip-radius" data={circle}>

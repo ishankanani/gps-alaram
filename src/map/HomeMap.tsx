@@ -108,6 +108,9 @@ export function HomeMap({
   return (
     <Map
       style={StyleSheet.absoluteFill}
+      // A TextureView is part of the normal view tree, so leaving the map leaves no hole
+      // behind (with a SurfaceView the status bar area stayed black on the next screen).
+      androidView="texture"
       mapStyle={mapStyle}
       logo={false}
       compass={false}

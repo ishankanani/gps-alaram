@@ -23,15 +23,30 @@ run_flow() {
   collect
 }
 
-# Like a real phone, the emulator reports a position every second, moving along the current route.
+# Like a real phone, the emulator reports a position (and its speed) every second along the route.
 # Usage: route from-lat from-lon to-lat to-lon seconds. Replaced in one step, so it is never read half-written.
 route() { echo "$1 $2 $3 $4 $5 $(date +%s)" > "$RUNS/route.new" && mv "$RUNS/route.new" "$RUNS/route"; }
+# Prints "longitude latitude knots" for the current moment of the route.
+position() {
+  local lat1 lon1 lat2 lon2 secs since
+  read -r lat1 lon1 lat2 lon2 secs since < "$RUNS/route" || return 1
+  awk -v a="$lat1" -v b="$lon1" -v c="$lat2" -v d="$lon2" -v s="$secs" -v t="$(($(date +%s) - since))" 'BEGIN {
+    f = s > 0 ? t / s : 1; if (f > 1) f = 1
+    dx = (d - b) * cos(a * 3.14159265 / 180) * 111320; dy = (c - a) * 110540
+    knots = (s > 0 && f < 1) ? sqrt(dx * dx + dy * dy) / s * 1.943844 : 0
+    printf "%.6f %.6f %.1f", b + (d - b) * f, a + (c - a) * f, knots
+  }'
+}
+# "latitude longitude" of where the phone is now, to start the next route from.
+here() { position | awk '{ print $2, $1 }'; }
 feed() {
+  local p lon lat knots out
   while true; do
-    if read -r lat1 lon1 lat2 lon2 secs since < "$RUNS/route"; then
-      # shellcheck disable=SC2046 # "longitude latitude" are two arguments
-      adb emu geo fix $(awk -v a="$lat1" -v b="$lon1" -v c="$lat2" -v d="$lon2" -v s="$secs" -v t="$(($(date +%s) - since))" \
-        'BEGIN { f = s > 0 ? t / s : 1; if (f > 1) f = 1; printf "%.6f %.6f", b + (d - b) * f, a + (c - a) * f }') >/dev/null 2>&1 || true
+    if p=$(position); then
+      read -r lon lat knots <<< "$p"
+      # Altitude 0 m, 12 satellites, speed in knots. Without a speed the GPS would report 0.
+      out=$(adb emu geo fix "$lon" "$lat" 0 12 "$knots" 2>&1) || true
+      case "$out" in *KO*) adb emu geo fix "$lon" "$lat" >/dev/null 2>&1 || true ;; esac
     fi
     sleep 1
   done
@@ -87,8 +102,9 @@ route 48.1426 11.5775 48.1402 11.5600 300
 sleep 25
 run_flow 3-trip.yaml
 
-# Arrive at München Hbf.
-route 48.1402 11.5600 48.1402 11.5600 0
+# Speed up like a train: the alarm should ring about 2 minutes before arriving.
+# shellcheck disable=SC2046 # here prints two arguments
+route $(here) 48.1402 11.5600 75
 run_flow 4-alarm.yaml
 
 # The alarm is dismissed by dragging the slider from its left end to the right.
