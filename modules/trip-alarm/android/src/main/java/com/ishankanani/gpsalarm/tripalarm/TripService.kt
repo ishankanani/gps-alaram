@@ -393,9 +393,11 @@ class TripService : Service() {
 
     AlarmPlayer.start(this, currentTrip.strength) { onAutoSilenced() }
     val (title, text) = Texts.alarm(reason, currentTrip, lastStatus)
-    Notifications.notify(this, Notifications.ID_ALARM, Notifications.alarmNotification(this, reason, title, text))
-    // With the app on screen a full-screen intent only shows a heads-up, so open the alarm directly.
-    if (TripEvents.appInForeground) {
+    // With the app on screen a full-screen intent only shows a heads-up (which would cover the alarm
+    // screen), so the alarm screen is opened directly and the notification stays quiet.
+    val onScreen = TripEvents.appInForeground
+    Notifications.notify(this, Notifications.ID_ALARM, Notifications.alarmNotification(this, reason, title, text, quiet = onScreen))
+    if (onScreen) {
       try {
         startActivity(AlarmActivity.intent(this, reason))
       } catch (e: Exception) {

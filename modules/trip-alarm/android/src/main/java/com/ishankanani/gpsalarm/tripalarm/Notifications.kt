@@ -91,8 +91,13 @@ object Notifications {
       .addAction(action(context, L10n["stopTrip"], TripService.ACTION_STOP, REQ_STOP))
       .build()
 
-  fun alarmNotification(context: Context, reason: String, title: String, text: String): Notification {
-    val b = builder(context, CHANNEL_ALARM)
+  /**
+   * The ringing alarm's notification. Its full-screen intent shows the alarm screen over the lock
+   * screen. With [quiet] (the app is on screen and opens the alarm screen itself) it goes on the
+   * quiet channel instead, so no pop-up covers the alarm screen; its buttons stay in the shade.
+   */
+  fun alarmNotification(context: Context, reason: String, title: String, text: String, quiet: Boolean = false): Notification {
+    val b = builder(context, if (quiet) CHANNEL_TRIP else CHANNEL_ALARM)
       .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
       .setContentTitle(title)
       .setContentText(text)
@@ -101,8 +106,8 @@ object Notifications {
       .setCategory(Notification.CATEGORY_ALARM)
       .setVisibility(Notification.VISIBILITY_PUBLIC)
       .setContentIntent(alarmScreenIntent(context, reason))
-      .setFullScreenIntent(alarmScreenIntent(context, reason), true)
-      .addAction(action(context, L10n["dismiss"], TripService.ACTION_DISMISS, REQ_DISMISS))
+    if (!quiet) b.setFullScreenIntent(alarmScreenIntent(context, reason), true)
+    b.addAction(action(context, L10n["dismiss"], TripService.ACTION_DISMISS, REQ_DISMISS))
       .addAction(action(context, L10n["snooze"], TripService.ACTION_SNOOZE, REQ_SNOOZE))
     if (Texts.canKeepTracking(reason)) {
       b.addAction(action(context, L10n["notYet"], TripService.ACTION_KEEP_TRACKING, REQ_KEEP))
