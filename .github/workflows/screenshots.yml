@@ -1,0 +1,84 @@
+name: Screenshots
+
+# Runs the app on an Android emulator through a whole trip (see e2e/), and commits screenshots of
+# the main screens to docs/screenshots on the branch it ran on. Start it from the Actions tab.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: screenshots-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  screenshots:
+    name: Screenshots on an emulator
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v4
+      - run: npm ci
+      - run: npm run build:stations
+      - name: Generate the Android project
+        run: npx expo prebuild --platform android --no-install
+      - name: Fetch the SDK parts the build needs
+        working-directory: android
+        run: |
+          for attempt in 1 2 3; do
+            ./gradlew help --no-daemon -q && exit 0
+            echo "SDK setup attempt $attempt failed, retrying"
+            sleep 20
+          done
+          exit 1
+      - name: Build a release APK for the emulator
+        working-directory: android
+        run: ./gradlew assembleRelease --no-daemon -PreactNativeArchitectures=x86_64
+      - name: Install Maestro
+        run: |
+          curl -fsSL "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Drive the app and take screenshots
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          disable-animations: true
+          script: bash e2e/screenshots.sh android/app/build/outputs/apk/release/app-release.apk "$PWD/screenshots"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screenshots
+          path: screenshots/
+          if-no-files-found: ignore
+      - name: Commit the screenshots
+        if: always()
+        run: |
+          ls screenshots/*.png >/dev/null 2>&1 || exit 0
+          rm -rf docs/screenshots
+          mkdir -p docs/screenshots
+          cp screenshots/*.png docs/screenshots/
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A docs/screenshots
+          git diff --cached --quiet && exit 0
+          git commit -m "Update app screenshots [skip ci]"
+          git pull --rebase origin "$GITHUB_REF_NAME"
+          git push origin "HEAD:$GITHUB_REF_NAME"

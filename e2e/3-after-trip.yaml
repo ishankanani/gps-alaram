@@ -1,0 +1,54 @@
+# After the alarm: the last screen, settings, and the app in German and Hindi.
+appId: com.ishankanani.gpsalarm
+---
+- extendedWaitUntil:
+    visible: "You made it"
+    timeout: 30000
+- waitForAnimationToEnd
+- takeScreenshot: ${OUT}/10-done
+
+- tapOn: "Done"
+- extendedWaitUntil:
+    visible: "Where are you going\\?"
+    timeout: 15000
+- tapOn: "Settings"
+- extendedWaitUntil:
+    visible: "Language"
+    timeout: 10000
+- waitForAnimationToEnd
+- takeScreenshot: ${OUT}/11-settings
+
+# German
+- tapOn: "Deutsch"
+- back
+- extendedWaitUntil:
+    visible: "Wohin fährst du\\?"
+    timeout: 15000
+- tapOn: "Wohin fährst du\\?"
+- inputText: "Marienplatz"
+- extendedWaitUntil:
+    visible: "München Marienplatz"
+    timeout: 20000
+- tapOn: "München Marienplatz"
+- extendedWaitUntil:
+    visible: "Alarm starten"
+    timeout: 15000
+- waitForAnimationToEnd:
+    timeout: 20000
+- takeScreenshot: ${OUT}/12-stop-german
+
+# Hindi
+- tapOn: "Schließen"
+- tapOn: "Einstellungen"
+- tapOn: "हिन्दी"
+- back
+- extendedWaitUntil:
+    visible: "आप कहाँ जा रहे हैं\\?"
+    timeout: 15000
+- tapOn: "München Hbf"
+- extendedWaitUntil:
+    visible: "अलार्म शुरू करें"
+    timeout: 15000
+- waitForAnimationToEnd:
+    timeout: 20000
+- takeScreenshot: ${OUT}/13-stop-hindi
