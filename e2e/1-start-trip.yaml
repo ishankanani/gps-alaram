@@ -1,5 +1,5 @@
 # First start, setup, the map, search and a stop, up to a running trip to München Hbf.
-# Run by e2e/screenshots.sh, which sets the location to Odeonsplatz in Munich first.
+# Run by e2e/screenshots.sh, which puts the phone at Odeonsplatz in Munich first.
 appId: com.ishankanani.gpsalarm
 ---
 - launchApp:
@@ -68,6 +68,3 @@ appId: com.ishankanani.gpsalarm
 - extendedWaitUntil:
     visible: "On the way to"
     timeout: 30000
-- waitForAnimationToEnd:
-    timeout: 20000
-- takeScreenshot: 08-trip

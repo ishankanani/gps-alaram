@@ -19,6 +19,8 @@ import { KIND_COLOR, KIND_ICON, useTheme } from '../ui/theme';
 import { circlePolygon, GERMANY_CENTER, GERMANY_ZOOM, stopsToGeoJSON } from './geo';
 import { useMapStyle } from './useMapStyle';
 
+type CameraView = { center: [number, number]; zoom: number };
+
 export type HomeMapHandle = {
   flyTo: (latitude: number, longitude: number, zoom?: number) => void;
 };
@@ -67,8 +69,10 @@ export function HomeMap({
   const t = useTheme();
   const mapStyle = useMapStyle();
   const camera = useRef<CameraRef>(null);
-  // Where to open when a fly-to was asked for before the map was on screen.
-  const [startView, setStartView] = useState<{ center: [number, number]; zoom: number } | null>(null);
+  // Camera moves asked for before the map is ready: where to open, or where to go once loaded.
+  const [startView, setStartView] = useState<CameraView | null>(null);
+  const loaded = useRef(false);
+  const pendingView = useRef<CameraView | null>(null);
   const stopsById = useMemo(() => new globalThis.Map(stops.map((s) => [s.id, s])), [stops]);
   const stopData = useMemo(() => stopsToGeoJSON(stops), [stops]);
   const radiusData = useMemo(
@@ -78,10 +82,19 @@ export function HomeMap({
 
   useImperativeHandle(ref, () => ({
     flyTo: (latitude, longitude, zoom = 15) => {
-      if (camera.current) camera.current.flyTo({ center: [longitude, latitude], zoom, duration: 900 });
-      else setStartView({ center: [longitude, latitude], zoom });
+      const view: CameraView = { center: [longitude, latitude], zoom };
+      if (!camera.current) setStartView(view);
+      else if (!loaded.current) pendingView.current = view;
+      else camera.current.flyTo({ ...view, duration: 900 });
     },
   }));
+
+  function onLoaded() {
+    loaded.current = true;
+    const view = pendingView.current;
+    pendingView.current = null;
+    if (view) camera.current?.flyTo({ ...view, duration: 0 });
+  }
 
   function onStopPress(event: NativeSyntheticEvent<PressEventWithFeatures>) {
     event.stopPropagation();
@@ -100,6 +113,7 @@ export function HomeMap({
       compass={false}
       tintColor={t.primary}
       attributionPosition={{ bottom: bottomInset + 8, left: 8 }}
+      onDidFinishLoadingMap={onLoaded}
       onPress={() => onPressMap()}
       onLongPress={(e) => onLongPress(e.nativeEvent.lngLat[1], e.nativeEvent.lngLat[0])}
       onRegionDidChange={(e) => onViewChange(e.nativeEvent.bounds, e.nativeEvent.zoom)}>
