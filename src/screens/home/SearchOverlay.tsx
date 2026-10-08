@@ -1,6 +1,6 @@
 import * as Location from 'expo-location';
 import { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Keyboard, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useI18n } from '../../i18n';
@@ -84,6 +84,17 @@ export function SearchOverlay({ near, favourites, recents, useMiles, onPick, onC
     };
   }, [query, lang]);
 
+  // Android keeps the keyboard up after the search field goes away; it would cover the stop sheet.
+  function pick(place: Place) {
+    Keyboard.dismiss();
+    onPick(place);
+  }
+
+  function close() {
+    Keyboard.dismiss();
+    onClose();
+  }
+
   async function useMyLocation() {
     setLocating(true);
     setLocationError(false);
@@ -91,7 +102,7 @@ export function SearchOverlay({ near, favourites, recents, useMiles, onPick, onC
       const perm = await Location.requestForegroundPermissionsAsync();
       if (!perm.granted) throw new Error('denied');
       const pos = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
-      onPick({
+      pick({
         id: `here:${pos.timestamp}`,
         name: tr('place.here'),
         context: `${pos.coords.latitude.toFixed(5)}, ${pos.coords.longitude.toFixed(5)}`,
@@ -132,7 +143,7 @@ export function SearchOverlay({ near, favourites, recents, useMiles, onPick, onC
         </View>
       }
       right={away(p) ? <Text style={[styles.away, { color: t.muted }]}>{away(p)}</Text> : undefined}
-      onPress={() => onPick(p)}
+      onPress={() => pick(p)}
     />
   );
 
@@ -140,7 +151,7 @@ export function SearchOverlay({ near, favourites, recents, useMiles, onPick, onC
   return (
     <View style={[StyleSheet.absoluteFill, { backgroundColor: t.background, paddingTop: insets.top + 8 }]}>
       <View style={styles.bar}>
-        <IconButton icon="arrow-left" label={tr('common.back')} onPress={onClose} size={44} />
+        <IconButton icon="arrow-left" label={tr('common.back')} onPress={close} size={44} />
         <View style={[styles.inputWrap, { backgroundColor: t.surface, borderColor: t.primary }]}>
           <Icon name="magnify" size={22} color={t.muted} />
           <TextInput

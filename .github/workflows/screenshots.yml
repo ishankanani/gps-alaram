@@ -44,6 +44,12 @@ jobs:
       - name: Build a release APK for the emulator
         working-directory: android
         run: ./gradlew assembleRelease --no-daemon -PreactNativeArchitectures=x86_64
+      - name: Check the map style and its fonts
+        run: |
+          curl -fsS https://tiles.openfreemap.org/styles/liberty -o "$RUNNER_TEMP/style.json"
+          node -e "const s=require(process.argv[1]); console.log('glyphs:', s.glyphs, 'sprite:', s.sprite)" "$RUNNER_TEMP/style.json"
+          curl -sS -o /dev/null -w "font %{http_code} %{size_download} bytes\n" "https://tiles.openfreemap.org/fonts/Noto%20Sans%20Regular/0-255.pbf"
+          curl -sS -o /dev/null -w "font %{http_code} %{size_download} bytes\n" "https://tiles.openfreemap.org/fonts/Noto%20Sans%20Bold/0-255.pbf"
       - name: Install Maestro
         run: |
           curl -fsSL "https://get.maestro.mobile.dev" | bash

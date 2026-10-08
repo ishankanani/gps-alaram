@@ -25,6 +25,9 @@ run_flow() {
 on_exit() {
   local status=$?
   collect
+  echo "::group::Map log"
+  adb logcat -d | grep -iE "mbgl|maplibre|glyph|sprite" | tail -80 || true
+  echo "::endgroup::"
   if [ "$status" -ne 0 ]; then
     echo "::group::App log"
     adb logcat -d | grep -E "ReactNativeJS|AndroidRuntime|TripService|TripAlarm|MapLibre|FATAL" | tail -200 || true

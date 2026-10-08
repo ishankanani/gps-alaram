@@ -115,16 +115,21 @@ export function HomeScreen({ data, notice, starting, onDismissNotice, onToggleFa
 
   async function locateMe() {
     movedByUser.current = true;
-    let perm = await Location.getForegroundPermissionsAsync();
-    if (!perm.granted) perm = await Location.requestForegroundPermissionsAsync();
-    if (!perm.granted) return;
-    setLocationAllowed(true);
-    const pos =
-      (await Location.getLastKnownPositionAsync()) ??
-      (await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced }));
-    const here = { latitude: pos.coords.latitude, longitude: pos.coords.longitude };
-    setUser(here);
-    map.current?.flyTo(here.latitude, here.longitude, 15);
+    try {
+      let perm = await Location.getForegroundPermissionsAsync();
+      if (!perm.granted) perm = await Location.requestForegroundPermissionsAsync();
+      if (!perm.granted) return;
+      setLocationAllowed(true);
+      // High accuracy may use GPS: on a train there is often no Wi-Fi or cell position.
+      const pos =
+        (await Location.getLastKnownPositionAsync({ maxAge: 5 * 60_000 })) ??
+        (await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High }));
+      const here = { latitude: pos.coords.latitude, longitude: pos.coords.longitude };
+      setUser(here);
+      map.current?.flyTo(here.latitude, here.longitude, 15);
+    } catch {
+      // No position yet: the button can be tapped again once the phone has one.
+    }
   }
 
   const isFavourite = selected ? data.favourites.some((f) => samePlace(f, selected)) : false;

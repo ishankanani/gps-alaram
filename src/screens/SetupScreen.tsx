@@ -188,7 +188,7 @@ export function SetupScreen({ strength, continueLabel, onContinue, onBack }: Pro
             </View>
             <View style={styles.itemTitle}>
               <Text style={[styles.itemTitleText, { color: t.text }]}>{tr(item.title)}</Text>
-              <Text style={[styles.itemTag, { color: item.required ? t.bad : t.muted }]}>
+              <Text style={[styles.itemTag, { color: item.ok ? t.good : item.required ? t.bad : t.muted }]}>
                 {item.ok ? tr('setup.allSet') : tr(item.required ? 'setup.required' : 'setup.recommended')}
               </Text>
             </View>
