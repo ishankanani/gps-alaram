@@ -36,8 +36,8 @@ before launch is still **20 real trips with zero missed stops**.
 ## Screenshots
 
 From the release APK on an Android 14 emulator, taken by the **Screenshots** workflow while it
-rides a simulated trip through Munich (see `e2e/`). The emulator draws no text on the map, most
-likely a limit of its software graphics; still to be confirmed on a phone.
+rides a simulated trip through Munich, then shows Pro, the Countries screen, Austria downloaded
+and searched, and a demo ride into Wien Hauptbahnhof (see `e2e/`).
 
 <p>
   <img src="docs/screenshots/01-welcome.png" width="180" alt="Welcome and language">
@@ -56,6 +56,12 @@ likely a limit of its software graphics; still to be confirmed on a phone.
   <img src="docs/screenshots/11-settings.png" width="180" alt="Settings">
   <img src="docs/screenshots/12-stop-german.png" width="180" alt="Deutsch">
   <img src="docs/screenshots/13-stop-hindi.png" width="180" alt="Hindi">
+</p>
+<p>
+  <img src="docs/screenshots/14-pro.png" width="180" alt="StopWake Pro">
+  <img src="docs/screenshots/15-countries.png" width="180" alt="Countries">
+  <img src="docs/screenshots/16-search-austria.png" width="180" alt="Searching Austria">
+  <img src="docs/screenshots/18-demo-ride.png" width="180" alt="Demo ride in Vienna">
 </p>
 
 ## Try it on a phone
@@ -115,6 +121,31 @@ OpenStreetMap extracts:
    Switzerland, Luxembourg, Denmark's S-tog) the badges say so; elsewhere they say Train and Metro.
 4. The packs are gzipped and published with `packs.json` (sizes, counts, build dates) to the
    `stop-packs` release.
+
+| Wave | Pack | Stops | Download |
+| --- | --- | ---: | ---: |
+| – | 🇩🇪 Germany (in the app) | 272,635 | – |
+| 1 | 🇦🇹 Austria | 36,244 | 1.5 MB |
+| 1 | 🇨🇭 Switzerland | 24,657 | 901 KB |
+| 1 | 🇱🇺 Luxembourg | 2,773 | 110 KB |
+| 2 | 🇳🇱 Netherlands | 29,648 | 1.0 MB |
+| 2 | 🇧🇪 Belgium | 31,367 | 1.2 MB |
+| 2 | 🇬🇧 United Kingdom | 180,352 | 6.5 MB |
+| 2 | 🇮🇪 Ireland | 7,616 | 282 KB |
+| 2 | 🇸🇪 Sweden | 32,970 | 1.2 MB |
+| 2 | 🇳🇴 Norway | 51,916 | 1.8 MB |
+| 2 | 🇩🇰 Denmark | 8,801 | 325 KB |
+| 2 | 🇫🇮 Finland | 80,172 | 2.6 MB |
+| 3 | 🇫🇷 France | 143,820 | 5.6 MB |
+| 4 | 🇺🇸 USA: Northeast | 37,827 | 1.3 MB |
+| 4 | 🇺🇸 USA: Midwest | 51,201 | 1.7 MB |
+| 4 | 🇺🇸 USA: South | 63,272 | 2.3 MB |
+| 4 | 🇺🇸 USA: West | 78,302 | 2.9 MB |
+| 4 | 🇨🇦 Canada | 80,179 | 3.0 MB |
+| 4 | 🇦🇺 Australia | 89,582 | 3.4 MB |
+| 4 | 🇯🇵 Japan | 102,499 | 4.4 MB |
+
+About 1.1 million stops outside Germany; packs are counted and sized from the latest build.
 
 The app lists them under **Settings → Countries**, offers the right one on the map when you are
 in (or look at) a country you have not downloaded, downloads and checks it, and then searches

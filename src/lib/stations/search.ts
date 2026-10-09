@@ -1,4 +1,4 @@
-import { fold, matchQuery, queryWords, splitName } from './text';
+import { fold, matchQuery, MODE, queryWords, splitName } from './text';
 
 /** Minimal query interface, so the same search runs on expo-sqlite in the app and node:sqlite in tests. */
 export interface StopsDb {
@@ -143,17 +143,47 @@ function intersects(a: Bounds, b: Bounds): boolean {
   return a[0] <= b[2] && b[0] <= a[2] && a[1] <= b[3] && b[1] <= a[3];
 }
 
+const RAIL = MODE.ICE | MODE.IC | MODE.RE | MODE.RB | MODE.SBAHN | MODE.TRAIN;
+const MAINLINE = MODE.ICE | MODE.IC | MODE.RE | MODE.RB;
+
+function slotOf(stop: Stop): number {
+  return Math.floor(stop.id / SLOT_SIZE);
+}
+
 /**
- * Border stations are in both countries' databases (Basel SBB, Salzburg Hbf): keep the more
- * important copy of stops with the same title within 150 m.
+ * One station seen by two databases: the country's own pack names it ("Wien Hauptbahnhof"), the
+ * Germany database adds what it knows (ICE, IC). "Train" is dropped when the finer badges are there.
+ */
+function mergeStations(local: Stop, other: Stop): Stop {
+  let modes = local.modes | other.modes;
+  if (modes & MAINLINE) modes &= ~MODE.TRAIN;
+  return { ...local, modes, rank: Math.max(local.rank, other.rank) };
+}
+
+/**
+ * Border stations are in both countries' databases (Basel SBB, Salzburg Hbf), and the Germany
+ * database has the big stations of its neighbours too. Stops with the same title within 150 m
+ * show once, and so do railway stations from two databases within 300 m ("Wien Hbf" and
+ * "Wien Hauptbahnhof"), under the name the country's own pack gives them.
  */
 export function withoutDuplicates(stops: Stop[]): Stop[] {
   const kept: Stop[] = [];
   const byTitle = new Map<string, Stop[]>();
+  const stations: number[] = []; // indexes into kept
   for (const stop of [...stops].sort((a, b) => b.rank - a.rank)) {
     const title = fold(stop.title);
     const same = byTitle.get(title);
     if (same?.some((k) => distanceKm(k, stop) < 0.15)) continue;
+    if (stop.modes & RAIL) {
+      const twin = stations.find((i) => slotOf(kept[i]) !== slotOf(stop) && distanceKm(kept[i], stop) < 0.3);
+      if (twin != null) {
+        const other = kept[twin];
+        // Slot 0 is Germany; outside it, the country's own pack knows the local name.
+        kept[twin] = slotOf(other) === 0 ? mergeStations(stop, other) : mergeStations(other, stop);
+        continue;
+      }
+      stations.push(kept.length);
+    }
     kept.push(stop);
     if (same) same.push(stop);
     else byTitle.set(title, [stop]);

@@ -65,6 +65,16 @@ describe('stops from several countries', () => {
     expect(stop?.title).toBe('Mirabellplatz');
   });
 
+  it('shows a station once when two databases have it, with the local name', () => {
+    const fromGermany = { id: 7, name: 'Wien Hbf', title: 'Wien Hbf', place: null, latitude: 48.1851, longitude: 16.3766, modes: MODE.ICE | MODE.IC | MODE.SBAHN, rank: 520 };
+    const fromAustria = { id: SLOT_SIZE + 1, name: 'Wien Hauptbahnhof', title: 'Wien Hauptbahnhof', place: null, latitude: 48.185, longitude: 16.3779, modes: MODE.TRAIN | MODE.SBAHN | MODE.TRAM, rank: 477 };
+    const busStop = { ...fromAustria, id: SLOT_SIZE + 2, name: 'Hauptbahnhof Ost', title: 'Hauptbahnhof Ost', modes: MODE.BUS, rank: 200 };
+    const result = withoutDuplicates([fromGermany, fromAustria, busStop]);
+    expect(result.map((s) => s.name)).toEqual(['Wien Hauptbahnhof', 'Hauptbahnhof Ost']);
+    expect(result[0].modes).toBe(MODE.ICE | MODE.IC | MODE.SBAHN | MODE.TRAM);
+    expect(result[0].rank).toBe(520);
+  });
+
   it('drops the second copy of a border station', () => {
     const a = { id: 1, name: 'Basel SBB', title: 'Basel SBB', place: null, latitude: 47.5476, longitude: 7.5897, modes: MODE.IC, rank: 500 };
     const b = { ...a, id: SLOT_SIZE + 1, latitude: 47.5477, rank: 450 };

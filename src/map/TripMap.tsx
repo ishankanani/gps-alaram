@@ -1,6 +1,6 @@
 import { Camera, GeoJSONSource, Layer, Map, Marker, type CameraRef } from '@maplibre/maplibre-react-native';
 import type { Feature, LineString } from 'geojson';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import type { StopKind } from '../lib/stations/text';
@@ -42,6 +42,8 @@ export function TripMap({ destination, kind, radiusM, user, estimated, trail, pa
   const t = useTheme();
   const mapStyle = useMapStyle();
   const camera = useRef<CameraRef>(null);
+  // Camera moves before the map has loaded are lost, so the first fit waits for it.
+  const [ready, setReady] = useState(false);
   const lastFit = useRef(0);
   const touchedAt = useRef(0);
   const circle = useMemo(
@@ -61,7 +63,7 @@ export function TripMap({ destination, kind, radiusM, user, estimated, trail, pa
   }, [trail, user, destination]);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user || !ready) return;
     const now = Date.now();
     if (now - touchedAt.current < HANDS_OFF_MS || now - lastFit.current < REFIT_EVERY_MS) return;
     lastFit.current = now;
@@ -69,7 +71,7 @@ export function TripMap({ destination, kind, radiusM, user, estimated, trail, pa
       padding: { top: padding.top, right: 56, bottom: padding.bottom, left: 56 },
       duration: 800,
     });
-  }, [user, destination, padding.top, padding.bottom]);
+  }, [user, destination, padding.top, padding.bottom, ready]);
 
   const youColor = estimated ? t.warn : t.primary;
   return (
@@ -81,7 +83,8 @@ export function TripMap({ destination, kind, radiusM, user, estimated, trail, pa
           mapStyle={mapStyle}
           logo={false}
           compass={false}
-          tintColor={t.primary}>
+          tintColor={t.primary}
+          onDidFinishLoadingMap={() => setReady(true)}>
           <Camera ref={camera} initialViewState={{ center: [destination.longitude, destination.latitude], zoom: 13 }} />
           <GeoJSONSource id="trip-radius" data={circle}>
             <Layer id="trip-radius-fill" type="fill" paint={{ 'fill-color': t.accent, 'fill-opacity': 0.18 }} />

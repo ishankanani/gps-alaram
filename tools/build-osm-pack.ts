@@ -245,18 +245,23 @@ function tidyModes(s: Stop) {
   if (s.modes.has('train') && !routeModes.has('train') && routeModes.has('suburban')) s.modes.delete('train');
 }
 
+/** Words that name any station: "Hauptbahnhof" or "Gare Centrale" alone do not say which town. */
+const GENERIC_STATION = /^(haupt)?bahnhof$|^(hbf|bf|station|gare|stazione|estación|centraal|central)$/;
+
 /**
  * "Hauptbahnhof, Wien": local stops get their town after the last comma, so commas inside names
- * become slashes. Railway stations keep their own name ("Clapham Junction", "London Euston"):
- * it is distinctive already, and the nearest town node is often the wrong district.
+ * become slashes. Railway stations with a name of their own ("Clapham Junction", "London Euston")
+ * keep it as it is: the nearest town node is often the wrong district.
  */
 export function displayName(s: Pick<Stop, 'name' | 'en' | 'place' | 'placeEn' | 'modes'>): string {
   let title = s.name.replace(/\s*,\s+/g, ' / ');
   const latin = isLatin(title);
   if (!latin && s.en && isLatin(s.en)) title = `${title} · ${s.en}`;
   const place = !latin && s.placeEn ? s.placeEn : s.place;
+  if (!place || key(title).includes(key(place))) return title;
+  const titleWords = key(title).split(/[\s/-]+/).filter(Boolean);
   const railway = s.modes.has('train') || s.modes.has('suburban');
-  if (!place || railway || key(title).includes(key(place))) return title;
+  if (railway && titleWords.length >= 2 && !GENERIC_STATION.test(titleWords[0])) return title;
   return `${title}, ${place}`;
 }
 
