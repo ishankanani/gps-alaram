@@ -24,7 +24,8 @@ appId: com.ishankanani.gpsalarm
 
 # 100 or 200 m before a train station is only seconds of warning: the sheet says so.
 - tapOn: "Distance"
-- tapOn: "200 m"
+# 200 m, or 0.1 mi where the phone uses miles.
+- tapOn: "200 m|0\\.1 mi"
 - extendedWaitUntil:
     visible: "Use 2 min instead"
     timeout: 5000

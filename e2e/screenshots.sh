@@ -79,6 +79,9 @@ adb shell cmd location set-location-enabled true || true
 adb shell appops set "$PKG" SCHEDULE_EXACT_ALARM allow || true
 adb shell appops set "$PKG" USE_FULL_SCREEN_INTENT allow || true
 adb shell dumpsys deviceidle whitelist "+$PKG" || true
+# The emulator is set to US English, which means miles. Run the app like an English speaker
+# living in Germany: English texts, kilometres.
+adb shell cmd locale set-app-locales "$PKG" --locales en-DE || true
 
 # The layout of a 1080 x 2400 phone (411 dp wide) with smaller files, and a tidy status bar.
 adb shell wm size 720x1600
