@@ -38,5 +38,8 @@ describe('format', () => {
     expect(formatCount(12345)).toBe('12,345');
     expect(formatCount(1234567, 'de')).toBe('1.234.567');
     expect(formatCount(999)).toBe('999');
+    expect(formatCount(12345, 'fr')).toBe('12\u00a0345');
+    expect(formatBytes(4_230_000, 'sv')).toBe('4,2 MB');
+    expect(formatBytes(4_230_000, 'ja')).toBe('4.2 MB');
   });
 });

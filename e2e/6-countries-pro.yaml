@@ -1,0 +1,74 @@
+# Back in English: StopWake Pro, the Countries screen, Austria downloaded and searched, and a
+# demo ride into Wien Hauptbahnhof.
+appId: com.ishankanani.gpsalarm
+---
+- tapOn: "बंद करें"
+- tapOn: "सेटिंग्स"
+- tapOn: "English"
+- extendedWaitUntil:
+    visible: "StopWake Pro"
+    timeout: 10000
+- tapOn: "StopWake Pro"
+- extendedWaitUntil:
+    visible: "Yearly"
+    timeout: 10000
+- waitForAnimationToEnd
+- takeScreenshot: 14-pro
+- tapOn: "Back"
+
+- scrollUntilVisible:
+    element:
+      text: "Countries"
+    direction: DOWN
+- tapOn: "Countries"
+- extendedWaitUntil:
+    visible: "Download · .*"
+    timeout: 30000
+- waitForAnimationToEnd
+- takeScreenshot: 15-countries
+- tapOn: "Austria"
+- extendedWaitUntil:
+    visible: ".* stops · .*"
+    timeout: 90000
+- tapOn: "Back"
+- tapOn: "Back"
+
+- extendedWaitUntil:
+    visible: "Where are you going\\?"
+    timeout: 15000
+- tapOn: "Where are you going\\?"
+- inputText: "Wien Hauptb"
+- extendedWaitUntil:
+    visible: "Wien Hauptbahnhof"
+    timeout: 20000
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: 16-search-austria
+- tapOn: "Wien Hauptbahnhof"
+- extendedWaitUntil:
+    visible: "Start alarm"
+    timeout: 15000
+- waitForAnimationToEnd:
+    timeout: 20000
+- takeScreenshot: 17-stop-vienna
+
+# A demo ride: simulated movement towards the station, without going anywhere.
+- tapOn: "More options"
+- scrollUntilVisible:
+    element:
+      text: "Try a demo ride"
+    direction: DOWN
+- tapOn: "Try a demo ride"
+- extendedWaitUntil:
+    visible: "Demo ride to"
+    timeout: 30000
+# The map follows the moving dot; let it travel for a while.
+- waitForAnimationToEnd:
+    timeout: 20000
+- takeScreenshot: 18-demo-ride
+- scrollUntilVisible:
+    element:
+      text: "Stop trip"
+    direction: DOWN
+- tapOn: "Stop trip"
+- tapOn: "(?i)stop"

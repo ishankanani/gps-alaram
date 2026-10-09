@@ -122,4 +122,5 @@ inset=$(((y2 - y1) / 2))
 adb shell input swipe $((x1 + inset)) "$y" $((x2 - inset)) "$y" 900
 
 run_flow 5-after-trip.yaml
+run_flow 6-countries-pro.yaml
 ls -la "$OUT"

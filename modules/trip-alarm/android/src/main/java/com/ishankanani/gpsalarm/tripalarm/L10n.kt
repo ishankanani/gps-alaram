@@ -9,7 +9,8 @@ import android.content.Context
 object L10n {
   private const val PREFS = "trip_alarm_l10n"
   private const val KEY_LANG = "lang"
-  val SUPPORTED = setOf("en", "de", "hi")
+  val SUPPORTED = setOf("en", "de", "hi", "fr", "nl", "it", "sv", "nb", "da", "fi", "ja")
+  private val DECIMAL_COMMA = setOf("de", "fr", "nl", "it", "sv", "nb", "da", "fi")
 
   @Volatile
   var lang: String = "en"
@@ -26,8 +27,8 @@ object L10n {
     lang = if (saved != null && saved in SUPPORTED) saved else "en"
   }
 
-  /** German writes 1,2 km. */
-  val decimalSeparator: Char get() = if (lang == "de") ',' else '.'
+  /** German, French, Dutch, Italian and the Nordic languages write 1,2 km. */
+  val decimalSeparator: Char get() = if (lang in DECIMAL_COMMA) ',' else '.'
 
   operator fun get(key: String): String = (TABLES[lang] ?: EN)[key] ?: EN[key] ?: key
 

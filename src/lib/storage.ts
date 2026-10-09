@@ -1,11 +1,23 @@
 import { File, Paths } from 'expo-file-system';
+import { getLocales } from 'expo-localization';
 
 import type { Place } from './geocode';
 import { DEFAULT_PREFERENCES, type SavedData } from './prefs';
 
 export { DEFAULT_PREFERENCES, type Preferences, type SavedData, type WakeBy } from './prefs';
 
-const EMPTY: SavedData = { favourites: [], recents: [], preferences: DEFAULT_PREFERENCES };
+/** Miles where the phone is set to US or UK units, until the user picks. */
+function deviceUsesMiles(): boolean {
+  try {
+    const system = getLocales()[0]?.measurementSystem;
+    return system === 'us' || system === 'uk';
+  } catch {
+    return false;
+  }
+}
+
+const DEFAULTS = { ...DEFAULT_PREFERENCES, useMiles: deviceUsesMiles() };
+const EMPTY: SavedData = { favourites: [], recents: [], preferences: DEFAULTS };
 const MAX_RECENTS = 8;
 
 function file() {
@@ -21,7 +33,7 @@ export function loadData(): SavedData {
     return {
       favourites: parsed.favourites ?? [],
       recents: parsed.recents ?? [],
-      preferences: { ...DEFAULT_PREFERENCES, ...parsed.preferences },
+      preferences: { ...DEFAULTS, ...parsed.preferences },
     };
   } catch {
     return EMPTY;
