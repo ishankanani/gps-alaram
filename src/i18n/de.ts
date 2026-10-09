@@ -12,11 +12,12 @@ export const de: Strings = {
 
   'onb.welcome.title': 'Nie mehr die Haltestelle verpassen',
   'onb.welcome.body':
-    'Schlaf ruhig im Zug oder Bus ein. StopWake weckt dich kurz bevor du ankommst, überall in Deutschland.',
+    'Schlaf ruhig im Zug oder Bus ein. StopWake weckt dich kurz bevor du ankommst.',
   'onb.language': 'Sprache wählen',
   'onb.how.title': 'So funktioniert’s',
   'onb.how.1.title': 'Haltestelle wählen',
-  'onb.how.1.body': 'Tippe auf der Karte auf eine Haltestelle oder durchsuche 270.000 Haltestellen in ganz Deutschland, auch offline.',
+  'onb.how.1.body':
+    'Tippe auf der Karte auf eine Haltestelle oder durchsuche alle Haltestellen in Deutschland und 16 weiteren Ländern, auch offline.',
   'onb.how.2.title': 'Weckzeitpunkt wählen',
   'onb.how.2.body': 'Ein paar hundert Meter oder ein paar Minuten vor der Ankunft.',
   'onb.how.3.title': 'Entspannen',

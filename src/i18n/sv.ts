@@ -12,11 +12,12 @@ export const sv: Strings = {
 
   'onb.welcome.title': 'Missa aldrig din hållplats',
   'onb.welcome.body':
-    'Somna gott på tåget eller bussen. StopWake väcker dig strax innan du är framme, var som helst i Tyskland.',
+    'Somna gott på tåget eller bussen. StopWake väcker dig strax innan du är framme.',
   'onb.language': 'Välj språk',
   'onb.how.title': 'Så funkar det',
   'onb.how.1.title': 'Välj din hållplats',
-  'onb.how.1.body': 'Tryck på en station på kartan eller sök bland 270 000 hållplatser i Tyskland. Fungerar offline.',
+  'onb.how.1.body':
+    'Tryck på en hållplats på kartan eller sök bland alla hållplatser i Tyskland och 16 andra länder. Fungerar offline.',
   'onb.how.2.title': 'Välj när du ska väckas',
   'onb.how.2.body': 'Några hundra meter eller några minuter innan du är framme.',
   'onb.how.3.title': 'Slappna av',

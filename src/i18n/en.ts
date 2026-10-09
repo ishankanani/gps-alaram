@@ -11,11 +11,12 @@ export const en = {
 
   'onb.welcome.title': 'Never miss your stop',
   'onb.welcome.body':
-    'Fall asleep on the train or bus. StopWake wakes you just before you arrive, anywhere in Germany.',
+    'Fall asleep on the train or bus. StopWake wakes you just before you arrive.',
   'onb.language': 'Choose your language',
   'onb.how.title': 'How it works',
   'onb.how.1.title': 'Pick your stop',
-  'onb.how.1.body': 'Tap a station on the map, or search any of 270,000 stops in Germany. Works offline.',
+  'onb.how.1.body':
+    'Tap a stop on the map, or search all stops in Germany and 16 more countries. Works offline.',
   'onb.how.2.title': 'Choose when to wake',
   'onb.how.2.body': 'A few hundred metres, or a few minutes, before you arrive.',
   'onb.how.3.title': 'Relax',

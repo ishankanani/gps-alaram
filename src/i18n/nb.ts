@@ -12,11 +12,12 @@ export const nb: Strings = {
 
   'onb.welcome.title': 'Kjør aldri forbi stoppet ditt',
   'onb.welcome.body':
-    'Sovn trygt på toget eller bussen. StopWake vekker deg rett før du er fremme, hvor som helst i Tyskland.',
+    'Sovn trygt på toget eller bussen. StopWake vekker deg rett før du er fremme.',
   'onb.language': 'Velg språk',
   'onb.how.title': 'Slik fungerer det',
   'onb.how.1.title': 'Velg stoppet ditt',
-  'onb.how.1.body': 'Trykk på en stasjon på kartet, eller søk blant 270 000 holdeplasser i Tyskland. Virker også uten nett.',
+  'onb.how.1.body':
+    'Trykk på en holdeplass på kartet, eller søk blant alle holdeplasser i Tyskland og 16 andre land. Virker også uten nett.',
   'onb.how.2.title': 'Velg når du vil vekkes',
   'onb.how.2.body': 'Noen hundre meter, eller noen minutter, før du er fremme.',
   'onb.how.3.title': 'Slapp av',

@@ -60,7 +60,9 @@ describe('prepareStyle', () => {
   });
 
   it('names countries in the app language, English for Hindi', () => {
-    expect(layer(de, 'label_country_1').layout?.['text-field']).toEqual(['coalesce', ['get', 'name:de'], ['get', 'name_de'], ['get', 'name']]);
+    const inEnglish = [['get', 'name:en'], ['get', 'name_en'], ['get', 'name']];
+    expect(layer(de, 'label_country_1').layout?.['text-field']).toEqual(['coalesce', ['get', 'name:de'], ['get', 'name_de'], ...inEnglish]);
+    expect(layer(prepareStyle(STYLE, 'nb'), 'label_country_1').layout?.['text-field']).toEqual(['coalesce', ['get', 'name:no'], ['get', 'name_no'], ...inEnglish]);
     const english = ['coalesce', ['get', 'name:en'], ['get', 'name_en'], ['get', 'name']];
     expect(layer(prepareStyle(STYLE, 'en'), 'label_country_1').layout?.['text-field']).toEqual(english);
     expect(layer(prepareStyle(STYLE, 'hi'), 'label_country_1').layout?.['text-field']).toEqual(english);

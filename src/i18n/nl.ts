@@ -12,11 +12,12 @@ export const nl: Strings = {
 
   'onb.welcome.title': 'Mis nooit meer je halte',
   'onb.welcome.body':
-    'Val gerust in slaap in de trein of bus. StopWake wekt je vlak voordat je aankomt, overal in Duitsland.',
+    'Val gerust in slaap in de trein of bus. StopWake wekt je vlak voordat je aankomt.',
   'onb.language': 'Kies je taal',
   'onb.how.title': 'Zo werkt het',
   'onb.how.1.title': 'Kies je halte',
-  'onb.how.1.body': 'Tik op een station op de kaart of zoek tussen 270.000 haltes in Duitsland. Werkt ook offline.',
+  'onb.how.1.body':
+    'Tik op een halte op de kaart of zoek tussen alle haltes in Duitsland en 16 andere landen. Werkt ook offline.',
   'onb.how.2.title': 'Kies je wekmoment',
   'onb.how.2.body': 'Een paar honderd meter of een paar minuten voordat je aankomt.',
   'onb.how.3.title': 'Ontspan',
