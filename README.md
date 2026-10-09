@@ -5,7 +5,10 @@ train or bus, and the phone wakes you before you get there, even in silent mode 
 screen locked.
 
 Built for Germany first: every bus, tram, U-Bahn, S-Bahn and train stop is on the map and in
-the search, offline. Android first; iOS follows with v1.1 (see the product plan).
+the search, offline. Stops for 16 more countries download in the app: Austria, Switzerland and
+Luxembourg (wave 1); the Netherlands, Belgium, the UK, Ireland, Sweden, Norway, Denmark and
+Finland (wave 2); France (wave 3); the USA, Canada, Australia and Japan (wave 4). Android first;
+iOS follows with v1.1 and matters most for wave 4, where most riders use iPhones.
 
 ## Status
 
@@ -15,15 +18,19 @@ before launch is still **20 real trips with zero missed stops**.
 
 | Works now | Not yet |
 | --- | --- |
-| Map of Germany with every stop (about 272,000), coloured by type | Pro tier and paywall (RevenueCat): everything is free in test builds |
-| Tap a stop, then **Start alarm**: two taps | Monthly stop updates (the bundled data is from March 2025) |
-| Offline stop search: *Muenchen*, *München* and *Munchen* all work, as do *Hbf* and *Str.* | Offline map tiles (the map needs a connection; the alarm does not) |
-| Address search, long-press anywhere to drop a pin | Saved routes, multi-stop, weekday schedules (v1.1) |
-| Wake by distance (100 m – 2 km) or time (1–15 min before) | Hard-to-dismiss challenges (type the stop name, shake) |
-| Trains and S-Bahn default to minutes, with a warning when 100–200 m is too short | iOS (AlarmKit) |
-| Deutsch, English, हिन्दी in the app, alarm screen and notifications | Own map and geocoder servers (uses the public OpenFreeMap and Photon) |
-| Live trip map, full-screen lock-screen alarm that rings in silent mode | Play Store signing key |
-| Gentle / Normal / Heavy sleeper, GPS-lost warning, dead-reckoning fallback | |
+| Map of Germany with every stop (about 272,000), coloured by type and named on the map | Commute schedules, multi-stop trips, sharing your arrival, watch (next for Pro) |
+| 16 more countries as in-app downloads, built monthly from OpenStreetMap | Hard-to-dismiss challenges (type the stop name, shake) |
+| Tap a stop, then **Start alarm**: two taps | iOS (AlarmKit), needed for wave 4 |
+| Offline stop search across all installed countries: *Muenchen*, *München*, *Munchen*, *Hbf*, *Str.* | Own map and geocoder servers (uses the public OpenFreeMap and Photon) |
+| Address search worldwide, long-press anywhere to drop a pin | Play Store signing key, Play Console products and the RevenueCat key |
+| Wake by distance (100 m – 2 km) or time (1–15 min before) | Ads for free users (planned about three months after launch) |
+| Trains and S-Bahn default to minutes, with a warning when 100–200 m is too short | |
+| 11 languages: Dansk, Deutsch, English, Français, Italiano, Nederlands, Norsk, Suomi, Svenska, हिन्दी, 日本語 | |
+| Live trip map with your trail and heading; an estimated position (≈) when GPS is lost underground | |
+| Demo ride: a simulated trip to any stop, to see the map move and hear the alarm | |
+| Offline map download (25 km around you) and a 256 MB map cache | |
+| Full-screen lock-screen alarm that rings in silent mode; Gentle / Normal / Heavy sleeper | |
+| StopWake Pro through Google Play: yearly with a 7-day trial, monthly, lifetime | |
 | Favourites, recents, setup checklist with a test alarm, shareable trip log | |
 
 ## Screenshots
@@ -65,12 +72,12 @@ likely a limit of its software graphics; still to be confirmed on a phone.
  App (Expo / React Native)                Native Android (modules/trip-alarm)
  ─────────────────────────                ────────────────────────────────────
  Map (MapLibre, OpenFreeMap)              TripService  (foreground service, type "location")
- Stops DB (SQLite, offline)  ─ startTrip ▶  │  GPS + network fixes (LocationManager)
+ Stops DBs (SQLite, offline) ─ startTrip ▶  │  GPS + network fixes (LocationManager)
  Search, sheet, live trip    ◀─ events ──   ▼
- de / en / hi                             TripEngine  (pure Kotlin, unit tested)
+ 11 languages, Pro (RevenueCat)           TripEngine  (pure Kotlin, unit tested)
                                             │  trigger rules · adaptive rate · watchdog
                                             ▼
-                                          AlarmPlayer + AlarmActivity  (texts in de / en / hi)
+                                          AlarmPlayer + AlarmActivity  (texts in 11 languages)
                                             alarm stream, escalating, over the lock screen
 ```
 
@@ -92,6 +99,27 @@ Each stop keeps its transport types (ICE, IC, RE/RB, S, U, tram, bus, ferry) and
 how busy it is. The rank decides which stops show at low zoom and breaks ties in search together
 with the distance from you. The file is generated, not committed: run the script after
 `npm install`, and CI runs it before every build.
+
+### Countries outside Germany
+
+The **Stop packs** workflow (monthly, or from the Actions tab for chosen packs) builds one
+SQLite pack per country, or per region for the USA, from [Geofabrik](https://download.geofabrik.de)'s
+OpenStreetMap extracts:
+
+1. `osmium tags-filter` keeps route relations, stop areas, stops and town names.
+2. `tools/osm-stops.py` lists every named stop element with the lines that stop there.
+3. `tools/build-osm-pack.ts` merges platforms, stop positions and the parts of a station (its
+   stop area) into one stop, names local stops after their town ("Karlsplatz, Wien"), ranks
+   stops by the lines that serve them, and writes the same format as the Germany database
+   (shared writer: `tools/stops-db.ts`). Where riders say S-Bahn and U-Bahn (Austria,
+   Switzerland, Luxembourg, Denmark's S-tog) the badges say so; elsewhere they say Train and Metro.
+4. The packs are gzipped and published with `packs.json` (sizes, counts, build dates) to the
+   `stop-packs` release.
+
+The app lists them under **Settings → Countries**, offers the right one on the map when you are
+in (or look at) a country you have not downloaded, downloads and checks it, and then searches
+all installed countries together and shows their stops on the map. Border stations that are in
+two databases show once. The catalog of packs is `src/lib/stations/countries.ts`.
 
 ### When it rings (arrive mode)
 
@@ -141,8 +169,8 @@ replay synthetic trips with GPS noise, station stops and tunnels. Any change to 
 rules should keep them green, and a missed stop seen on a real trip should become a new scenario
 in `TripEngineTest`.
 
-**Languages.** The app's texts live in `src/i18n/{en,de,hi}.ts`; `en.ts` defines the keys and
-the other two must have every key with the same `{placeholders}` (a test checks this). The
+**Languages.** The app's texts live in `src/i18n/*.ts`; `en.ts` defines the keys and every
+other language must have every key with the same `{placeholders}` (a test checks this). The
 alarm screen and notifications are drawn natively, so their texts are in `L10n.kt`. The app
 sends the chosen language to the native side on start and whenever it changes.
 
@@ -150,11 +178,12 @@ sends the chosen language to the native side on start and whenever it changes.
 App.tsx                      screen flow
 src/screens/                 Onboarding, Home (map, sheet, search), Setup, Tracking, Done, Settings
 src/map/                     home map, trip map, GeoJSON helpers
-src/lib/stations/            stops database: spelling rules, search, nearest stop
-src/lib/                     address search, wake options, formatting, local storage
-src/i18n/                    English, German, Hindi
+src/lib/stations/            stops databases: spelling rules, search, country catalog and packs
+src/lib/                     address search, wake options, Pro, formatting, local storage
+src/i18n/                    the 11 languages
 src/ui/                      theme, colours, shared components
 tools/build-stations.ts      builds assets/stations/germany-stops.db
+tools/osm-stops.py, build-osm-pack.ts   build the country packs (see the Stop packs workflow)
 e2e/                         emulator flows and the screenshot script (Maestro)
 modules/trip-alarm/
   android/…/tripalarm/       TripService, AlarmPlayer, AlarmActivity, receivers, L10n, JS bridge
@@ -163,6 +192,33 @@ modules/trip-alarm/
   src/                       typed JS wrapper
 ```
 
+## StopWake Pro
+
+| Free | Pro |
+| --- | --- |
+| Every stop in every country, online and offline | Everything in Free |
+| Wake by distance or time, Gentle and Normal alarms | Heavy sleeper alarm |
+| Three favourites | Unlimited favourites |
+| Demo ride, live trip map, map cache | Offline map download |
+| | Never any ads; next: commute schedules, multi-stop trips, sharing your arrival, watch |
+
+Prices (set in Play Console, shown from the store): **€9.99 a year with a 7-day free trial**
+(CHF 11, £8.99, $9.99), €1.99 a month, €14.99 once for lifetime. The app reads the plans from
+RevenueCat and unlocks Pro with its entitlement `pro`; it never hard-codes product ids.
+
+To start selling:
+
+1. **Play Console:** create the app, then the subscriptions (yearly with a 7-day free-trial
+   offer, monthly) and a one-time product for lifetime, with local prices.
+2. **RevenueCat:** create the project and its Android app, connect Play with a service account,
+   import the three products, create the entitlement `pro` with all three attached, and a
+   current offering with Annual, Monthly and Lifetime packages.
+3. **GitHub:** add the RevenueCat *Android public SDK key* as the repository secret
+   `REVENUECAT_ANDROID_KEY`. Builds made with it sell Pro; builds without it (like the test
+   APKs so far) have Pro unlocked and show example prices.
+4. Purchases only work in a build installed from Play (an internal testing track is enough),
+   signed with your upload key.
+
 ## Data and credits
 
 - Map © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors, tiles by
@@ -170,6 +226,8 @@ modules/trip-alarm/
 - Stops: DB InfraGO AG ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)) and
   OpenStreetMap contributors ([ODbL](https://opendatacommons.org/licenses/odbl/)), via
   db-hafas-stations.
+- Stops outside Germany: © OpenStreetMap contributors ([ODbL](https://opendatacommons.org/licenses/odbl/)),
+  extracts by [Geofabrik](https://download.geofabrik.de), rebuilt monthly.
 - Address search: [Photon](https://photon.komoot.io) by Komoot.
 
 The same credits are shown in the app under **Settings → About and data**.
