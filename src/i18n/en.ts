@@ -138,6 +138,15 @@ export const en = {
   'settings.about': 'About and data',
   'settings.aboutBody':
     'Map © OpenStreetMap contributors, OpenFreeMap, OpenMapTiles. Stops: DB InfraGO (CC BY 4.0) and OpenStreetMap contributors (ODbL). Address search: Photon by Komoot.',
+  'settings.offline': 'Offline map',
+  'settings.offlineBody': 'Save the map around you to see it without internet, for example in underground stations. Stops and the alarm work offline anyway.',
+  'settings.offlineDownload': 'Save the map around me ({km} km)',
+  'settings.offlineReady': 'Ready · {size} MB · {km} km around',
+  'settings.offlineProgress': 'Downloading {percent}% · {size} MB',
+  'settings.offlineDelete': 'Delete offline map',
+  'settings.offlineNeedsLocation': 'Allow location so we know which area to save.',
+  'settings.offlineFailed': 'The download stopped. Check your internet connection and try again.',
+  'home.offline': 'Offline: stops and the alarm still work',
   'settings.version': 'Version {version}',
 
   'setup.title': 'Before you go',

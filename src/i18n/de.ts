@@ -141,6 +141,15 @@ export const de: Strings = {
   'settings.about': 'Über und Daten',
   'settings.aboutBody':
     'Karte © OpenStreetMap-Mitwirkende, OpenFreeMap, OpenMapTiles. Haltestellen: DB InfraGO (CC BY 4.0) und OpenStreetMap-Mitwirkende (ODbL). Adresssuche: Photon von Komoot.',
+  'settings.offline': 'Offline-Karte',
+  'settings.offlineBody': 'Speichere die Karte um dich herum, um sie ohne Internet zu sehen, zum Beispiel in unterirdischen Stationen. Haltestellen und Alarm funktionieren ohnehin offline.',
+  'settings.offlineDownload': 'Karte um mich speichern ({km} km)',
+  'settings.offlineReady': 'Bereit · {size} MB · {km} km Umkreis',
+  'settings.offlineProgress': 'Lädt {percent} % · {size} MB',
+  'settings.offlineDelete': 'Offline-Karte löschen',
+  'settings.offlineNeedsLocation': 'Erlaube den Standort, damit wir wissen, welche Gegend gespeichert werden soll.',
+  'settings.offlineFailed': 'Der Download wurde unterbrochen. Prüfe deine Internetverbindung und versuche es erneut.',
+  'home.offline': 'Offline: Haltestellen und Alarm funktionieren trotzdem',
   'settings.version': 'Version {version}',
 
   'setup.title': 'Bevor es losgeht',

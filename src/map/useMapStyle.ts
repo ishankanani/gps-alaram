@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { useI18n } from '../i18n';
 import { MAP_STYLE } from './geo';
+import { prepareMapCache } from './offline';
 import { prepareStyle } from './style';
 
 type MapStyle = string | StyleSpecification;
@@ -49,6 +50,7 @@ async function fetchStyle(): Promise<StyleSpecification> {
 
 function load(): Promise<MapStyle> {
   if (!loading) {
+    void prepareMapCache();
     const cached = readCache();
     const fresh = fetchStyle();
     // A cached style opens the map at once; the fresh copy is saved for the next start.

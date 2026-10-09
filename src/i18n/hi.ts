@@ -139,6 +139,15 @@ export const hi: Strings = {
   'settings.about': 'जानकारी और डेटा',
   'settings.aboutBody':
     'मैप © OpenStreetMap योगदानकर्ता, OpenFreeMap, OpenMapTiles। स्टॉप: DB InfraGO (CC BY 4.0) और OpenStreetMap योगदानकर्ता (ODbL)। पता खोज: Komoot का Photon।',
+  'settings.offline': 'ऑफ़लाइन मैप',
+  'settings.offlineBody': 'अपने आसपास का मैप सेव करें ताकि बिना इंटरनेट के भी दिखे, जैसे भूमिगत स्टेशनों में। स्टॉप और अलार्म वैसे भी ऑफ़लाइन काम करते हैं।',
+  'settings.offlineDownload': 'मेरे आसपास का मैप सेव करें ({km} km)',
+  'settings.offlineReady': 'तैयार · {size} MB · {km} km के दायरे में',
+  'settings.offlineProgress': 'डाउनलोड हो रहा है {percent}% · {size} MB',
+  'settings.offlineDelete': 'ऑफ़लाइन मैप हटाएँ',
+  'settings.offlineNeedsLocation': 'लोकेशन की अनुमति दें ताकि हमें पता हो कि कौन सा इलाका सेव करना है।',
+  'settings.offlineFailed': 'डाउनलोड रुक गया। अपना इंटरनेट कनेक्शन जाँचें और फिर से कोशिश करें।',
+  'home.offline': 'ऑफ़लाइन: स्टॉप और अलार्म फिर भी काम करते हैं',
   'settings.version': 'संस्करण {version}',
 
   'setup.title': 'शुरू करने से पहले',

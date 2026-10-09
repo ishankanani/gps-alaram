@@ -7,6 +7,7 @@ import { LANGUAGES, useI18n, type Lang } from '../i18n';
 import type { Preferences } from '../lib/prefs';
 import { Body, Card, Divider, Icon, IconButton, Label, Row, Segmented, Title } from '../ui/components';
 import { radius, useTheme } from '../ui/theme';
+import { OfflineMapCard } from './settings/OfflineMapCard';
 
 type Props = {
   preferences: Preferences;
@@ -62,6 +63,8 @@ export function SettingsScreen({ preferences, onChange, onOpenSetup, onBack }: P
         />
         <Body muted>{tr(`strength.${preferences.strength}.body`)}</Body>
       </Card>
+
+      <OfflineMapCard />
 
       <Card>
         <Row

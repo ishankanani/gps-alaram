@@ -1,4 +1,5 @@
 import * as Location from 'expo-location';
+import { useNetworkState } from 'expo-network';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -34,6 +35,8 @@ export function HomeScreen({ data, notice, starting, onDismissNotice, onToggleFa
   const t = useTheme();
   const { t: tr, lang } = useI18n();
   const insets = useSafeAreaInsets();
+  const network = useNetworkState();
+  const offline = network.isConnected === false || network.isInternetReachable === false;
   const map = useRef<HomeMapHandle>(null);
   const [stops, setStops] = useState<Stop[]>([]);
   const [zoom, setZoom] = useState(0);
@@ -199,6 +202,13 @@ export function HomeScreen({ data, notice, starting, onDismissNotice, onToggleFa
             <Text style={[styles.noticeText, { color: t.text }]}>{notice}</Text>
             <Icon name="close" size={18} color={t.muted} />
           </Pressable>
+        ) : null}
+
+        {offline ? (
+          <View style={[styles.zoomHint, { backgroundColor: t.surface }]}>
+            <Icon name="wifi-off" size={16} color={t.warn} />
+            <Text style={[styles.zoomHintText, { color: t.text }]}>{tr('home.offline')}</Text>
+          </View>
         ) : null}
 
         {!selected && zoom >= 8.5 && zoom < ALL_STOPS_ZOOM ? (
