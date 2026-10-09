@@ -245,13 +245,18 @@ function tidyModes(s: Stop) {
   if (s.modes.has('train') && !routeModes.has('train') && routeModes.has('suburban')) s.modes.delete('train');
 }
 
-/** "Hauptbahnhof, Wien": the place goes after the last comma, so commas inside names become slashes. */
-export function displayName(s: Pick<Stop, 'name' | 'en' | 'place' | 'placeEn'>): string {
+/**
+ * "Hauptbahnhof, Wien": local stops get their town after the last comma, so commas inside names
+ * become slashes. Railway stations keep their own name ("Clapham Junction", "London Euston"):
+ * it is distinctive already, and the nearest town node is often the wrong district.
+ */
+export function displayName(s: Pick<Stop, 'name' | 'en' | 'place' | 'placeEn' | 'modes'>): string {
   let title = s.name.replace(/\s*,\s+/g, ' / ');
   const latin = isLatin(title);
   if (!latin && s.en && isLatin(s.en)) title = `${title} · ${s.en}`;
   const place = !latin && s.placeEn ? s.placeEn : s.place;
-  if (!place || key(title).includes(key(place))) return title;
+  const railway = s.modes.has('train') || s.modes.has('suburban');
+  if (!place || railway || key(title).includes(key(place))) return title;
   return `${title}, ${place}`;
 }
 

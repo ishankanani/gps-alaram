@@ -56,9 +56,15 @@ function expandPlaceAbbreviations(name: string): string {
 }
 
 /** Every token a station name should be findable by. */
+/** Apostrophes inside names: King's Cross, l'Étoile, Earl’s Court. */
+const APOSTROPHES = /['’`]/g;
+
 export function indexTokens(name: string): string[] {
   const out = new Set<string>();
-  for (const word of words(expandPlaceAbbreviations(name))) {
+  const text = expandPlaceAbbreviations(name);
+  // "King's Cross" is typed "kings cross" or "king's cross"; "Gare de l'Est" may be typed "est".
+  const all = [...words(text), ...words(text.replace(APOSTROPHES, ''))];
+  for (const word of all) {
     for (const spelling of spellings(word)) {
       out.add(spelling);
       for (const extra of expansions(spelling)) out.add(extra);
@@ -69,7 +75,7 @@ export function indexTokens(name: string): string[] {
 
 /** The query words in the form the index stores ("ue" for umlauts). */
 export function queryWords(input: string): string[] {
-  return words(input).map((w) => spellings(w)[0]);
+  return words(input.replace(APOSTROPHES, '')).map((w) => spellings(w)[0]);
 }
 
 /**

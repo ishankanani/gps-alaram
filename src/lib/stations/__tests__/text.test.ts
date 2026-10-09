@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { indexTokens, matchQuery, MODE, modeBadges, primaryKind, splitName } from '../text';
+import { indexTokens, matchQuery, MODE, modeBadges, primaryKind, queryWords, splitName } from '../text';
 
 describe('indexTokens', () => {
   it('indexes umlauts both ways', () => {
@@ -13,6 +13,14 @@ describe('indexTokens', () => {
     expect(indexTokens('Hauptstraße, Ulm')).toEqual(expect.arrayContaining(['hauptstrasse', 'hauptstr']));
     expect(indexTokens('Heilbronn Hauptbahnhof')).toContain('hbf');
     expect(indexTokens('Bf Aalen')).toContain('bahnhof');
+  });
+
+  it('finds names with apostrophes with or without them', () => {
+    const tokens = indexTokens("King's Cross St. Pancras");
+    expect(tokens).toContain('kings');
+    expect(tokens).toContain('king');
+    expect(queryWords("king's cross")).toEqual(['kings', 'cross']);
+    expect(indexTokens('Gare de l’Est')).toEqual(expect.arrayContaining(['lest', 'est']));
   });
 
   it('spells out Frankfurt am Main', () => {
