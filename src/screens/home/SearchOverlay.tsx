@@ -6,8 +6,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useI18n } from '../../i18n';
 import { formatDistance } from '../../lib/format';
 import { searchPlaces, type Place } from '../../lib/geocode';
-import { stopsDb } from '../../lib/stations/db';
-import { distanceKm, searchStops, type LatLon } from '../../lib/stations/search';
+import { stopSources } from '../../lib/stations/packs';
+import { distanceKm, searchAllStops, type LatLon } from '../../lib/stations/search';
 import { stopToPlace } from '../../lib/stations/toPlace';
 import { Body, Icon, IconButton, KindIcon, Label, ModeBadges, Row } from '../../ui/components';
 import { radius, useTheme } from '../../ui/theme';
@@ -46,9 +46,9 @@ export function SearchOverlay({ near, favourites, recents, useMiles, onPick, onC
         if (!cancelled) setStops([]);
         return;
       }
-      const db = await stopsDb();
-      if (!db || cancelled) return;
-      const found = await searchStops(db, q, nearRef.current ?? undefined, 12);
+      const sources = await stopSources();
+      if (cancelled) return;
+      const found = await searchAllStops(sources, q, nearRef.current ?? undefined, 12);
       if (!cancelled) setStops(found.map(stopToPlace));
     }, 120);
     return () => {

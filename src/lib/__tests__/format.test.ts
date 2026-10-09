@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { formatDistance, formatDuration, formatRadius } from '../format';
+import { formatBytes, formatCount, formatDistance, formatDuration, formatRadius } from '../format';
 
 describe('format', () => {
   it('formats distances in metric', () => {
@@ -28,5 +28,15 @@ describe('format', () => {
   it('formats radius chips', () => {
     expect(formatRadius(300)).toBe('300 m');
     expect(formatRadius(2000)).toBe('2 km');
+  });
+
+  it('formats download sizes and counts', () => {
+    expect(formatBytes(850_000)).toBe('850 KB');
+    expect(formatBytes(4_230_000)).toBe('4.2 MB');
+    expect(formatBytes(4_230_000, 'de')).toBe('4,2 MB');
+    expect(formatBytes(38_400_000)).toBe('38 MB');
+    expect(formatCount(12345)).toBe('12,345');
+    expect(formatCount(1234567, 'de')).toBe('1.234.567');
+    expect(formatCount(999)).toBe('999');
   });
 });

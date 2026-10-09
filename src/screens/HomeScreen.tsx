@@ -7,8 +7,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useI18n } from '../i18n';
 import { reversePlace, type Place } from '../lib/geocode';
 import type { Preferences, SavedData } from '../lib/prefs';
-import { stopsDb } from '../lib/stations/db';
-import { distanceKm, nearestStop, stopsInBounds, type Bounds, type LatLon, type Stop } from '../lib/stations/search';
+import { formatBytes } from '../lib/format';
+import { installPack, stopSources, usePacks } from '../lib/stations/packs';
+import { distanceKm, nearestStopAll, stopsInBoundsAll, type Bounds, type LatLon, type Stop } from '../lib/stations/search';
 import { stopToPlace } from '../lib/stations/toPlace';
 import { samePlace } from '../lib/storage';
 import { defaultWake, type WakeOptions } from '../lib/wake';
@@ -16,8 +17,10 @@ import { ALL_STOPS_ZOOM, stopQueryForZoom } from '../map/geo';
 import { HomeMap, type HomeMapHandle } from '../map/HomeMap';
 import { Body, Heading, Icon, IconButton, KindIcon, Row } from '../ui/components';
 import { radius, useTheme } from '../ui/theme';
+import { countryName } from './CountriesScreen';
 import { PlaceSheet } from './home/PlaceSheet';
 import { SearchOverlay } from './home/SearchOverlay';
+import { useSuggestedPack } from './home/useSuggestedPack';
 
 type Props = {
   data: SavedData;
@@ -29,9 +32,23 @@ type Props = {
   /** Try the alarm with a simulated ride to the place, starting from where the user is. */
   onDemo: (place: Place, wake: WakeOptions, from: LatLon | null) => void;
   onOpenSettings: () => void;
+  onOpenCountries: () => void;
 };
 
-export function HomeScreen({ data, notice, starting, onDismissNotice, onToggleFavourite, onStart, onDemo, onOpenSettings }: Props) {
+/** From this zoom on, the map shows a place the user looks at: offer that country's stops. */
+const LOOKING_ZOOM = 9;
+
+export function HomeScreen({
+  data,
+  notice,
+  starting,
+  onDismissNotice,
+  onToggleFavourite,
+  onStart,
+  onDemo,
+  onOpenSettings,
+  onOpenCountries,
+}: Props) {
   const t = useTheme();
   const { t: tr, lang } = useI18n();
   const insets = useSafeAreaInsets();
@@ -40,6 +57,10 @@ export function HomeScreen({ data, notice, starting, onDismissNotice, onToggleFa
   const map = useRef<HomeMapHandle>(null);
   const [stops, setStops] = useState<Stop[]>([]);
   const [zoom, setZoom] = useState(0);
+  const [center, setCenter] = useState<LatLon | null>(null);
+  const [dismissedPacks, setDismissedPacks] = useState<string[]>([]);
+  const packs = usePacks();
+  const lastView = useRef<{ bounds: Bounds; zoom: number } | null>(null);
   const [selected, setSelected] = useState<Place | null>(null);
   const [wake, setWake] = useState<WakeOptions>(() => defaultWake('place', data.preferences));
   const [searchOpen, setSearchOpen] = useState(false);
@@ -77,8 +98,32 @@ export function HomeScreen({ data, notice, starting, onDismissNotice, onToggleFa
     [zoom],
   );
 
+  // A country was downloaded or removed: show its stops on the map right away.
+  useEffect(() => {
+    const view = lastView.current;
+    const query = view ? stopQueryForZoom(view.zoom) : null;
+    if (!view || !query) return;
+    const request = ++viewRequest.current;
+    let cancelled = false;
+    stopSources()
+      .then((sources) => stopsInBoundsAll(sources, view.bounds, query.limit, query.minRank))
+      .then((found) => {
+        if (!cancelled && request === viewRequest.current) setStops(found);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [packs.installed]);
+
+  const suggested = useSuggestedPack(zoom >= LOOKING_ZOOM && center ? center : user, !offline, dismissedPacks);
+  const suggestedEntry = suggested ? packs.available?.find((p) => p.id === suggested.id) : undefined;
+  const suggestedJob = suggested ? packs.jobs[suggested.id] : undefined;
+
   function onViewChange(bounds: Bounds, newZoom: number) {
     setZoom(newZoom);
+    setCenter({ latitude: (bounds[1] + bounds[3]) / 2, longitude: (bounds[0] + bounds[2]) / 2 });
+    lastView.current = { bounds, zoom: newZoom };
     if (viewTimer.current) clearTimeout(viewTimer.current);
     const request = ++viewRequest.current;
     viewTimer.current = setTimeout(async () => {
@@ -87,17 +132,14 @@ export function HomeScreen({ data, notice, starting, onDismissNotice, onToggleFa
         setStops([]);
         return;
       }
-      const db = await stopsDb();
-      if (!db) return;
-      const found = await stopsInBounds(db, bounds, query.limit, query.minRank);
+      const found = await stopsInBoundsAll(await stopSources(), bounds, query.limit, query.minRank);
       if (request === viewRequest.current) setStops(found);
     }, 200);
   }
 
   async function onLongPress(latitude: number, longitude: number) {
     movedByUser.current = true;
-    const db = await stopsDb();
-    const stop = db ? await nearestStop(db, { latitude, longitude }, 60) : null;
+    const stop = await nearestStopAll(await stopSources(), { latitude, longitude }, 60).catch(() => null);
     if (stop) {
       select(stopToPlace(stop), data.preferences, false);
       return;
@@ -208,6 +250,40 @@ export function HomeScreen({ data, notice, starting, onDismissNotice, onToggleFa
           <View style={[styles.zoomHint, { backgroundColor: t.surface }]}>
             <Icon name="wifi-off" size={16} color={t.warn} />
             <Text style={[styles.zoomHintText, { color: t.text }]}>{tr('home.offline')}</Text>
+          </View>
+        ) : null}
+
+        {suggested && !selected ? (
+          <View style={[styles.pack, { backgroundColor: t.surface, shadowColor: t.shadow }]}>
+            <Pressable onPress={onOpenCountries} style={styles.packText} accessibilityRole="button">
+              <Text style={[styles.packTitle, { color: t.text }]}>
+                {suggested.flag} {tr('home.packTitle', { country: countryName(tr, suggested.id) })}
+              </Text>
+              <Text style={[styles.packBody, { color: t.muted }]}>
+                {suggestedJob
+                  ? tr('home.packProgress', {
+                      country: countryName(tr, suggested.id),
+                      percent: Math.floor(suggestedJob.progress * 100),
+                    })
+                  : tr('home.packBody', { size: formatBytes(suggestedEntry?.bytes ?? 0, lang) })}
+              </Text>
+            </Pressable>
+            {suggestedJob ? null : (
+              <Pressable
+                onPress={() => void installPack(suggested.id)}
+                accessibilityRole="button"
+                style={[styles.packButton, { backgroundColor: t.primary }]}>
+                <Icon name="download" size={18} color={t.onPrimary} />
+                <Text style={[styles.packButtonText, { color: t.onPrimary }]}>{tr('home.packDownload')}</Text>
+              </Pressable>
+            )}
+            <IconButton
+              icon="close"
+              label={tr('common.close')}
+              onPress={() => setDismissedPacks((cur) => [...cur, suggested.id])}
+              size={36}
+              tint={t.muted}
+            />
           </View>
         ) : null}
 
@@ -324,6 +400,24 @@ const styles = StyleSheet.create({
     opacity: 0.92,
   },
   zoomHintText: { fontSize: 13, fontWeight: '600' },
+  pack: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    borderRadius: radius.md,
+    paddingLeft: 14,
+    paddingRight: 4,
+    paddingVertical: 8,
+    shadowOpacity: 0.14,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 4,
+  },
+  packText: { flex: 1, gap: 2 },
+  packTitle: { fontSize: 15, fontWeight: '700' },
+  packBody: { fontSize: 13, lineHeight: 18 },
+  packButton: { flexDirection: 'row', alignItems: 'center', gap: 6, borderRadius: radius.pill, paddingHorizontal: 12, paddingVertical: 8 },
+  packButtonText: { fontSize: 14, fontWeight: '700' },
   locate: { position: 'absolute', right: 14 },
   hint: {
     position: 'absolute',

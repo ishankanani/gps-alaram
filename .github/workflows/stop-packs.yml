@@ -1,0 +1,139 @@
+name: Stop packs
+
+# Builds the country stop packs (all countries except Germany, which ships in the app) from
+# OpenStreetMap extracts by Geofabrik, and publishes them with packs.json to the "stop-packs"
+# release, where the app downloads them. Runs monthly so stops stay current; start it from the
+# Actions tab to build some packs now.
+on:
+  workflow_dispatch:
+    inputs:
+      packs:
+        description: Pack ids or country codes to build, comma separated (empty builds all)
+        required: false
+        default: ''
+  schedule:
+    - cron: '17 3 3 * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: stop-packs
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    name: Pick the packs
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - id: plan
+        env:
+          PACKS: ${{ inputs.packs }}
+        run: echo "matrix=$(node tools/pack-matrix.ts "$PACKS")" >> "$GITHUB_OUTPUT"
+
+  build:
+    name: Build ${{ matrix.pack.id }}
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        pack: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    env:
+      WORK: ${{ github.workspace }}/../osm
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install osmium
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q osmium-tool
+          pip install 'osmium>=4,<5'
+      - name: Download the OpenStreetMap extract
+        run: |
+          mkdir -p "$WORK"
+          curl -fSL --retry 3 --retry-delay 30 -o "$WORK/in.osm.pbf" \
+            "https://download.geofabrik.de/${{ matrix.pack.source }}-latest.osm.pbf"
+          ls -lh "$WORK/in.osm.pbf"
+      - name: Keep only routes, stops and town names
+        run: |
+          osmium tags-filter -R "$WORK/in.osm.pbf" \
+            r/route=train,subway,light_rail,tram,monorail,bus,trolleybus,ferry,funicular \
+            r/public_transport=stop_area \
+            -o "$WORK/relations.osm.pbf"
+          osmium tags-filter "$WORK/in.osm.pbf" \
+            nw/public_transport=platform,stop_position,station \
+            n/railway=station,halt,tram_stop w/railway=station,halt \
+            n/highway=bus_stop nw/amenity=ferry_terminal \
+            n/place=city,town,village \
+            -o "$WORK/stops.osm.pbf"
+          rm "$WORK/in.osm.pbf"
+          ls -lh "$WORK"
+      - name: Extract stops
+        run: python3 tools/osm-stops.py "$WORK/relations.osm.pbf" "$WORK/stops.osm.pbf" "$WORK/stops.ndjson"
+      - name: Build the pack
+        run: |
+          mkdir -p packs
+          node tools/build-osm-pack.ts "${{ matrix.pack.id }}" "$WORK/stops.ndjson" "packs/${{ matrix.pack.id }}.db"
+          gzip -9 "packs/${{ matrix.pack.id }}.db"
+          ls -lh packs
+      - name: Check the pack
+        run: |
+          node -e "
+            const { DatabaseSync } = require('node:sqlite');
+            const zlib = require('node:zlib'), fs = require('node:fs');
+            const file = process.env.RUNNER_TEMP + '/check.db';
+            fs.writeFileSync(file, zlib.gunzipSync(fs.readFileSync('packs/${{ matrix.pack.id }}.db.gz')));
+            const db = new DatabaseSync(file, { readOnly: true });
+            const count = db.prepare('SELECT COUNT(*) AS n FROM stops').get().n;
+            console.log(count, 'stops; the biggest:');
+            for (const r of db.prepare('SELECT name, rank FROM stops ORDER BY rank DESC LIMIT 15').all()) console.log(' ', r.rank, r.name);
+            if (count < 100) throw new Error('Too few stops, something went wrong');
+          "
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pack-${{ matrix.pack.id }}
+          path: packs/
+          retention-days: 7
+
+  publish:
+    name: Publish to the stop-packs release
+    needs: [plan, build]
+    if: always() && needs.plan.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: pack-*
+          path: packs
+          merge-multiple: true
+      - name: Upload the packs and packs.json
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ls packs/*.db.gz >/dev/null 2>&1 || { echo "No pack was built"; exit 1; }
+          if ! gh release view stop-packs >/dev/null 2>&1; then
+            gh release create stop-packs --latest=false --title "Stop packs" --notes \
+              "Stops for the countries StopWake covers outside Germany, built monthly from OpenStreetMap. Stop data © OpenStreetMap contributors, available under the Open Database License (ODbL). The app downloads these files; there is nothing to install by hand."
+          fi
+          mkdir -p old
+          gh release download stop-packs --pattern packs.json --dir old || true
+          node tools/pack-manifest.ts packs old/packs.json packs/packs.json
+          gh release upload stop-packs packs/*.db.gz packs/packs.json --clobber

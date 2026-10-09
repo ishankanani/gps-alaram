@@ -5,7 +5,7 @@ import stopsAsset from '../../../assets/stations/germany-stops.db';
 import type { StopsDb } from './search';
 
 /** Change the name whenever the bundled file changes, so installed apps copy the new one. */
-const DB_NAME = 'germany-stops-2025-03-v1.db';
+const DB_NAME = 'germany-stops-2025-03-v2.db';
 const OLD_VERSIONS_PREFIX = 'germany-stops-';
 
 let opening: Promise<StopsDb | null> | null = null;

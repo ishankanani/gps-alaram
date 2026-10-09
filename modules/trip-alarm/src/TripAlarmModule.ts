@@ -26,6 +26,8 @@ declare class TripAlarmModule extends NativeModule<TripAlarmEvents> {
   openSettings(kind: SettingsKind): boolean;
   listTripLogs(): TripLogFile[];
   shareTripLog(name: string): Promise<void>;
+  /** Unpacks a .gz file (a file:// URI or path) and resolves to the unpacked size in bytes. */
+  gunzip(source: string, destination: string): Promise<number>;
 }
 
 /** Null where the native module is not built in (iOS for now, web, Expo Go). */

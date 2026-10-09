@@ -13,6 +13,11 @@ import android.os.Build
 import android.os.PowerManager
 import android.provider.Settings
 import com.ishankanani.gpsalarm.tripalarm.engine.AlarmMode
+import java.io.BufferedInputStream
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.util.zip.GZIPInputStream
 import expo.modules.interfaces.permissions.Permissions
 import expo.modules.kotlin.Promise
 import expo.modules.kotlin.exception.CodedException
@@ -42,6 +47,8 @@ class PreciseLocationRequiredException :
   CodedException("Precise location permission is needed to track a trip")
 
 class InvalidTripException(message: String) : CodedException(message)
+
+private const val BUFFER_BYTES = 1 shl 16
 
 class TripAlarmModule : Module() {
   private val context: Context
@@ -141,6 +148,23 @@ class TripAlarmModule : Module() {
         ctx.startActivity(chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
       }
     }.runOnQueue(Queues.MAIN)
+
+    /** Unpacks a downloaded stop pack (.gz) and returns the size of the result in bytes. */
+    AsyncFunction("gunzip") { source: String, destination: String ->
+      gunzip(fileOf(source), fileOf(destination)).toDouble()
+    }
+  }
+
+  private fun fileOf(uriOrPath: String): File =
+    File(if (uriOrPath.startsWith("file:")) Uri.parse(uriOrPath).path ?: uriOrPath else uriOrPath)
+
+  private fun gunzip(source: File, destination: File): Long {
+    if (!source.isFile) throw InvalidTripException("No file at ${source.path}")
+    destination.parentFile?.mkdirs()
+    GZIPInputStream(BufferedInputStream(FileInputStream(source), BUFFER_BYTES)).use { input ->
+      FileOutputStream(destination).use { output -> input.copyTo(output, BUFFER_BYTES) }
+    }
+    return destination.length()
   }
 
   private fun startTrip(options: TripOptions): Map<String, Any?> {

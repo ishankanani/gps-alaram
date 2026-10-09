@@ -27,3 +27,18 @@ export function formatRadius(meters: number, useMiles = false, lang = 'en'): str
   if (useMiles) return formatDistance(meters, true, lang);
   return meters < 1000 ? `${meters} m` : `${meters / 1000} km`;
 }
+
+/** Download sizes: 850 KB, 4.2 MB, 38 MB. */
+export function formatBytes(bytes: number, lang = 'en'): string {
+  if (bytes < 1_000_000) return `${Math.max(1, Math.round(bytes / 1000))} KB`;
+  if (bytes < 10_000_000) return `${decimal(bytes / 1_000_000, lang)} MB`;
+  return `${Math.round(bytes / 1_000_000)} MB`;
+}
+
+/** 12345 as 12,345 (12.345 in German). */
+export function formatCount(n: number, lang = 'en'): string {
+  const text = Math.round(n)
+    .toString()
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  return lang === 'de' ? text.replace(/,/g, '.') : text;
+}

@@ -4,8 +4,9 @@
  * source of truth for both sides. It must stay free of imports so Node can run the builder.
  */
 
-const UMLAUT_AS_E: Record<string, string> = { ä: 'ae', ö: 'oe', ü: 'ue' };
-const UMLAUT_PLAIN: Record<string, string> = { ä: 'a', ö: 'o', ü: 'u' };
+// Danish and Norwegian ø and æ are letters of their own, so the index does not fold them away.
+const UMLAUT_AS_E: Record<string, string> = { ä: 'ae', ö: 'oe', ü: 'ue', ø: 'oe', æ: 'ae' };
+const UMLAUT_PLAIN: Record<string, string> = { ä: 'a', ö: 'o', ü: 'u', ø: 'o', æ: 'ae' };
 
 /** Words that mean the same thing on German stop signs, in both directions. */
 const SYNONYMS: Record<string, string[]> = {
@@ -36,8 +37,8 @@ export function words(text: string): string[] {
 
 /** "münchen" is typed as "muenchen" or "munchen"; return both, the "ue" form first. */
 export function spellings(word: string): string[] {
-  const withE = word.replace(/[äöü]/g, (c) => UMLAUT_AS_E[c]);
-  const plain = word.replace(/[äöü]/g, (c) => UMLAUT_PLAIN[c]);
+  const withE = word.replace(/[äöüøæ]/g, (c) => UMLAUT_AS_E[c]);
+  const plain = word.replace(/[äöüøæ]/g, (c) => UMLAUT_PLAIN[c]);
   return withE === plain ? [withE] : [withE, plain];
 }
 
@@ -98,15 +99,20 @@ export const MODE = {
   TRAM: 64,
   BUS: 128,
   FERRY: 256,
+  /** Any train outside Germany (country packs from OpenStreetMap). */
+  TRAIN: 512,
+  /** Metro, subway or underground outside the German-speaking countries. */
+  METRO: 1024,
 } as const;
 
-export type StopKind = 'train' | 'sbahn' | 'ubahn' | 'tram' | 'bus' | 'ferry' | 'other';
+export type StopKind = 'train' | 'sbahn' | 'ubahn' | 'metro' | 'tram' | 'bus' | 'ferry' | 'other';
 
 /** The mode a stop is best known for, which picks its icon and colour. */
 export function primaryKind(modes: number): StopKind {
-  if (modes & (MODE.ICE | MODE.IC | MODE.RE | MODE.RB)) return 'train';
+  if (modes & (MODE.ICE | MODE.IC | MODE.RE | MODE.RB | MODE.TRAIN)) return 'train';
   if (modes & MODE.SBAHN) return 'sbahn';
   if (modes & MODE.UBAHN) return 'ubahn';
+  if (modes & MODE.METRO) return 'metro';
   if (modes & MODE.TRAM) return 'tram';
   if (modes & MODE.FERRY) return 'ferry';
   if (modes & MODE.BUS) return 'bus';
@@ -119,8 +125,10 @@ export function modeBadges(modes: number): string[] {
   if (modes & MODE.ICE) out.push('ICE');
   if (modes & MODE.IC) out.push('IC');
   if (modes & (MODE.RE | MODE.RB)) out.push('RE');
+  if (modes & MODE.TRAIN) out.push('Train');
   if (modes & MODE.SBAHN) out.push('S');
   if (modes & MODE.UBAHN) out.push('U');
+  if (modes & MODE.METRO) out.push('Metro');
   if (modes & MODE.TRAM) out.push('Tram');
   if (modes & MODE.BUS) out.push('Bus');
   if (modes & MODE.FERRY) out.push('Ferry');

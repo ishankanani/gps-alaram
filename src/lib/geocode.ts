@@ -14,9 +14,6 @@ export type Place = {
   modes?: number;
 };
 
-/** [west, south, east, north] around Germany, with a margin for border stations. */
-export const GERMANY_BBOX = [5.5, 47.0, 15.5, 55.2] as const;
-
 const STOP_VALUES = new Set([
   'station',
   'halt',
@@ -119,7 +116,6 @@ export async function searchPlaces(query: string, options: SearchOptions = {}): 
   }
   const lang = (options.language ?? 'en').slice(0, 2);
   if (['en', 'de', 'fr'].includes(lang)) params.lang = lang;
-  params.bbox = GERMANY_BBOX.join(',');
   const qs = Object.entries(params)
     .map(([k, v]) => `${k}=${encodeURIComponent(v)}`)
     .join('&');
@@ -143,4 +139,16 @@ export async function reversePlace(
   if (!res.ok) return null;
   const found = parsePhoton(await res.json())[0];
   return found ? { ...found, latitude, longitude } : null;
+}
+
+/** The ISO country code (lowercase) at a point, such as "at". Needs internet; null when unknown. */
+export async function countryAt(latitude: number, longitude: number, signal?: AbortSignal): Promise<string | null> {
+  const res = await fetch(
+    `https://photon.komoot.io/reverse?lat=${latitude.toFixed(4)}&lon=${longitude.toFixed(4)}&limit=1`,
+    { signal },
+  );
+  if (!res.ok) return null;
+  const json = (await res.json()) as { features?: PhotonFeature[] };
+  const code = json.features?.[0]?.properties?.countrycode;
+  return typeof code === 'string' && code.length === 2 ? code.toLowerCase() : null;
 }

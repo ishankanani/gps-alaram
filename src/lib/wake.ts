@@ -58,6 +58,7 @@ export const DEMO_SPEED_MPS: Record<StopKind | 'place', number> = {
   train: 33,
   sbahn: 22,
   ubahn: 15,
+  metro: 15,
   tram: 10,
   bus: 10,
   ferry: 8,

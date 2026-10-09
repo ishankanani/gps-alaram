@@ -14,6 +14,7 @@ import { demoRide, rememberWake, tripOptions, type WakeOptions } from './src/lib
 import { DoneScreen } from './src/screens/DoneScreen';
 import { HomeScreen } from './src/screens/HomeScreen';
 import { OnboardingScreen } from './src/screens/OnboardingScreen';
+import { CountriesScreen } from './src/screens/CountriesScreen';
 import { SettingsScreen } from './src/screens/SettingsScreen';
 import { SetupScreen, setupReady } from './src/screens/SetupScreen';
 import { TrackingScreen } from './src/screens/TrackingScreen';
@@ -27,6 +28,7 @@ type Screen =
   | { name: 'setup'; then: PendingTrip | null }
   | { name: 'home' }
   | { name: 'settings' }
+  | { name: 'countries'; from: 'home' | 'settings' }
   | { name: 'tracking' }
   | { name: 'done'; ended: TripEndedEvent; place: Place | null };
 
@@ -104,6 +106,10 @@ export default function App() {
   // Android back: go home from secondary screens; never leave a running trip by accident.
   useEffect(() => {
     const sub = BackHandler.addEventListener('hardwareBackPress', () => {
+      if (screen.name === 'countries') {
+        setScreen(screen.from === 'home' ? { name: 'home' } : { name: 'settings' });
+        return true;
+      }
       if (screen.name === 'settings' || screen.name === 'done' || (screen.name === 'setup' && data.preferences.onboarded)) {
         setScreen({ name: 'home' });
         return true;
@@ -111,7 +117,7 @@ export default function App() {
       return screen.name === 'tracking';
     });
     return () => sub.remove();
-  }, [screen.name, data.preferences.onboarded]);
+  }, [screen, data.preferences.onboarded]);
 
   async function launch({ place, wake, demo }: PendingTrip) {
     const native = TripAlarm;
@@ -175,9 +181,13 @@ export default function App() {
         preferences={data.preferences}
         onChange={setPreferences}
         onOpenSetup={() => setScreen({ name: 'setup', then: null })}
+        onOpenCountries={() => setScreen({ name: 'countries', from: 'settings' })}
         onBack={() => setScreen({ name: 'home' })}
       />
     );
+  } else if (screen.name === 'countries') {
+    const back: Screen = screen.from === 'home' ? { name: 'home' } : { name: 'settings' };
+    content = <CountriesScreen onBack={() => setScreen(back)} />;
   } else if (screen.name === 'done') {
     const place = screen.place;
     content = (
@@ -200,6 +210,7 @@ export default function App() {
         onStart={(place, wake) => start({ place, wake })}
         onDemo={(place, wake, from) => start({ place, wake, demo: { from } })}
         onOpenSettings={() => setScreen({ name: 'settings' })}
+        onOpenCountries={() => setScreen({ name: 'countries', from: 'home' })}
       />
     );
   }

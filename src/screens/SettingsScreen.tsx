@@ -13,10 +13,11 @@ type Props = {
   preferences: Preferences;
   onChange: (prefs: Preferences) => void;
   onOpenSetup: () => void;
+  onOpenCountries: () => void;
   onBack: () => void;
 };
 
-export function SettingsScreen({ preferences, onChange, onOpenSetup, onBack }: Props) {
+export function SettingsScreen({ preferences, onChange, onOpenSetup, onOpenCountries, onBack }: Props) {
   const t = useTheme();
   const { t: tr, lang } = useI18n();
   const insets = useSafeAreaInsets();
@@ -62,6 +63,19 @@ export function SettingsScreen({ preferences, onChange, onOpenSetup, onBack }: P
           ]}
         />
         <Body muted>{tr(`strength.${preferences.strength}.body`)}</Body>
+      </Card>
+
+      <Card>
+        <Row
+          leading={
+            <View style={[styles.rowIcon, { backgroundColor: t.primarySoft }]}>
+              <Icon name="earth" size={22} color={t.primary} />
+            </View>
+          }
+          title={tr('settings.countries')}
+          subtitle={tr('settings.countriesBody')}
+          onPress={onOpenCountries}
+        />
       </Card>
 
       <OfflineMapCard />
