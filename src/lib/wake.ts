@@ -53,6 +53,53 @@ export function tripOptions(place: Place, w: WakeOptions, useMiles: boolean): Tr
   };
 }
 
+/** Typical speeds for a demo ride, in m/s. */
+export const DEMO_SPEED_MPS: Record<StopKind | 'place', number> = {
+  train: 33,
+  sbahn: 22,
+  ubahn: 15,
+  tram: 10,
+  bus: 10,
+  ferry: 8,
+  other: 12,
+  place: 12,
+};
+
+/** How long a demo ride runs before the alarm should ring. */
+const DEMO_LEAD_SEC = 40;
+
+/**
+ * Where a demo ride starts: far enough out that the alarm rings about [DEMO_LEAD_SEC] after the
+ * start, on the side of the stop where the user is (or west of it when we do not know).
+ */
+export function demoRide(
+  destination: { latitude: number; longitude: number },
+  kind: StopKind | 'place',
+  w: WakeOptions,
+  from: { latitude: number; longitude: number } | null,
+): { demoFromLatitude: number; demoFromLongitude: number; demoSpeedMps: number } {
+  const speed = DEMO_SPEED_MPS[kind];
+  const byTime = w.mode === 'arrive' && w.wakeBy === 'time';
+  const startM = (byTime ? w.minutesBefore * 60 * speed : w.radiusM) + DEMO_LEAD_SEC * speed;
+  const cosLat = Math.cos((destination.latitude * Math.PI) / 180);
+  let north = 0;
+  let east = -1;
+  if (from) {
+    const dn = (from.latitude - destination.latitude) * 110_540;
+    const de = (from.longitude - destination.longitude) * 111_320 * cosLat;
+    const len = Math.hypot(dn, de);
+    if (len > 50) {
+      north = dn / len;
+      east = de / len;
+    }
+  }
+  return {
+    demoFromLatitude: destination.latitude + (north * startM) / 110_540,
+    demoFromLongitude: destination.longitude + (east * startM) / (111_320 * cosLat),
+    demoSpeedMps: speed,
+  };
+}
+
 /** Remembers the choices for next time (the wake-by default stays per stop kind). */
 export function rememberWake(prefs: Preferences, w: WakeOptions): Preferences {
   return { ...prefs, radiusM: w.radiusM, minutesBefore: w.minutesBefore, strength: w.strength };

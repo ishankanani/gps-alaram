@@ -153,10 +153,11 @@ class TripEngine(
 
   fun status(nowMs: Long): TripStatus {
     val speed = speedEstimator.speedMps()
-    val d = distanceM
+    val guess = if (health(nowMs) == GpsHealth.LOST) estimate(nowMs) else null
+    val d = guess?.distanceM ?: distanceM
     return TripStatus(
-      latitude = lastFix?.lat,
-      longitude = lastFix?.lon,
+      latitude = guess?.lat ?: lastFix?.lat,
+      longitude = guess?.lon ?: lastFix?.lon,
       distanceM = d,
       etaSec = if (d != null) etaSec(d, speed) else null,
       speedMps = speed,
@@ -168,6 +169,29 @@ class TripEngine(
       closestDistanceM = if (closestM.isFinite()) closestM else null,
       fallbackAtMs = fallbackAtMs,
       trigger = trigger,
+      estimated = guess != null,
+    )
+  }
+
+  private class Estimate(val lat: Double, val lon: Double, val distanceM: Double)
+
+  /**
+   * Where we probably are without GPS: from the last fix, towards the stop at the average speed.
+   * Only for showing progress; the alarm itself uses [computeFallback], which errs towards early.
+   */
+  private fun estimate(nowMs: Long): Estimate? {
+    if (config.mode != AlarmMode.ARRIVE) return null
+    val base = lastFix ?: return null
+    val speed = speedEstimator.speedMps() ?: return null
+    if (speed < params.minMovingSpeedMps) return null
+    val fromBase = Geo.distanceM(base.lat, base.lon, config.targetLat, config.targetLon)
+    if (fromBase <= 0.0) return null
+    val travelled = min(fromBase, speed * max(0L, nowMs - base.timeMs) / 1000.0)
+    val f = travelled / fromBase
+    return Estimate(
+      lat = base.lat + (config.targetLat - base.lat) * f,
+      lon = base.lon + (config.targetLon - base.lon) * f,
+      distanceM = fromBase - travelled,
     )
   }
 

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { Place } from '../geocode';
 import { DEFAULT_PREFERENCES } from '../prefs';
-import { defaultWake, rememberWake, tooShortForTrain, tripOptions, TIME_BACKSTOP_RADIUS_M } from '../wake';
+import { DEMO_SPEED_MPS, defaultWake, demoRide, rememberWake, tooShortForTrain, tripOptions, TIME_BACKSTOP_RADIUS_M } from '../wake';
 
 const place: Place = { id: 'stop:Ulm Hbf', name: 'Ulm Hbf', context: '', latitude: 48.4, longitude: 9.98 };
 
@@ -48,5 +48,21 @@ describe('wake options', () => {
   it('remembers distance, minutes and strength', () => {
     const w = { ...defaultWake('bus', DEFAULT_PREFERENCES), radiusM: 500, minutesBefore: 5, strength: 'heavy' as const };
     expect(rememberWake(DEFAULT_PREFERENCES, w)).toMatchObject({ radiusM: 500, minutesBefore: 5, strength: 'heavy' });
+  });
+
+  it('starts a demo ride so the alarm rings about 40 s in, on the side the user is on', () => {
+    const stop = { latitude: 48.14, longitude: 11.56 };
+    const metres = (a: typeof stop, b: typeof stop) =>
+      Math.hypot((a.latitude - b.latitude) * 110_540, (a.longitude - b.longitude) * 111_320 * Math.cos((48.14 * Math.PI) / 180));
+    // Train, wake 2 min before: 2 min plus 40 s at train speed.
+    const train = demoRide(stop, 'train', defaultWake('train', DEFAULT_PREFERENCES), { latitude: 48.2, longitude: 11.56 });
+    const start = { latitude: train.demoFromLatitude, longitude: train.demoFromLongitude };
+    expect(train.demoSpeedMps).toBe(DEMO_SPEED_MPS.train);
+    expect(metres(start, stop)).toBeCloseTo((120 + 40) * 33, -1);
+    expect(start.latitude).toBeGreaterThan(stop.latitude); // north, towards the user
+    // Bus, wake 300 m before, user unknown: starts west of the stop.
+    const bus = demoRide(stop, 'bus', { ...defaultWake('bus', DEFAULT_PREFERENCES), radiusM: 300 }, null);
+    expect(metres({ latitude: bus.demoFromLatitude, longitude: bus.demoFromLongitude }, stop)).toBeCloseTo(300 + 40 * 10, -1);
+    expect(bus.demoFromLongitude).toBeLessThan(stop.longitude);
   });
 });

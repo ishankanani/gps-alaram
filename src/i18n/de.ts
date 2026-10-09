@@ -51,6 +51,11 @@ export const de: Strings = {
   'place.shortTrainWarning':
     'Im Zug sind {distance} nur wenige Sekunden, bevor die Türen öffnen. Ein paar Minuten vorher ist sicherer.',
   'place.useTime': 'Stattdessen 2 Min.',
+  'place.demo': 'Probefahrt starten',
+  'place.demoBody': 'Simuliert die Fahrt zu dieser Haltestelle in unter einer Minute, damit du den Alarm vor einer echten Fahrt siehst und hörst.',
+  'trip.demo': 'Probefahrt nach',
+  'trip.gps.estimating': 'Kein GPS: geschätzt',
+  'trip.estimatedNote': 'Gerade kein GPS (Tunnel oder unterirdisch). Deine Position wird aus deiner Geschwindigkeit geschätzt, und der Alarm klingelt anhand dieser Schätzung.',
   'place.moreOptions': 'Mehr Optionen',
   'place.fewerOptions': 'Weniger Optionen',
 

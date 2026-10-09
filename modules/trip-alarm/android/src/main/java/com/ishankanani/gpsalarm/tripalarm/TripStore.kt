@@ -37,8 +37,13 @@ data class ActiveTrip(
   val strength: AlarmStrength,
   val useMiles: Boolean,
   val startedAtWallMs: Long,
+  /** A demo ride starts here and moves to the stop at [demoSpeedMps], with simulated fixes. */
+  val demoFromLat: Double? = null,
+  val demoFromLon: Double? = null,
+  val demoSpeedMps: Double? = null,
 ) {
   val config: TripConfig get() = TripConfig(latitude, longitude, radiusM, mode, minutesBefore)
+  val isDemo: Boolean get() = demoSpeedMps != null && demoFromLat != null && demoFromLon != null
 
   fun toJson(): JSONObject = JSONObject()
     .put("id", id)
@@ -51,6 +56,9 @@ data class ActiveTrip(
     .put("strength", strength.name)
     .put("useMiles", useMiles)
     .put("startedAtWallMs", startedAtWallMs)
+    .put("demoFromLat", demoFromLat ?: JSONObject.NULL)
+    .put("demoFromLon", demoFromLon ?: JSONObject.NULL)
+    .put("demoSpeedMps", demoSpeedMps ?: JSONObject.NULL)
 
   fun toMap(): Map<String, Any?> = mapOf(
     "id" to id,
@@ -63,6 +71,7 @@ data class ActiveTrip(
     "strength" to strength.name.lowercase(),
     "useMiles" to useMiles,
     "startedAt" to startedAtWallMs.toDouble(),
+    "demo" to isDemo,
   )
 
   companion object {
@@ -77,7 +86,12 @@ data class ActiveTrip(
       strength = AlarmStrength.parse(json.optString("strength")),
       useMiles = json.optBoolean("useMiles"),
       startedAtWallMs = json.getLong("startedAtWallMs"),
+      demoFromLat = json.optDoubleOrNull("demoFromLat"),
+      demoFromLon = json.optDoubleOrNull("demoFromLon"),
+      demoSpeedMps = json.optDoubleOrNull("demoSpeedMps"),
     )
+
+    private fun JSONObject.optDoubleOrNull(key: String): Double? = if (isNull(key)) null else optDouble(key)
   }
 }
 

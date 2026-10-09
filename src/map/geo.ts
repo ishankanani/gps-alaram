@@ -59,3 +59,11 @@ export function boundsOf(points: { latitude: number; longitude: number }[], pad 
   [w, s, e, n] = [w - padLon, s - padLat, e + padLon, n + padLat];
   return [w, s, e, n];
 }
+
+/** Compass bearing from a to b in degrees (0 = north, 90 = east), or null when they are a few metres apart. */
+export function bearingDeg(a: { latitude: number; longitude: number }, b: { latitude: number; longitude: number }): number | null {
+  const north = (b.latitude - a.latitude) * 110_540;
+  const east = (b.longitude - a.longitude) * 111_320 * Math.cos((a.latitude * Math.PI) / 180);
+  if (Math.hypot(north, east) < 3) return null;
+  return ((Math.atan2(east, north) * 180) / Math.PI + 360) % 360;
+}

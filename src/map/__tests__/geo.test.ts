@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { distanceKm } from '../../lib/stations/search';
-import { boundsOf, circlePolygon, stopQueryForZoom, stopsToGeoJSON } from '../geo';
+import { bearingDeg, boundsOf, circlePolygon, stopQueryForZoom, stopsToGeoJSON } from '../geo';
 
 describe('map geometry', () => {
   it('draws the alarm circle at the right size', () => {
@@ -37,5 +37,18 @@ describe('map geometry', () => {
     ]);
     expect(fc.features[0].properties).toMatchObject({ id: 1, kind: 'train', color: '#E3001B' });
     expect(fc.features[0].geometry.coordinates).toEqual([9.98, 48.4]);
+  });
+});
+
+describe('bearingDeg', () => {
+  const here = { latitude: 48.14, longitude: 11.56 };
+  it('points north, east, south and west', () => {
+    expect(bearingDeg(here, { latitude: 48.15, longitude: 11.56 })).toBeCloseTo(0, 5);
+    expect(bearingDeg(here, { latitude: 48.14, longitude: 11.57 })).toBeCloseTo(90, 5);
+    expect(bearingDeg(here, { latitude: 48.13, longitude: 11.56 })).toBeCloseTo(180, 5);
+    expect(bearingDeg(here, { latitude: 48.14, longitude: 11.55 })).toBeCloseTo(270, 5);
+  });
+  it('has no direction for points a few metres apart', () => {
+    expect(bearingDeg(here, { latitude: 48.14001, longitude: 11.56 })).toBeNull();
   });
 });

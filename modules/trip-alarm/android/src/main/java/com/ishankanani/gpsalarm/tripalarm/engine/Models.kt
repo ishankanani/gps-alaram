@@ -63,7 +63,10 @@ data class TrackingPlan(
 }
 
 data class TripStatus(
-  /** Position of the last usable fix, for drawing the user on the trip map. */
+  /**
+   * Where the user is, for the trip map: the last usable fix, or with [estimated] the
+   * dead-reckoning guess while GPS is lost (in a tunnel or an underground station).
+   */
   val latitude: Double?,
   val longitude: Double?,
   val distanceM: Double?,
@@ -79,6 +82,8 @@ data class TripStatus(
   /** When the dead-reckoning alarm would fire if no new fix arrives (monotonic ms). */
   val fallbackAtMs: Long?,
   val trigger: TriggerReason?,
+  /** Position, distance and ETA are estimated from the last speed: no GPS right now. */
+  val estimated: Boolean = false,
 )
 
 data class EngineUpdate(

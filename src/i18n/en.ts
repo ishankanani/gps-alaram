@@ -49,6 +49,11 @@ export const en = {
   'place.ruleLeave': 'Rings when you are more than {distance} away',
   'place.shortTrainWarning': 'On a train, {distance} is only a few seconds before the doors open. Waking a few minutes before is safer.',
   'place.useTime': 'Use 2 min instead',
+  'place.demo': 'Try a demo ride',
+  'place.demoBody': 'Simulates the ride to this stop in under a minute, so you can see and hear the alarm before a real trip.',
+  'trip.demo': 'Demo ride to',
+  'trip.gps.estimating': 'No GPS: estimating',
+  'trip.estimatedNote': 'No GPS right now (tunnel or underground). Your position is estimated from your speed, and the alarm still rings from that estimate.',
   'place.moreOptions': 'More options',
   'place.fewerOptions': 'Fewer options',
 

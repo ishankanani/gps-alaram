@@ -36,8 +36,11 @@ object Texts {
     }
   }
 
-  fun tripTitle(trip: ActiveTrip): String =
-    L10n.format(if (trip.mode == AlarmMode.LEAVE) "tripLeaving" else "tripTo", "label" to trip.label)
+  fun tripTitle(trip: ActiveTrip): String = when {
+    trip.isDemo -> L10n.format("demoTitle", "label" to trip.label)
+    trip.mode == AlarmMode.LEAVE -> L10n.format("tripLeaving", "label" to trip.label)
+    else -> L10n.format("tripTo", "label" to trip.label)
+  }
 
   fun ringsWhen(trip: ActiveTrip): String {
     val radius = distance(trip.radiusM, trip.useMiles)
@@ -55,7 +58,8 @@ object Texts {
     if (trip.mode == AlarmMode.LEAVE && !status.armed) {
       parts += L10n["waitingInside"]
     } else {
-      parts += distance(status.distanceM, trip.useMiles)
+      // Without GPS the distance is a guess from the last speed.
+      parts += (if (status.estimated) "≈ " else "") + distance(status.distanceM, trip.useMiles)
       status.etaSec?.let { if (trip.mode == AlarmMode.ARRIVE) parts += duration(it) }
     }
     parts += when (status.health) {

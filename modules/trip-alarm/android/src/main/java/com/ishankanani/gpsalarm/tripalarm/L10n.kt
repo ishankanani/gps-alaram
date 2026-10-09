@@ -40,6 +40,7 @@ object L10n {
   private val EN = mapOf(
     "yourStop" to "your stop",
     "tripTo" to "To {label}",
+    "demoTitle" to "Demo ride to {label}",
     "tripLeaving" to "Leaving {label}",
     "ringsWithin" to "Rings within {radius}",
     "ringsBefore" to "Rings {minutes} min before or within {radius}",
@@ -93,6 +94,7 @@ object L10n {
   private val DE = mapOf(
     "yourStop" to "deine Haltestelle",
     "tripTo" to "Nach {label}",
+    "demoTitle" to "Probefahrt nach {label}",
     "tripLeaving" to "Verlassen von {label}",
     "ringsWithin" to "Klingelt im Umkreis von {radius}",
     "ringsBefore" to "Klingelt {minutes} Min. vorher oder im Umkreis von {radius}",
@@ -146,6 +148,7 @@ object L10n {
   private val HI = mapOf(
     "yourStop" to "आपका स्टॉप",
     "tripTo" to "{label} की ओर",
+    "demoTitle" to "{label} तक डेमो यात्रा",
     "tripLeaving" to "{label} से निकल रहे हैं",
     "ringsWithin" to "{radius} के अंदर बजेगा",
     "ringsBefore" to "{minutes} मिनट पहले या {radius} के अंदर बजेगा",

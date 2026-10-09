@@ -16,9 +16,9 @@ const HEALTH_COLOR: Record<GpsHealth, (t: Theme) => string> = {
   lost: (t) => t.bad,
 };
 
-type Props = { status: TripStatus; kind: StopKind | 'place' };
+type Props = { status: TripStatus; kind: StopKind | 'place'; trail: { latitude: number; longitude: number }[] };
 
-export function TrackingScreen({ status, kind }: Props) {
+export function TrackingScreen({ status, kind, trail }: Props) {
   const t = useTheme();
   const { t: tr, lang } = useI18n();
   const insets = useSafeAreaInsets();
@@ -30,6 +30,8 @@ export function TrackingScreen({ status, kind }: Props) {
   const snoozed = status.state === 'snoozed';
   const uncertain = status.trigger === 'CLOSEST_POINT_PASSED' || status.trigger === 'ESTIMATED';
   const health = status.health ?? 'waiting';
+  const estimated = status.estimated === true;
+  const approx = estimated ? '≈ ' : '';
   const user =
     status.latitude != null && status.longitude != null ? { latitude: status.latitude, longitude: status.longitude } : null;
 
@@ -54,11 +56,14 @@ export function TrackingScreen({ status, kind }: Props) {
           kind={kind}
           radiusM={trip.radiusM}
           user={user}
+          estimated={estimated}
+          trail={trail}
+          padding={{ top: insets.top + 110, bottom: 56 }}
         />
         <View style={[styles.mapHeader, { top: insets.top + 10, backgroundColor: t.surface, shadowColor: t.shadow }]}>
           <KindIcon kind={kind} size={38} />
           <View style={styles.mapHeaderText}>
-            <Label>{tr(leave ? 'trip.leaving' : 'trip.onTheWay')}</Label>
+            <Label>{tr(trip.demo ? 'trip.demo' : leave ? 'trip.leaving' : 'trip.onTheWay')}</Label>
             <Text style={[styles.destination, { color: t.text }]} numberOfLines={1}>
               {trip.label}
             </Text>
@@ -96,13 +101,13 @@ export function TrackingScreen({ status, kind }: Props) {
           <View style={styles.stat}>
             <Label>{tr('trip.distance')}</Label>
             <Text style={[styles.big, { color: t.text }]}>
-              {status.distanceM != null ? formatDistance(status.distanceM, trip.useMiles, lang) : '–'}
+              {status.distanceM != null ? approx + formatDistance(status.distanceM, trip.useMiles, lang) : '–'}
             </Text>
           </View>
           {!leave ? (
             <View style={styles.stat}>
               <Label>{tr('trip.arrival')}</Label>
-              <Text style={[styles.big, { color: t.text }]}>{status.etaSec != null ? formatDuration(status.etaSec) : '–'}</Text>
+              <Text style={[styles.big, { color: t.text }]}>{status.etaSec != null ? approx + formatDuration(status.etaSec) : '–'}</Text>
             </View>
           ) : null}
         </View>
@@ -110,13 +115,17 @@ export function TrackingScreen({ status, kind }: Props) {
         {leave && status.armed === false ? <Text style={[styles.note, { color: t.muted }]}>{tr('trip.waitingInside')}</Text> : null}
 
         <View style={[styles.pill, { backgroundColor: t.surfaceAlt }]}>
-          <StatusDot color={HEALTH_COLOR[health](t)} />
-          <Text style={[styles.pillText, { color: t.text }]}>{tr(`trip.gps.${health}`)}</Text>
-          {status.accuracyM != null ? (
+          <StatusDot color={estimated ? t.warn : HEALTH_COLOR[health](t)} />
+          <Text style={[styles.pillText, { color: t.text }]}>{tr(estimated ? 'trip.gps.estimating' : `trip.gps.${health}`)}</Text>
+          {status.accuracyM != null && !estimated ? (
             <Text style={[styles.pillMuted, { color: t.muted }]}>{tr('trip.accuracy', { meters: Math.round(status.accuracyM) })}</Text>
           ) : null}
         </View>
-        {status.tier ? <Text style={[styles.note, { color: t.muted }]}>{tr(`trip.tier.${status.tier}`)}</Text> : null}
+        {estimated ? (
+          <Text style={[styles.note, { color: t.text }]}>{tr('trip.estimatedNote')}</Text>
+        ) : status.tier ? (
+          <Text style={[styles.note, { color: t.muted }]}>{tr(`trip.tier.${status.tier}`)}</Text>
+        ) : null}
 
         <View style={[styles.rule, { borderColor: t.border }]}>
           <Icon name="bell-ring" size={20} color={t.primary} />

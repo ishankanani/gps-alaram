@@ -21,6 +21,10 @@ export type TripOptions = {
   label: string;
   strength: AlarmStrength;
   useMiles: boolean;
+  /** A demo ride: simulated movement from here to the stop at this speed, instead of GPS. */
+  demoFromLatitude?: number | null;
+  demoFromLongitude?: number | null;
+  demoSpeedMps?: number | null;
 };
 
 export type ActiveTrip = {
@@ -34,6 +38,7 @@ export type ActiveTrip = {
   strength: AlarmStrength;
   useMiles: boolean;
   startedAt: number;
+  demo?: boolean;
 };
 
 export type TripStatus = {
@@ -51,6 +56,8 @@ export type TripStatus = {
   tier?: TrackingTier | null;
   armed?: boolean;
   trigger?: TriggerReason | null;
+  /** No GPS right now: position, distance and ETA are estimated from the last speed. */
+  estimated?: boolean;
 };
 
 export type SetupStatus = {

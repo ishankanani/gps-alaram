@@ -6,9 +6,11 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { TripAlarm, type TripEndedEvent, type TripStatus } from './modules/trip-alarm/src';
 import { deviceLanguage, I18nProvider, translator, type Lang } from './src/i18n';
 import type { Place } from './src/lib/geocode';
+import type { LatLon } from './src/lib/stations/search';
 import type { Preferences } from './src/lib/prefs';
 import { loadData, samePlace, saveData, toggleFavourite, withRecent, type SavedData } from './src/lib/storage';
-import { rememberWake, tripOptions, type WakeOptions } from './src/lib/wake';
+import { EMPTY_TRAIL, extendTrail } from './src/lib/trail';
+import { demoRide, rememberWake, tripOptions, type WakeOptions } from './src/lib/wake';
 import { DoneScreen } from './src/screens/DoneScreen';
 import { HomeScreen } from './src/screens/HomeScreen';
 import { OnboardingScreen } from './src/screens/OnboardingScreen';
@@ -17,7 +19,8 @@ import { SetupScreen, setupReady } from './src/screens/SetupScreen';
 import { TrackingScreen } from './src/screens/TrackingScreen';
 import { useTheme } from './src/ui/theme';
 
-type PendingTrip = { place: Place; wake: WakeOptions };
+/** A trip waiting for setup to finish. With demoFrom set it is a demo ride (simulated movement). */
+type PendingTrip = { place: Place; wake: WakeOptions; demo?: { from: LatLon | null } };
 
 type Screen =
   | { name: 'onboarding' }
@@ -36,6 +39,7 @@ export default function App() {
   const [data, setData] = useState<SavedData>(loadData);
   const [screen, setScreen] = useState<Screen>(() => (loadData().preferences.onboarded ? { name: 'home' } : { name: 'onboarding' }));
   const [status, setStatus] = useState<TripStatus | null>(null);
+  const [trail, setTrail] = useState(EMPTY_TRAIL);
   const [stoppedNotice, setStoppedNotice] = useState(false);
   const [starting, setStarting] = useState(false);
   const tripPlace = useRef<Place | null>(null);
@@ -80,6 +84,7 @@ export default function App() {
     const subs = [
       native.addListener('onStatus', (s) => {
         setStatus(s);
+        setTrail((cur) => extendTrail(cur, s));
         if (isRunning(s)) setScreen((cur) => (cur.name === 'tracking' ? cur : { name: 'tracking' }));
       }),
       native.addListener('onTripEnded', (ended) => {
@@ -108,15 +113,17 @@ export default function App() {
     return () => sub.remove();
   }, [screen.name, data.preferences.onboarded]);
 
-  async function launch({ place, wake }: PendingTrip) {
+  async function launch({ place, wake, demo }: PendingTrip) {
     const native = TripAlarm;
     if (!native) return;
     const preferences = rememberWake(data.preferences, wake);
-    update(withRecent({ ...data, preferences }, place));
+    // A demo ride is a try-out: it does not count as a recent place.
+    update(demo ? { ...data, preferences } : withRecent({ ...data, preferences }, place));
     tripPlace.current = place;
     setStarting(true);
     try {
-      const trip = await native.startTrip(tripOptions(place, wake, preferences.useMiles));
+      const options = tripOptions(place, wake, preferences.useMiles);
+      const trip = await native.startTrip(demo ? { ...options, ...demoRide(place, place.kind ?? 'place', wake, demo.from) } : options);
       setStoppedNotice(false);
       setStatus({ trip, state: 'tracking', health: 'waiting' });
       setScreen({ name: 'tracking' });
@@ -127,9 +134,9 @@ export default function App() {
     }
   }
 
-  function start(place: Place, wake: WakeOptions) {
-    if (setupReady(TripAlarm?.getSetupStatus())) void launch({ place, wake });
-    else setScreen({ name: 'setup', then: { place, wake } });
+  function start(pending: PendingTrip) {
+    if (setupReady(TripAlarm?.getSetupStatus())) void launch(pending);
+    else setScreen({ name: 'setup', then: pending });
   }
 
   /** The destination's kind for the trip map pin, also after the app was restarted mid-trip. */
@@ -141,7 +148,7 @@ export default function App() {
 
   let content;
   if (screen.name === 'tracking' && isRunning(status)) {
-    content = <TrackingScreen status={status} kind={tripKind()} />;
+    content = <TrackingScreen status={status} kind={tripKind()} trail={trail.tripId === status.trip?.id ? trail.points : []} />;
   } else if (screen.name === 'onboarding') {
     content = (
       <OnboardingScreen
@@ -190,7 +197,8 @@ export default function App() {
         starting={starting}
         onDismissNotice={() => setStoppedNotice(false)}
         onToggleFavourite={(place) => update(toggleFavourite(data, place))}
-        onStart={start}
+        onStart={(place, wake) => start({ place, wake })}
+        onDemo={(place, wake, from) => start({ place, wake, demo: { from } })}
         onOpenSettings={() => setScreen({ name: 'settings' })}
       />
     );

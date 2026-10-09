@@ -25,10 +25,12 @@ type Props = {
   onDismissNotice: () => void;
   onToggleFavourite: (place: Place) => void;
   onStart: (place: Place, wake: WakeOptions) => void;
+  /** Try the alarm with a simulated ride to the place, starting from where the user is. */
+  onDemo: (place: Place, wake: WakeOptions, from: LatLon | null) => void;
   onOpenSettings: () => void;
 };
 
-export function HomeScreen({ data, notice, starting, onDismissNotice, onToggleFavourite, onStart, onOpenSettings }: Props) {
+export function HomeScreen({ data, notice, starting, onDismissNotice, onToggleFavourite, onStart, onDemo, onOpenSettings }: Props) {
   const t = useTheme();
   const { t: tr, lang } = useI18n();
   const insets = useSafeAreaInsets();
@@ -222,6 +224,7 @@ export function HomeScreen({ data, notice, starting, onDismissNotice, onToggleFa
           onToggleFavourite={() => onToggleFavourite(selected)}
           onClose={() => setSelected(null)}
           onStart={() => onStart(selected, wake)}
+          onDemo={() => onDemo(selected, wake, user)}
           starting={starting}
           onLayoutHeight={setSheetHeight}
         />

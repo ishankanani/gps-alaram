@@ -171,6 +171,35 @@ class TripEngineTest {
   }
 
   @Test
+  fun `without GPS the position is estimated towards the stop at the last speed`() {
+    val target = TripSimulator.pointAlong(10_000.0)
+    val engine = TripEngine(TripConfig(target.first, target.second, 300.0), startedAtMs = 0)
+    var t = 0L
+    var along = 0.0
+    // A minute at 20 m/s with GPS, then into a tunnel at 1.2 km.
+    while (along <= 1_200.0) {
+      val p = TripSimulator.pointAlong(along)
+      val s = engine.onFix(Fix(p.first, p.second, 8.0, t, speedMps = 20.0)).status
+      assertFalse(s.estimated)
+      along += 100.0
+      t += 5_000
+    }
+    val lastFixAt = t - 5_000
+    // Before the signal counts as lost, the map keeps the last fix.
+    assertFalse(engine.status(lastFixAt + 30_000).estimated)
+    val lostAt = engine.nextCheckAtMs()!!
+    engine.onTick(lostAt)
+    val s = engine.status(lostAt + 20_000)
+    assertTrue(s.estimated)
+    val expected = 10_000.0 - 1_200.0 - 20.0 * (lostAt + 20_000 - lastFixAt) / 1000.0
+    assertTrue(kotlin.math.abs(s.distanceM!! - expected) < 50.0, "estimated ${s.distanceM}, expected $expected")
+    // The estimate lies on the way to the stop and stops at the stop.
+    val far = engine.status(lostAt + 3_600_000)
+    assertEquals(0.0, far.distanceM!!, 1.0)
+    assertEquals(target.first, far.latitude!!, 1e-6)
+  }
+
+  @Test
   fun `keep tracking after an uncertain alarm watches again from here`() {
     val target = TripSimulator.pointAlong(10_000.0, sideM = 1_000.0)
     val engine = TripEngine(TripConfig(target.first, target.second, 300.0), startedAtMs = 0)

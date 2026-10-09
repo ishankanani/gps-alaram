@@ -21,6 +21,8 @@ type Props = {
   onToggleFavourite: () => void;
   onClose: () => void;
   onStart: () => void;
+  /** Start a demo ride: simulated movement to this place, to see and hear the alarm. */
+  onDemo: () => void;
   starting: boolean;
   onLayoutHeight: (height: number) => void;
 };
@@ -35,6 +37,7 @@ export function PlaceSheet({
   onToggleFavourite,
   onClose,
   onStart,
+  onDemo,
   starting,
   onLayoutHeight,
 }: Props) {
@@ -175,6 +178,12 @@ export function PlaceSheet({
               ]}
             />
             <Text style={[styles.small, { color: t.muted }]}>{tr(`strength.${wake.strength}.body`)}</Text>
+            {!leave ? (
+              <View style={[styles.demo, { backgroundColor: t.primarySoft }]}>
+                <Text style={[styles.small, { color: t.text }]}>{tr('place.demoBody')}</Text>
+                <Button title={tr('place.demo')} kind="secondary" icon="play-circle-outline" compact onPress={onDemo} busy={starting} />
+              </View>
+            ) : null}
           </View>
         ) : null}
       </ScrollView>
@@ -216,4 +225,5 @@ const styles = StyleSheet.create({
   link: { fontSize: 15, fontWeight: '700' },
   moreToggle: { flexDirection: 'row', alignItems: 'center', gap: 4, alignSelf: 'flex-start' },
   more: { gap: 12 },
+  demo: { gap: 10, padding: 12, borderRadius: radius.md },
 });

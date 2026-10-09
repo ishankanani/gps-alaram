@@ -19,12 +19,14 @@ import android.os.SystemClock
 import android.util.Log
 import com.ishankanani.gpsalarm.tripalarm.engine.EngineUpdate
 import com.ishankanani.gpsalarm.tripalarm.engine.Fix
+import com.ishankanani.gpsalarm.tripalarm.engine.Geo
 import com.ishankanani.gpsalarm.tripalarm.engine.Tier
 import com.ishankanani.gpsalarm.tripalarm.engine.TrackingPlan
 import com.ishankanani.gpsalarm.tripalarm.engine.TripEngine
 import com.ishankanani.gpsalarm.tripalarm.engine.TripStatus
 import org.json.JSONObject
 import kotlin.math.max
+import kotlin.math.min
 
 /**
  * Runs a trip end to end without JavaScript: location updates, the trip engine, the watchdog
@@ -53,6 +55,9 @@ class TripService : Service() {
   private val gpsListener = Listener()
   private val networkListener = Listener()
   private val tickRunnable = Runnable { tick() }
+  private val refreshRunnable = Runnable { refreshEstimate() }
+  private val demoRunnable = Runnable { feedDemo() }
+  private var demoStartedMs = 0L
 
   val currentTrip: ActiveTrip? get() = trip
   val currentStatus: TripStatus? get() = lastStatus
@@ -117,6 +122,10 @@ class TripService : Service() {
     Notifications.cancel(this, Notifications.ID_ALARM)
     Notifications.cancel(this, Notifications.ID_WARNING)
     applyPlan()
+    if (newTrip.isDemo) {
+      demoStartedMs = now
+      handler.post(demoRunnable)
+    }
     scheduleWatchdog()
     emitStatus()
   }
@@ -125,7 +134,9 @@ class TripService : Service() {
   private fun restore() {
     if (trip != null) return
     val saved = TripStore.load(this)
-    if (saved == null) {
+    if (saved == null || saved.first.isDemo) {
+      // A demo ride that was interrupted is simply over.
+      if (saved != null) TripStore.clear(this)
       stopSelf()
       return
     }
@@ -224,6 +235,11 @@ class TripService : Service() {
     if (plan == requestedPlan) return
     stopLocationUpdates()
     requestedPlan = plan
+    if (trip?.isDemo == true) {
+      // A demo ride feeds simulated fixes through the same engine instead of using GPS.
+      if (plan.holdWakeLock) acquireWakeLock() else releaseWakeLock()
+      return
+    }
     val providers = locationManager.allProviders
     try {
       val gpsInterval = plan.gpsIntervalMs
@@ -267,6 +283,27 @@ class TripService : Service() {
     val update = e.onFix(fix)
     log?.fix(SystemClock.elapsedRealtime(), fix, update.status)
     handle(update)
+  }
+
+  /** One simulated fix a second, along the straight line from the demo start to the stop. */
+  private fun feedDemo() {
+    val t = trip ?: return
+    val fromLat = t.demoFromLat ?: return
+    val fromLon = t.demoFromLon ?: return
+    val speed = t.demoSpeedMps ?: return
+    val total = Geo.distanceM(fromLat, fromLon, t.latitude, t.longitude)
+    val travelled = min(total, speed * (SystemClock.elapsedRealtime() - demoStartedMs) / 1000.0)
+    val f = if (total > 0.0) travelled / total else 1.0
+    val location = Location(LocationManager.GPS_PROVIDER).apply {
+      latitude = fromLat + (t.latitude - fromLat) * f
+      longitude = fromLon + (t.longitude - fromLon) * f
+      accuracy = 5f
+      this.speed = if (travelled < total) speed.toFloat() else 0f
+      time = System.currentTimeMillis()
+      elapsedRealtimeNanos = SystemClock.elapsedRealtimeNanos()
+    }
+    if (state == TripState.TRACKING) onLocation(location)
+    handler.postDelayed(demoRunnable, DEMO_INTERVAL_MS)
   }
 
   private fun onProviderOff() {
@@ -330,7 +367,21 @@ class TripService : Service() {
       updateTripNotification(currentTrip, force = update.planChanged || update.signalLost || update.signalRecovered)
       scheduleWatchdog()
     }
+    handler.removeCallbacks(refreshRunnable)
+    if (state == TripState.TRACKING && update.status.estimated) handler.postDelayed(refreshRunnable, ESTIMATE_REFRESH_MS)
     emitStatus()
+  }
+
+  /** Without GPS (a tunnel, an underground station) the estimated position moves on: show it. */
+  private fun refreshEstimate() {
+    val e = engine ?: return
+    val currentTrip = trip ?: return
+    if (state != TripState.TRACKING) return
+    val status = e.status(SystemClock.elapsedRealtime())
+    lastStatus = status
+    updateTripNotification(currentTrip, force = false)
+    emitStatus()
+    if (status.estimated) handler.postDelayed(refreshRunnable, ESTIMATE_REFRESH_MS)
   }
 
   private fun scheduleWatchdog() {
@@ -501,6 +552,7 @@ class TripService : Service() {
       "tier" to (s?.tier?.name?.lowercase() ?: engine?.plan?.tier?.name?.lowercase()),
       "armed" to (s?.armed ?: true),
       "trigger" to lastTrigger,
+      "estimated" to (s?.estimated ?: false),
     )
   }
 
@@ -524,6 +576,8 @@ class TripService : Service() {
     private const val TAG = "TripService"
     private const val NOTIFICATION_THROTTLE_MS = 5_000L
     private const val SNOOZE_MS = 60_000L
+    private const val ESTIMATE_REFRESH_MS = 3_000L
+    private const val DEMO_INTERVAL_MS = 1_000L
     private const val WAKE_LOCK_MAX_MS = 3 * 60 * 60_000L
 
     const val ACTION_START = "com.ishankanani.gpsalarm.tripalarm.START"

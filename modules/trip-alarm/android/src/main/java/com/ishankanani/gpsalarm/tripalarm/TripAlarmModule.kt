@@ -32,6 +32,10 @@ class TripOptions(
   @Field var label: String = "",
   @Field var strength: String = "normal",
   @Field var useMiles: Boolean = false,
+  /** Set all three for a demo ride: simulated movement from this point instead of GPS. */
+  @Field var demoFromLatitude: Double? = null,
+  @Field var demoFromLongitude: Double? = null,
+  @Field var demoSpeedMps: Double? = null,
 ) : Record
 
 class PreciseLocationRequiredException :
@@ -162,6 +166,9 @@ class TripAlarmModule : Module() {
       strength = AlarmStrength.parse(options.strength),
       useMiles = options.useMiles,
       startedAtWallMs = now,
+      demoFromLat = options.demoFromLatitude?.takeIf { it in -90.0..90.0 },
+      demoFromLon = options.demoFromLongitude?.takeIf { it in -180.0..180.0 },
+      demoSpeedMps = options.demoSpeedMps?.takeIf { it in 1.0..100.0 },
     )
     TripService.start(ctx, trip)
     return trip.toMap()

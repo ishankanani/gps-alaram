@@ -50,6 +50,11 @@ export const hi: Strings = {
   'place.ruleLeave': '{distance} से ज़्यादा दूर जाने पर बजेगा',
   'place.shortTrainWarning': 'ट्रेन में {distance} बस कुछ सेकंड होते हैं, फिर दरवाज़े खुल जाते हैं। कुछ मिनट पहले जगना ज़्यादा सुरक्षित है।',
   'place.useTime': 'इसकी जगह 2 मिनट',
+  'place.demo': 'डेमो यात्रा आज़माएँ',
+  'place.demoBody': 'इस स्टॉप तक की यात्रा एक मिनट से कम में सिम्युलेट करता है, ताकि असली यात्रा से पहले आप अलार्म देख और सुन सकें।',
+  'trip.demo': 'डेमो यात्रा:',
+  'trip.gps.estimating': 'GPS नहीं: अनुमान',
+  'trip.estimatedNote': 'अभी GPS नहीं है (सुरंग या भूमिगत)। आपकी स्थिति आपकी गति से अनुमानित है, और अलार्म इसी अनुमान से बजेगा।',
   'place.moreOptions': 'और विकल्प',
   'place.fewerOptions': 'कम विकल्प',
 

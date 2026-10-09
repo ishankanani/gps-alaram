@@ -8,7 +8,7 @@ import {
   type CameraRef,
   type PressEventWithFeatures,
 } from '@maplibre/maplibre-react-native';
-import type { ExpressionSpecification } from '@maplibre/maplibre-gl-style-spec';
+import type { ExpressionSpecification, SymbolLayerSpecification } from '@maplibre/maplibre-gl-style-spec';
 import { useImperativeHandle, useMemo, useRef, useState, type Ref } from 'react';
 import { StyleSheet, View, type NativeSyntheticEvent } from 'react-native';
 
@@ -40,6 +40,16 @@ type Props = {
   onLongPress: (latitude: number, longitude: number) => void;
   onViewChange: (bounds: Bounds, zoom: number) => void;
 };
+
+/** Stop name under its dot. */
+const LABEL = {
+  'text-field': ['get', 'title'],
+  'text-offset': [0, 1],
+  'text-anchor': 'top',
+  'text-max-width': 9,
+  'text-optional': true,
+  'symbol-sort-key': ['-', 0, ['get', 'rank']],
+} satisfies SymbolLayerSpecification['layout'];
 
 const STOP_RADIUS: ExpressionSpecification = [
   'interpolate',
@@ -149,35 +159,31 @@ export function HomeMap({
             'circle-stroke-color': '#FFFFFF',
           }}
         />
+        {/* Names for every stop: big stations first, the rest as you zoom in. On a collision the
+            more important stop keeps its name; the dot always stays. */}
         <Layer
-          id="stops-label-big"
+          id="stops-label-major"
           type="symbol"
-          minzoom={10.5}
-          filter={['>=', ['get', 'rank'], 250]}
-          layout={{
-            'text-field': ['get', 'title'],
-            'text-font': ['Noto Sans Bold'],
-            'text-size': 13,
-            'text-offset': [0, 1.1],
-            'text-anchor': 'top',
-            'text-optional': true,
-          }}
+          minzoom={9.5}
+          filter={['>=', ['get', 'rank'], 380]}
+          layout={{ ...LABEL, 'text-font': ['Noto Sans Bold'], 'text-size': 14 }}
+          paint={{ 'text-color': '#111827', 'text-halo-color': '#FFFFFF', 'text-halo-width': 1.8 }}
+        />
+        <Layer
+          id="stops-label-mid"
+          type="symbol"
+          minzoom={12}
+          filter={['all', ['>=', ['get', 'rank'], 200], ['<', ['get', 'rank'], 380]]}
+          layout={{ ...LABEL, 'text-font': ['Noto Sans Bold'], 'text-size': 12.5 }}
           paint={{ 'text-color': '#1F2937', 'text-halo-color': '#FFFFFF', 'text-halo-width': 1.6 }}
         />
         <Layer
-          id="stops-label"
+          id="stops-label-minor"
           type="symbol"
-          minzoom={15.5}
-          filter={['<', ['get', 'rank'], 250]}
-          layout={{
-            'text-field': ['get', 'title'],
-            'text-font': ['Noto Sans Regular'],
-            'text-size': 12,
-            'text-offset': [0, 1],
-            'text-anchor': 'top',
-            'text-optional': true,
-          }}
-          paint={{ 'text-color': '#374151', 'text-halo-color': '#FFFFFF', 'text-halo-width': 1.4 }}
+          minzoom={14}
+          filter={['<', ['get', 'rank'], 200]}
+          layout={{ ...LABEL, 'text-font': ['Noto Sans Regular'], 'text-size': 12 }}
+          paint={{ 'text-color': '#374151', 'text-halo-color': '#FFFFFF', 'text-halo-width': 1.5 }}
         />
       </GeoJSONSource>
 
