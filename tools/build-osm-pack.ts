@@ -178,19 +178,15 @@ function baseKey(name: string): string {
 }
 
 /**
- * Merges elements of one base name into stops: the same name within MERGE_DISTANCE_M, or the same
- * name apart from a note in brackets within half of that.
+ * Merges elements of one base name (the name without a note in brackets) into stops: within
+ * MERGE_DISTANCE_M, or RAIL_MERGE_DISTANCE_M for two railway stops.
  */
 function mergeSameName(elements: Stop[]): Stop[] {
   const sorted = [...elements].sort((a, b) => importance(b) - importance(a));
   const stops: Stop[] = [];
   for (const e of sorted) {
     const k = key(e.name);
-    const into = stops.find((s) => {
-      const d = distanceM(s, e);
-      const limit = isRail(s) && isRail(e) ? RAIL_MERGE_DISTANCE_M : MERGE_DISTANCE_M;
-      return d <= MERGE_DISTANCE_M / 2 || (d <= limit && key(s.name) === k);
-    });
+    const into = stops.find((s) => distanceM(s, e) <= (isRail(s) && isRail(e) ? RAIL_MERGE_DISTANCE_M : MERGE_DISTANCE_M));
     if (!into) {
       stops.push(e);
       continue;
@@ -205,40 +201,40 @@ function mergeSameName(elements: Stop[]): Stop[] {
   return stops;
 }
 
-/** "Hauptbahnhof" tram stop next to the "Wien Hauptbahnhof" station is the same place. */
+/**
+ * "Hauptbahnhof" tram stop next to the "Wien Hauptbahnhof" station is the same place, and so is the
+ * "Praterstern" U-Bahn station next to "Wien Praterstern": the smaller one joins the bigger one.
+ */
 function absorbIntoStations(stops: Stop[]): Stop[] {
   const cell = 0.01;
-  const cellOf = (s: Stop) => `${Math.floor(s.lat / cell)},${Math.floor(s.lon / cell)}`;
+  const cellOf = (s: Stop) => [Math.floor(s.lat / cell), Math.floor(s.lon / cell)];
   const stations = new Map<string, Stop[]>();
-  for (const s of stops) {
-    if (!s.station) continue;
-    const c = cellOf(s);
-    const list = stations.get(c);
-    if (list) list.push(s);
-    else stations.set(c, [s]);
-  }
   const kept: Stop[] = [];
-  for (const s of stops) {
-    if (s.station) {
-      kept.push(s);
-      continue;
-    }
-    const [cy, cx] = cellOf(s).split(',').map(Number);
-    let target: Stop | null = null;
+  // Stations first, biggest first, so a stop always joins the most important match.
+  for (const s of [...stops].sort((a, b) => importance(b) - importance(a))) {
+    const [cy, cx] = cellOf(s);
     const name = key(s.name);
+    let target: Stop | null = null;
     for (let dy = -1; dy <= 1 && !target; dy++) {
       for (let dx = -1; dx <= 1 && !target; dx++) {
-        for (const st of stations.get(`${cy + dy},${cx + dx}`) ?? []) {
-          const stName = key(st.name);
-          if ((stName.includes(name) || name.includes(stName)) && distanceM(st, s) <= STATION_ABSORB_M) {
-            target = st;
-            break;
-          }
-        }
+        target =
+          stations.get(`${cy + dy},${cx + dx}`)?.find((st) => {
+            const stName = key(st.name);
+            return (stName.includes(name) || name.includes(stName)) && distanceM(st, s) <= STATION_ABSORB_M;
+          }) ?? null;
       }
     }
-    if (target) absorb(target, s);
-    else kept.push(s);
+    if (target) {
+      absorb(target, s);
+      continue;
+    }
+    kept.push(s);
+    if (s.station) {
+      const c = `${cy},${cx}`;
+      const list = stations.get(c);
+      if (list) list.push(s);
+      else stations.set(c, [s]);
+    }
   }
   return kept;
 }

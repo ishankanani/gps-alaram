@@ -245,6 +245,8 @@ export async function installPack(id: string): Promise<void> {
     if (previous && previous.file !== name) await closeAndDelete(previous.file);
   } catch {
     setState({ failed: { ...state.failed, [id]: true } });
+    // The pack may have been rebuilt since the list was loaded: the next try uses the new list.
+    void refreshAvailable();
     for (const f of [gz, part]) {
       try {
         if (f.exists) f.delete();
