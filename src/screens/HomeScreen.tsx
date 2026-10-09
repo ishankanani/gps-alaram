@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useI18n } from '../i18n';
 import { reversePlace, type Place } from '../lib/geocode';
+import type { ProReason } from '../lib/plans';
 import type { Preferences, SavedData } from '../lib/prefs';
 import { formatBytes } from '../lib/format';
 import { installPack, stopSources, usePacks } from '../lib/stations/packs';
@@ -33,6 +34,7 @@ type Props = {
   onDemo: (place: Place, wake: WakeOptions, from: LatLon | null) => void;
   onOpenSettings: () => void;
   onOpenCountries: () => void;
+  onOpenPro: (reason: ProReason) => void;
 };
 
 /** From this zoom on, the map shows a place the user looks at: offer that country's stops. */
@@ -48,6 +50,7 @@ export function HomeScreen({
   onDemo,
   onOpenSettings,
   onOpenCountries,
+  onOpenPro,
 }: Props) {
   const t = useTheme();
   const { t: tr, lang } = useI18n();
@@ -311,6 +314,7 @@ export function HomeScreen({
           onClose={() => setSelected(null)}
           onStart={() => onStart(selected, wake)}
           onDemo={() => onDemo(selected, wake, user)}
+          onNeedPro={() => onOpenPro('heavy')}
           starting={starting}
           onLayoutHeight={setSheetHeight}
         />

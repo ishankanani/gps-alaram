@@ -2,12 +2,15 @@ import { useEffect, useState } from 'react';
 import { Animated, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import type { AlarmMode, AlarmStrength } from '../../../modules/trip-alarm/src';
+import type { AlarmMode } from '../../../modules/trip-alarm/src';
 import { useI18n } from '../../i18n';
 import { formatDistance, formatRadius } from '../../lib/format';
 import type { Place } from '../../lib/geocode';
+import { effectiveStrength } from '../../lib/plans';
+import { usePro } from '../../lib/pro';
 import { DISTANCE_CHOICES, MINUTE_CHOICES, tooShortForTrain, type WakeOptions } from '../../lib/wake';
 import { Button, Chip, Icon, IconButton, KindIcon, Label, ModeBadges, Segmented } from '../../ui/components';
+import { StrengthPicker } from '../../ui/StrengthPicker';
 import { radius, useTheme } from '../../ui/theme';
 
 type Props = {
@@ -23,6 +26,8 @@ type Props = {
   onStart: () => void;
   /** Start a demo ride: simulated movement to this place, to see and hear the alarm. */
   onDemo: () => void;
+  /** Opens the paywall for Heavy sleeper. */
+  onNeedPro: () => void;
   starting: boolean;
   onLayoutHeight: (height: number) => void;
 };
@@ -38,9 +43,11 @@ export function PlaceSheet({
   onClose,
   onStart,
   onDemo,
+  onNeedPro,
   starting,
   onLayoutHeight,
 }: Props) {
+  const { isPro } = usePro();
   const t = useTheme();
   const { t: tr, lang } = useI18n();
   const insets = useSafeAreaInsets();
@@ -168,16 +175,8 @@ export function PlaceSheet({
               ]}
             />
             <Label>{tr('place.alarm')}</Label>
-            <Segmented<AlarmStrength>
-              value={wake.strength}
-              onChange={(strength) => onChange({ ...wake, strength })}
-              options={[
-                { value: 'gentle', label: tr('strength.gentle') },
-                { value: 'normal', label: tr('strength.normal') },
-                { value: 'heavy', label: tr('strength.heavy') },
-              ]}
-            />
-            <Text style={[styles.small, { color: t.muted }]}>{tr(`strength.${wake.strength}.body`)}</Text>
+            <StrengthPicker value={wake.strength} onChange={(strength) => onChange({ ...wake, strength })} onNeedPro={onNeedPro} />
+            <Text style={[styles.small, { color: t.muted }]}>{tr(`strength.${effectiveStrength(wake.strength, isPro)}.body`)}</Text>
             {!leave ? (
               <View style={[styles.demo, { backgroundColor: t.primarySoft }]}>
                 <Text style={[styles.small, { color: t.text }]}>{tr('place.demoBody')}</Text>

@@ -2,10 +2,12 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import app from '../../app.json';
-import type { AlarmStrength } from '../../modules/trip-alarm/src';
 import { LANGUAGES, useI18n, type Lang } from '../i18n';
+import { effectiveStrength, type ProReason } from '../lib/plans';
 import type { Preferences } from '../lib/prefs';
+import { storeConnected, usePro } from '../lib/pro';
 import { Body, Card, Divider, Icon, IconButton, Label, Row, Segmented, Title } from '../ui/components';
+import { StrengthPicker } from '../ui/StrengthPicker';
 import { radius, useTheme } from '../ui/theme';
 import { OfflineMapCard } from './settings/OfflineMapCard';
 
@@ -14,13 +16,15 @@ type Props = {
   onChange: (prefs: Preferences) => void;
   onOpenSetup: () => void;
   onOpenCountries: () => void;
+  onOpenPro: (reason: ProReason) => void;
   onBack: () => void;
 };
 
-export function SettingsScreen({ preferences, onChange, onOpenSetup, onOpenCountries, onBack }: Props) {
+export function SettingsScreen({ preferences, onChange, onOpenSetup, onOpenCountries, onOpenPro, onBack }: Props) {
   const t = useTheme();
   const { t: tr, lang } = useI18n();
   const insets = useSafeAreaInsets();
+  const pro = usePro();
 
   return (
     <ScrollView
@@ -28,6 +32,19 @@ export function SettingsScreen({ preferences, onChange, onOpenSetup, onOpenCount
       contentContainerStyle={[styles.root, { paddingTop: insets.top + 12, paddingBottom: insets.bottom + 24 }]}>
       <IconButton icon="arrow-left" label={tr('common.back')} onPress={onBack} size={44} />
       <Title>{tr('settings.title')}</Title>
+
+      <Card>
+        <Row
+          leading={
+            <View style={[styles.rowIcon, { backgroundColor: t.accent }]}>
+              <Icon name="crown" size={22} color={t.onAccent} />
+            </View>
+          }
+          title={tr('settings.pro')}
+          subtitle={pro.isPro && storeConnected ? tr('settings.proActive') : tr('settings.proBody')}
+          onPress={() => onOpenPro(null)}
+        />
+      </Card>
 
       <Card>
         <Label>{tr('settings.language')}</Label>
@@ -53,16 +70,12 @@ export function SettingsScreen({ preferences, onChange, onOpenSetup, onOpenCount
 
       <Card>
         <Label>{tr('settings.alarm')}</Label>
-        <Segmented<AlarmStrength>
+        <StrengthPicker
           value={preferences.strength}
           onChange={(strength) => onChange({ ...preferences, strength })}
-          options={[
-            { value: 'gentle', label: tr('strength.gentle') },
-            { value: 'normal', label: tr('strength.normal') },
-            { value: 'heavy', label: tr('strength.heavy') },
-          ]}
+          onNeedPro={() => onOpenPro('heavy')}
         />
-        <Body muted>{tr(`strength.${preferences.strength}.body`)}</Body>
+        <Body muted>{tr(`strength.${effectiveStrength(preferences.strength, pro.isPro)}.body`)}</Body>
       </Card>
 
       <Card>
@@ -78,7 +91,7 @@ export function SettingsScreen({ preferences, onChange, onOpenSetup, onOpenCount
         />
       </Card>
 
-      <OfflineMapCard />
+      <OfflineMapCard onNeedPro={() => onOpenPro('offlineMap')} />
 
       <Card>
         <Row

@@ -7,13 +7,16 @@ import { TripAlarm, type TripEndedEvent, type TripStatus } from './modules/trip-
 import { deviceLanguage, I18nProvider, translator, type Lang } from './src/i18n';
 import type { Place } from './src/lib/geocode';
 import type { LatLon } from './src/lib/stations/search';
+import { canAddFavourite, effectiveStrength, type ProReason } from './src/lib/plans';
 import type { Preferences } from './src/lib/prefs';
+import { startPro, usePro } from './src/lib/pro';
 import { loadData, samePlace, saveData, toggleFavourite, withRecent, type SavedData } from './src/lib/storage';
 import { EMPTY_TRAIL, extendTrail } from './src/lib/trail';
 import { demoRide, rememberWake, tripOptions, type WakeOptions } from './src/lib/wake';
 import { DoneScreen } from './src/screens/DoneScreen';
 import { HomeScreen } from './src/screens/HomeScreen';
 import { OnboardingScreen } from './src/screens/OnboardingScreen';
+import { ProScreen } from './src/screens/ProScreen';
 import { CountriesScreen } from './src/screens/CountriesScreen';
 import { SettingsScreen } from './src/screens/SettingsScreen';
 import { SetupScreen, setupReady } from './src/screens/SetupScreen';
@@ -29,8 +32,15 @@ type Screen =
   | { name: 'home' }
   | { name: 'settings' }
   | { name: 'countries'; from: 'home' | 'settings' }
+  | { name: 'pro'; reason: ProReason; from: 'home' | 'settings' | 'done' }
   | { name: 'tracking' }
   | { name: 'done'; ended: TripEndedEvent; place: Place | null };
+
+/** Where Back goes from a screen opened from home or settings. */
+function backFrom(from: 'home' | 'settings' | 'done'): Screen {
+  // The trip summary has been seen; go home rather than back to it.
+  return from === 'settings' ? { name: 'settings' } : { name: 'home' };
+}
 
 function isRunning(status: TripStatus | null): status is TripStatus {
   return !!status?.trip && status.state !== 'stopped';
@@ -45,11 +55,14 @@ export default function App() {
   const [stoppedNotice, setStoppedNotice] = useState(false);
   const [starting, setStarting] = useState(false);
   const tripPlace = useRef<Place | null>(null);
+  const pro = usePro();
 
   const deviceLang = useMemo(deviceLanguage, []);
   const lang: Lang = data.preferences.language ?? deviceLang;
   const i18n = useMemo(() => ({ lang, t: translator(lang) }), [lang]);
   const tr = i18n.t;
+
+  useEffect(startPro, []);
 
   // The alarm screen and notifications are native: tell them the language too.
   useEffect(() => {
@@ -106,8 +119,8 @@ export default function App() {
   // Android back: go home from secondary screens; never leave a running trip by accident.
   useEffect(() => {
     const sub = BackHandler.addEventListener('hardwareBackPress', () => {
-      if (screen.name === 'countries') {
-        setScreen(screen.from === 'home' ? { name: 'home' } : { name: 'settings' });
+      if (screen.name === 'countries' || screen.name === 'pro') {
+        setScreen(backFrom(screen.from));
         return true;
       }
       if (screen.name === 'settings' || screen.name === 'done' || (screen.name === 'setup' && data.preferences.onboarded)) {
@@ -119,9 +132,20 @@ export default function App() {
     return () => sub.remove();
   }, [screen, data.preferences.onboarded]);
 
-  async function launch({ place, wake, demo }: PendingTrip) {
+  /** Adds or removes a favourite; the free version keeps FREE_FAVOURITES. */
+  function toggleFavouriteOrPay(place: Place, from: 'home' | 'done') {
+    const adding = !data.favourites.some((f) => samePlace(f, place));
+    if (adding && !canAddFavourite(data.favourites.length, pro.isPro)) {
+      setScreen({ name: 'pro', reason: 'favourites', from });
+      return;
+    }
+    update(toggleFavourite(data, place));
+  }
+
+  async function launch({ place, wake: chosen, demo }: PendingTrip) {
     const native = TripAlarm;
     if (!native) return;
+    const wake = { ...chosen, strength: effectiveStrength(chosen.strength, pro.isPro) };
     const preferences = rememberWake(data.preferences, wake);
     // A demo ride is a try-out: it does not count as a recent place.
     update(demo ? { ...data, preferences } : withRecent({ ...data, preferences }, place));
@@ -182,12 +206,16 @@ export default function App() {
         onChange={setPreferences}
         onOpenSetup={() => setScreen({ name: 'setup', then: null })}
         onOpenCountries={() => setScreen({ name: 'countries', from: 'settings' })}
+        onOpenPro={(reason) => setScreen({ name: 'pro', reason, from: 'settings' })}
         onBack={() => setScreen({ name: 'home' })}
       />
     );
   } else if (screen.name === 'countries') {
-    const back: Screen = screen.from === 'home' ? { name: 'home' } : { name: 'settings' };
+    const back = backFrom(screen.from);
     content = <CountriesScreen onBack={() => setScreen(back)} />;
+  } else if (screen.name === 'pro') {
+    const back = backFrom(screen.from);
+    content = <ProScreen reason={screen.reason} onBack={() => setScreen(back)} />;
   } else if (screen.name === 'done') {
     const place = screen.place;
     content = (
@@ -195,7 +223,7 @@ export default function App() {
         ended={screen.ended}
         place={place}
         isFavourite={!!place && data.favourites.some((f) => samePlace(f, place))}
-        onSaveFavourite={() => place && update(toggleFavourite(data, place))}
+        onSaveFavourite={() => place && toggleFavouriteOrPay(place, 'done')}
         onDone={() => setScreen({ name: 'home' })}
       />
     );
@@ -206,11 +234,12 @@ export default function App() {
         notice={stoppedNotice ? tr('home.stoppedNotice') : null}
         starting={starting}
         onDismissNotice={() => setStoppedNotice(false)}
-        onToggleFavourite={(place) => update(toggleFavourite(data, place))}
+        onToggleFavourite={(place) => toggleFavouriteOrPay(place, 'home')}
         onStart={(place, wake) => start({ place, wake })}
         onDemo={(place, wake, from) => start({ place, wake, demo: { from } })}
         onOpenSettings={() => setScreen({ name: 'settings' })}
         onOpenCountries={() => setScreen({ name: 'countries', from: 'home' })}
+        onOpenPro={(reason) => setScreen({ name: 'pro', reason, from: 'home' })}
       />
     );
   }

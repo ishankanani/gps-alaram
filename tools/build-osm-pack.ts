@@ -28,6 +28,8 @@ type Element = {
   station: boolean;
   en: string | null;
   alt: string[];
+  area: number | null;
+  area_name: string | null;
   place: string | null;
   place_en: string | null;
 };
@@ -41,12 +43,18 @@ type Stop = {
   station: boolean;
   en: string | null;
   aliases: Set<string>;
+  area: number | null;
+  areaName: string | null;
   place: string | null;
   placeEn: string | null;
 };
 
 /** Entries with the same name closer than this are one stop. */
 const MERGE_DISTANCE_M = 400;
+/** Railway stations are longer: their platforms and entrances can be this far apart. */
+const RAIL_MERGE_DISTANCE_M = 800;
+/** Parts of one stop area (a station with its platforms, bus stops and entrances) within this. */
+const AREA_MERGE_DISTANCE_M = 1000;
 /** A stop this close to a station whose name contains its own (or the other way round) is part of it. */
 const STATION_ABSORB_M = 250;
 
@@ -107,6 +115,8 @@ function toStop(e: Element): Stop {
     station: e.station,
     en: e.en,
     aliases: new Set(e.alt),
+    area: e.area ?? null,
+    areaName: e.area_name ?? null,
     place: e.place,
     placeEn: e.place_en,
   };
@@ -126,6 +136,42 @@ function importance(s: Stop): number {
   return (s.station ? 1e6 : 0) + s.routes.size;
 }
 
+function isRail(s: Stop): boolean {
+  return s.modes.has('train') || s.modes.has('suburban') || s.modes.has('metro');
+}
+
+/**
+ * OpenStreetMap groups the parts of a station or stop in a stop area: the station, its
+ * platforms, the bus stops in front. They become one stop, named after the station or the area.
+ */
+function mergeStopAreas(all: Stop[]): Stop[] {
+  const out: Stop[] = [];
+  const areas = new Map<number, Stop[]>();
+  for (const s of all) {
+    if (s.area == null) {
+      out.push(s);
+      continue;
+    }
+    const group = areas.get(s.area);
+    if (group) group.push(s);
+    else areas.set(s.area, [s]);
+  }
+  for (const group of areas.values()) {
+    group.sort((a, b) => importance(b) - importance(a));
+    const [main, ...rest] = group;
+    for (const s of rest) {
+      if (distanceM(main, s) <= AREA_MERGE_DISTANCE_M) absorb(main, s);
+      else out.push(s);
+    }
+    if (!main.station && main.areaName && key(main.areaName) !== key(main.name)) {
+      main.aliases.add(main.name);
+      main.name = main.areaName;
+    }
+    out.push(main);
+  }
+  return out;
+}
+
 /** "Place d'Armes (Port)" and "Place d'Armes (TAM)" are platforms of "Place d'Armes". */
 function baseKey(name: string): string {
   return key(name.replace(/\s*\([^)]*\)\s*$/, '')) || key(name);
@@ -142,7 +188,8 @@ function mergeSameName(elements: Stop[]): Stop[] {
     const k = key(e.name);
     const into = stops.find((s) => {
       const d = distanceM(s, e);
-      return d <= MERGE_DISTANCE_M / 2 || (d <= MERGE_DISTANCE_M && key(s.name) === k);
+      const limit = isRail(s) && isRail(e) ? RAIL_MERGE_DISTANCE_M : MERGE_DISTANCE_M;
+      return d <= MERGE_DISTANCE_M / 2 || (d <= limit && key(s.name) === k);
     });
     if (!into) {
       stops.push(e);
@@ -212,14 +259,20 @@ export function displayName(s: Pick<Stop, 'name' | 'en' | 'place' | 'placeEn'>):
   return `${title}, ${place}`;
 }
 
-async function readElements(path: string): Promise<Map<string, Stop[]>> {
-  const byName = new Map<string, Stop[]>();
+async function readElements(path: string): Promise<Stop[]> {
+  const stops: Stop[] = [];
   const lines = createInterface({ input: createReadStream(path, 'utf8'), crlfDelay: Infinity });
   for await (const line of lines) {
     if (!line.trim()) continue;
     const e = JSON.parse(line) as Element;
-    if (!e.name?.trim()) continue;
-    const stop = toStop(e);
+    if (e.name?.trim()) stops.push(toStop(e));
+  }
+  return stops;
+}
+
+function byBaseName(stops: Stop[]): Map<string, Stop[]> {
+  const byName = new Map<string, Stop[]>();
+  for (const stop of stops) {
     const k = baseKey(stop.name);
     const group = byName.get(k);
     if (group) group.push(stop);
@@ -232,13 +285,10 @@ async function readElements(path: string): Promise<Map<string, Stop[]>> {
 export async function buildPack(packId: string, input: string, out: string) {
   const started = Date.now();
   const country = packById(packId)?.country ?? packId;
-  const groups = await readElements(input);
+  const all = await readElements(input);
+  const elements = all.length;
   let merged: Stop[] = [];
-  let elements = 0;
-  for (const group of groups.values()) {
-    elements += group.length;
-    merged.push(...mergeSameName(group));
-  }
+  for (const group of byBaseName(mergeStopAreas(all)).values()) merged.push(...mergeSameName(group));
   merged = absorbIntoStations(merged);
   const records: StopRecord[] = [];
   const ranked = merged.map((s) => ({ s, rank: rankOf(s) })).sort((a, b) => b.rank - a.rank || b.s.routes.size - a.s.routes.size);

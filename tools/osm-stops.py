@@ -9,7 +9,8 @@ Both inputs may be the same file. In CI they are made smaller first with osmium-
 
 Each output line is one named stop element:
   {"name", "lat", "lon", "modes": [...], "routes": {mode: [route ids]}, "station", "en", "alt": [...],
-   "place", "place_en"}
+   "area", "area_name", "place", "place_en"}
+"area" is the stop_area relation the element belongs to: the parts of one station or stop.
 Modes are train, suburban (S-Bahn, S-tog and other commuter trains), metro, tram, bus and ferry.
 tools/build-osm-pack.ts merges them into stops and builds the SQLite pack.
 """
@@ -95,6 +96,8 @@ class Relations(osmium.SimpleHandler):
         self.routes = {}  # ("n"|"w", id) -> set of route ids
         self.route_mode = {}  # route id -> mode
         self.area_members = {}  # stop_area id -> list of member keys
+        self.area_names = {}  # stop_area id -> name
+        self.area_of = {}  # member key -> stop_area id
 
     def relation(self, r):
         tags = r.tags
@@ -107,7 +110,12 @@ class Relations(osmium.SimpleHandler):
                 if m.type in ("n", "w"):
                     self.routes.setdefault((m.type, m.ref), set()).add(r.id)
         elif tags.get("public_transport") == "stop_area":
-            self.area_members[r.id] = [(m.type, m.ref) for m in r.members if m.type in ("n", "w")]
+            members = [(m.type, m.ref) for m in r.members if m.type in ("n", "w")]
+            self.area_members[r.id] = members
+            if tags.get("name"):
+                self.area_names[r.id] = tags.get("name")
+            for key in members:
+                self.area_of.setdefault(key, r.id)
 
     def spread_over_stop_areas(self):
         """A route that stops at one member of a stop area serves the whole station."""
@@ -148,6 +156,8 @@ class Stops(osmium.SimpleHandler):
                 "modes": sorted(modes),
                 "routes": routes,
                 "station": tags.get("public_transport") == "station" or tags.get("railway") in ("station", "halt"),
+                "area": self.rel.area_of.get((kind, osm_id)),
+                "area_name": self.rel.area_names.get(self.rel.area_of.get((kind, osm_id))),
                 "en": tags.get("name:en"),
                 "alt": alt,
             }

@@ -80,6 +80,10 @@ jobs:
       - name: Build release APK
         working-directory: android
         # Signed with the template's debug key: fine for testers, not for the Play Store.
+        # With the REVENUECAT_ANDROID_KEY secret set, Pro is sold through Google Play; without it,
+        # the build has every Pro feature unlocked for testing.
+        env:
+          EXPO_PUBLIC_REVENUECAT_ANDROID_KEY: ${{ secrets.REVENUECAT_ANDROID_KEY }}
         run: ./gradlew assembleRelease --no-daemon -PreactNativeArchitectures=arm64-v8a,armeabi-v7a
       - name: Name the APK after the commit
         run: cp android/app/build/outputs/apk/release/app-release.apk "StopWake-${GITHUB_SHA::7}.apk"

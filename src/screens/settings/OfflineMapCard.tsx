@@ -4,6 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { useI18n } from '../../i18n';
 import { reversePlace } from '../../lib/geocode';
+import { usePro } from '../../lib/pro';
 import { deleteArea, downloadArea, listAreas, type OfflineArea } from '../../map/offline';
 import { Body, Button, Card, Icon, IconButton, Label } from '../../ui/components';
 import { radius, useTheme } from '../../ui/theme';
@@ -15,9 +16,10 @@ function megabytes(bytes: number) {
 }
 
 /** Save the map around you, for underground stations and trips without mobile data. */
-export function OfflineMapCard() {
+export function OfflineMapCard({ onNeedPro }: { onNeedPro: () => void }) {
   const t = useTheme();
   const { t: tr, lang } = useI18n();
+  const { isPro } = usePro();
   const [areas, setAreas] = useState<OfflineArea[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -38,6 +40,10 @@ export function OfflineMapCard() {
   }
 
   async function download() {
+    if (!isPro) {
+      onNeedPro();
+      return;
+    }
     setError(null);
     setBusy(true);
     try {
@@ -88,7 +94,7 @@ export function OfflineMapCard() {
       <Button
         title={tr('settings.offlineDownload', { km: RADIUS_KM })}
         kind="secondary"
-        icon="download"
+        icon={isPro ? 'download' : 'lock'}
         busy={busy}
         onPress={() => void download()}
       />
