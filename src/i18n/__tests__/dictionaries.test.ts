@@ -14,7 +14,7 @@ describe('dictionaries', () => {
       const dict = DICTIONARIES[lang];
       for (const key of Object.keys(en) as (keyof typeof en)[]) {
         expect(dict[key], `${lang} ${key}`).toBeTruthy();
-        expect(placeholders(dict[key]), `${lang} ${key}`).toEqual(placeholders(en[key]));
+        expect(placeholders(dict[key] ?? ''), `${lang} ${key}`).toEqual(placeholders(en[key]));
       }
     });
   }

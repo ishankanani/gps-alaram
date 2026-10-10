@@ -1,6 +1,6 @@
-import type { Strings } from './en';
+import type { Strings } from '../en';
 
-export const it: Strings = {
+export const core: Partial<Strings> = {
   'app.name': 'StopWake',
   'app.tagline': 'Non perdere mai la tua fermata.',
 

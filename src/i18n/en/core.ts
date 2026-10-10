@@ -1,5 +1,5 @@
-/** English strings. The keys here define the full set every other language must provide. */
-export const en = {
+/** English strings of the app's core screens. */
+export const core = {
   'app.name': 'StopWake',
   'app.tagline': 'Never miss your stop.',
 
@@ -268,4 +268,3 @@ export const en = {
   'setup.unsupported.body': 'Trip alarms run on Android for now. The iPhone version comes next.',
 } as const;
 
-export type Strings = Record<keyof typeof en, string>;

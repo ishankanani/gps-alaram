@@ -33,7 +33,7 @@ export const LANGUAGES: { code: Lang; name: string }[] = [
   { code: 'ja', name: '日本語' },
 ];
 
-export const DICTIONARIES: Record<Lang, Strings> = { da, de, en, fi, fr, hi, it, ja, nb, nl, sv };
+export const DICTIONARIES: Record<Lang, Partial<Strings>> = { da, de, en, fi, fr, hi, it, ja, nb, nl, sv };
 
 /** Phones report Norwegian as "nb", "no" or "nn"; we have Bokmål. */
 const ALIASES: Record<string, Lang> = { no: 'nb', nn: 'nb' };

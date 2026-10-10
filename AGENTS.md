@@ -32,9 +32,11 @@ Run lint and typecheck before declaring any task done.
 - The UI is a small screen state machine in `App.tsx` (no Expo Router).
 - The offline stops database `assets/stations/germany-stops.db` is generated, not committed:
   run `npm run build:stations` after `npm install`. Metro bundles it as an asset.
-- Every user-facing text goes through `useI18n()` with keys from `src/i18n/en.ts`, and needs an
-  entry in every other language in `src/i18n` (the dictionaries test checks keys and
-  placeholders). Native alarm and notification texts live in `L10n.kt`, one table per language.
+- Every user-facing text goes through `useI18n()`. Strings live in `src/i18n/<lang>/`, one file
+  per feature area (`core.ts`, and e.g. `account.ts`, `admin.ts`), combined in `<lang>/index.ts`;
+  English defines the keys. Every other language needs every key with the same placeholders (the
+  dictionaries test checks this; missing keys fall back to English at runtime). Native alarm and
+  notification texts live in `L10n.kt`, one table per language.
 - Modules that Vitest tests (`src/lib`, `src/map/geo.ts`, `src/ui/colors.ts`) must not import
   `react-native`; Vitest cannot parse it.
 - Run `npm run check` (typecheck, lint, JS tests) before declaring any task done.
