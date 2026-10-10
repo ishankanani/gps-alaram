@@ -19,7 +19,11 @@ collect() {
 run_flow() {
   local dir="$RUNS/${1%.yaml}"
   mkdir -p "$dir"
-  (cd "$dir" && maestro test "$FLOWS/$1")
+  # Accounts the flows sign in with (the seeded StopWake Cloud in CI, see screenshots.yml).
+  (cd "$dir" && maestro test \
+    -e ADMIN_EMAIL="${ADMIN_EMAIL:-admin@example.com}" -e ADMIN_PASSWORD="${ADMIN_PASSWORD:-}" \
+    -e DEMO_EMAIL=lena.weber@example.com -e DEMO_PASSWORD=demo-password-2026 -e DEMO_PROMO=STOPWAKE-DEMO \
+    "$FLOWS/$1")
   collect
 }
 

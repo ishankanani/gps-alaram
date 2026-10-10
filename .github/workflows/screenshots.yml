@@ -16,7 +16,13 @@ jobs:
   screenshots:
     name: Screenshots on an emulator
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 90
+    env:
+      # The emulator reaches the runner's StopWake Cloud at 10.0.2.2 (the host's loopback). Read by
+      # app.config.js at prebuild and compiled into the JS bundle.
+      EXPO_PUBLIC_API_URL: http://10.0.2.2:8787
+      ADMIN_EMAIL: admin@example.com
+      ADMIN_PASSWORD: StopWake-admin-2026
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -30,6 +36,17 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
       - run: npm ci
       - run: npm run build:stations
+      - name: Start StopWake Cloud with demo data
+        env:
+          PORT: '8787'
+          DATA_DIR: ${{ runner.temp }}/cloud
+          MAIL_MODE: log
+          REVENUECAT_WEBHOOK_SECRET: ci-only-secret
+        run: |
+          node --disable-warning=ExperimentalWarning server/cli.ts seed --demo --reset --extra-guests=160
+          nohup node --disable-warning=ExperimentalWarning server/main.ts > "$RUNNER_TEMP/cloud.log" 2>&1 &
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:8787/v1/health && exit 0; sleep 1; done
+          cat "$RUNNER_TEMP/cloud.log"; exit 1
       - name: Generate the Android project
         run: npx expo prebuild --platform android --no-install
       - name: Fetch the SDK parts the build needs
@@ -76,6 +93,14 @@ jobs:
         with:
           name: screenshots
           path: screenshots/
+          if-no-files-found: ignore
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cloud-log
+          path: |
+            ${{ runner.temp }}/cloud.log
+            ${{ runner.temp }}/cloud/outbox/
           if-no-files-found: ignore
       - name: Commit the screenshots
         if: always()
