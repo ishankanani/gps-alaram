@@ -1,0 +1,12 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "verbatimModuleSyntax": true,
+    "erasableSyntaxOnly": true,
+    "types": ["node"],
+    "lib": ["ES2023"],
+    "noUncheckedIndexedAccess": true
+  },
+  "include": ["**/*.ts", "../src/api/types.ts", "../src/lib/pricing.ts"],
+  "exclude": ["data"]
+}

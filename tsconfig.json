@@ -9,6 +9,7 @@
     "node_modules",
     "modules/trip-alarm/engine-tests",
     "android",
-    "ios"
+    "ios",
+    "server"
   ]
 }

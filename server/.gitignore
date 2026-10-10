@@ -1,0 +1,2 @@
+# Local runtime data (DATA_DIR default): database, backups, mail outbox.
+/data/

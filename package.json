@@ -47,7 +47,11 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run src",
     "test:engine": "cd modules/trip-alarm/engine-tests && ./gradlew test --no-daemon",
-    "check": "npm run typecheck && npm run lint && npm test",
+    "check": "npm run typecheck && npm run typecheck:server && npm run lint && npm test && npm run test:server",
+    "server": "node --disable-warning=ExperimentalWarning server/main.ts",
+    "server:seed": "node --disable-warning=ExperimentalWarning server/cli.ts seed --demo --reset --extra-guests=160",
+    "typecheck:server": "tsc -p server",
+    "test:server": "node --disable-warning=ExperimentalWarning --test \"server/test/**/*.test.ts\"",
     "build:stations": "node --disable-warning=ExperimentalWarning --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tools/build-stations.ts"
   },
   "private": true
