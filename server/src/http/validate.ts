@@ -43,8 +43,8 @@ export const codePoints = (s: string): number => {
 };
 
 // C0 and C1 controls, DEL, and the line/paragraph separators.
-const CONTROL = /[\u0000-\u001F\u007F-\u009F  ]/;
-const CONTROL_EXCEPT_NEWLINE = /[\u0000-\u0009\u000B-\u001F\u007F-\u009F  ]/;
+const CONTROL = /[\u0000-\u001F\u007F-\u009F\u2028\u2029]/;
+const CONTROL_EXCEPT_NEWLINE = /[\u0000-\u0009\u000B-\u001F\u007F-\u009F\u2028\u2029]/;
 
 export const hasOwn = (body: Body, key: string): boolean =>
   Object.prototype.hasOwnProperty.call(body, key) && body[key] !== undefined;
