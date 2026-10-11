@@ -68,7 +68,7 @@ function scryptAsync(password: string, salt: Buffer, keylen: number, p: HashPara
 
 function createSemaphore(max: number, maxQueue: number) {
   let running = 0;
-  const waiting: Array<() => void> = [];
+  const waiting: (() => void)[] = [];
   return {
     async run<T>(fn: () => Promise<T>): Promise<T> {
       if (running >= max) {

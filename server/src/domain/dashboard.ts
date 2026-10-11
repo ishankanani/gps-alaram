@@ -79,7 +79,8 @@ export function buildDashboard(db: Db, input: { now: number; days: DashboardDays
   for (let t = firstDay; t <= today; t += DAY) series.set(dayKey(t), { date: dayKey(t), guests: 0, accounts: 0 });
   for (const r of many<{ day: number; guests: number; accounts: number }>(
     db,
-    `SELECT (created_at / :dayMs) AS day, coalesce(sum(email IS NULL), 0) AS guests, coalesce(sum(email IS NOT NULL), 0) AS accounts
+    // node:sqlite binds JS numbers as REAL: without the CAST every user would be its own "day".
+    `SELECT CAST(created_at / :dayMs AS INTEGER) AS day, coalesce(sum(email IS NULL), 0) AS guests, coalesce(sum(email IS NOT NULL), 0) AS accounts
      FROM users WHERE ${notMerged} AND created_at >= :from GROUP BY day`,
     { from: firstDay, dayMs: DAY },
   )) {

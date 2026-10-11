@@ -183,7 +183,7 @@ describe('PUT /v1/admin/prices/:country', () => {
   });
 
   it('validates the body; the key must be ISO2, EU or DEFAULT', async () => {
-    const cases: Array<[Record<string, unknown>, Record<string, string>]> = [
+    const cases: [Record<string, unknown>, Record<string, string>][] = [
       [{}, { currency: 'required', monthly: 'required', yearly: 'required', lifetime: 'required' }],
       [{ currency: 'eur', monthly: 199, yearly: 999, lifetime: 1499 }, { currency: 'invalid' }],
       [{ currency: 'EUR', monthly: 1.99, yearly: 999, lifetime: 1499 }, { monthly: 'invalid' }],

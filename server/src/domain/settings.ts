@@ -249,7 +249,7 @@ export function patchSettings(
 ): SettingsPatch {
   if (!isObject(values) || Object.keys(values).length === 0) throw validationFailed({ values: 'invalid' });
   const fields: Record<string, FieldError> = {};
-  const updates: Array<{ key: SettingKey; value: unknown }> = [];
+  const updates: { key: SettingKey; value: unknown }[] = [];
   for (const [key, raw] of Object.entries(values)) {
     if (!isSettingKey(key)) {
       fields[key] = 'unknown_key';

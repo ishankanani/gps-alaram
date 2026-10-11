@@ -19,7 +19,7 @@ import { issueResetCode } from '../../domain/reset-codes.ts';
 import { deleteSubscribersWithRetry } from '../../domain/revenuecat-api.ts';
 import { applyFetchedSubscriber, fetchSubscriber } from '../../domain/store.ts';
 import { deleteUserSessions } from '../../domain/sessions.ts';
-import { countActiveAdmins, deleteUser, getUser, getUserByEmail, type UserRow } from '../../domain/users.ts';
+import { countActiveAdmins, deleteUser, getUser, getUserByEmail } from '../../domain/users.ts';
 import { ApiError, notFound } from '../../http/errors.ts';
 import { json, noContent, type Reply } from '../../http/response.ts';
 import { route } from '../../http/router.ts';
@@ -87,7 +87,7 @@ function update(ctx: RequestContext): Reply {
   // Only real changes are written and listed in the audit row (values are never stored there).
   const fields: string[] = [];
   const sets: string[] = [];
-  const params: Array<string | number | null> = [];
+  const params: (string | number | null)[] = [];
   const set = (field: string, column: string, value: string | null, current: string | null): void => {
     if (value === current) return;
     fields.push(field);

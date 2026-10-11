@@ -153,7 +153,7 @@ export const DEMO_PROMOS: readonly DemoPromo[] = [
   { code: 'STOPWAKE-DEMO', plan: 'yearly', durationDays: 365, max: null, starts: null, expires: null, active: true, description: 'Demo code for screenshots and testers', created: -2 },
 ];
 
-const NOTES: ReadonlyArray<{ user: string; by: 'A1' | 'A2'; daysAgo: number; body: string }> = [
+const NOTES: readonly { user: string; by: 'A1' | 'A2'; daysAgo: number; body: string }[] = [
   { user: '5', by: 'A1', daysAgo: 75, body: 'Beta tester; prefers German emails.' },
   { user: '1', by: 'A2', daysAgo: 18, body: 'Asked about Wear OS support; told her the watch is planned.' },
   { user: '26', by: 'A2', daysAgo: 10, body: 'Missed Berri-UQAM: GPS dropped in the tunnel. Log received by email 12 days ago.' },
@@ -189,7 +189,7 @@ export const PL_OVERRIDE = { country: 'PL', currency: 'PLN', monthly: 899, yearl
 
 const PRODUCTS = { monthly: 'stopwake_pro:monthly', yearly: 'stopwake_pro:yearly', lifetime: 'stopwake_lifetime' } as const;
 const ADMIN_IPS = { A1: '203.0.113.10', A2: '198.51.100.7' } as const;
-const EXTRA_COUNTRIES: ReadonlyArray<[string, number, Lang]> = [
+const EXTRA_COUNTRIES: readonly [string, number, Lang][] = [
   ['DE', 55, 'de'], ['AT', 8, 'de'], ['CH', 6, 'de'], ['GB', 6, 'en'], ['NL', 5, 'nl'], ['FR', 5, 'fr'], ['SE', 2, 'sv'], ['NO', 2, 'nb'],
   ['DK', 2, 'da'], ['FI', 2, 'fi'], ['BE', 2, 'nl'], ['US', 2, 'en'], ['IN', 2, 'hi'], ['IE', 1, 'en'],
 ];
@@ -437,7 +437,7 @@ export async function seedDemo(db: Db, opts: SeedOptions): Promise<SeedSummary> 
       return { code, plan: p.plan, durationDays: p.durationDays, maxRedemptions: p.max };
     };
     const announcementBefore = null;
-    const entries: Array<{ days: number; by: 'A1' | 'A2'; action: string; target: { type: string; id: string | null; user: string | null; label: string | null }; details: unknown }> = [
+    const entries: { days: number; by: 'A1' | 'A2'; action: string; target: { type: string; id: string | null; user: string | null; label: string | null }; details: unknown }[] = [
       { days: -120, by: 'A1', action: 'settings.update', target: { type: 'settings', id: null, user: null, label: 'support.email' },
         details: { keys: ['support.email'], before: { 'support.email': 'help@example.com' }, after: { 'support.email': 'support@example.com' } } },
       { days: -90, by: 'A1', action: 'promo.create', target: promoTarget('BETA-TESTERS'), details: promoDetails('BETA-TESTERS') },

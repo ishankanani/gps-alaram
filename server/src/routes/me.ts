@@ -53,7 +53,7 @@ async function patchMe(ctx: RequestContext): Promise<Reply> {
   const now = ctx.now;
   const updated = tx(db, () => {
     const sets: string[] = [];
-    const params: Array<string | number | null> = [];
+    const params: (string | number | null)[] = [];
     const set = (column: string, value: string | number | null): void => {
       sets.push(`${column} = ?`);
       params.push(value);

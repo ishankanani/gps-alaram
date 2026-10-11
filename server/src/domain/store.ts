@@ -673,7 +673,7 @@ export function listStoreEvents(
   q: { status?: WebhookStatus | null; userId?: string | null; before?: string | null; limit: number },
 ): { items: StoreEvent[]; nextBefore: string | null } {
   const where: string[] = [];
-  const params: Array<string | number> = [];
+  const params: (string | number)[] = [];
   if (q.status) {
     where.push('e.status = ?');
     params.push(q.status);

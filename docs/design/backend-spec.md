@@ -902,7 +902,7 @@ Every mutation runs in one transaction together with exactly one audit row (4.6)
 - **Search (`q`)**, first matching rule:
   1. A UUID: exact `id`.
   2. Starts with `GPA.`: users whose `store_subscriptions.original_transaction_id` starts with `q` (a Play order id).
-  3. Starts with `sw` (any case, optional dash) followed by ≥ 4 Crockford characters, **or** is exactly 8 Crockford characters with an optional middle dash: `public_id LIKE 'SW-XXXX-YYY%'` after normalization, OR'ed with rule 5 for the bare-8-character case.
+  3. Starts with `sw` (any case, optional dash) followed by ≥ 4 Crockford characters, **or** is exactly 8 Crockford characters with an optional middle dash: `public_id LIKE 'SW-XXXX-YYY%'` after normalization, always OR'ed with rule 5 ("swantje" is an id prefix and a name).
   4. Contains `@`: `email LIKE '%q%'`.
   5. Otherwise: `email LIKE '%q%' OR display_name LIKE '%q%'`, case-insensitive.
 

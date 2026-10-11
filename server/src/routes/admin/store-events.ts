@@ -13,7 +13,7 @@ import { route } from '../../http/router.ts';
 import { audit, Fields, queryEnum, queryInt, queryText } from './common.ts';
 
 /** Any event id RevenueCat may send (≤ 100 characters, no control characters). */
-// eslint-disable-next-line no-control-regex
+ 
 export const EVENT_ID_PARAM = /^[^\u0000-\u001F\u007F]{1,100}$/;
 const STATUSES: readonly WebhookStatus[] = ['processed', 'stale', 'ignored', 'unmatched', 'error'];
 

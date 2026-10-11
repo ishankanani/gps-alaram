@@ -162,10 +162,10 @@ export async function startTestServer(
 }
 
 /** Rows of a table, for assertions. */
-export const rows = <T = Record<string, unknown>>(db: Db, sql: string, ...params: Array<string | number | null>): T[] =>
+export const rows = <T = Record<string, unknown>>(db: Db, sql: string, ...params: (string | number | null)[]): T[] =>
   db.prepare(sql).all(...params) as T[];
 
-export const count = (db: Db, sql: string, ...params: Array<string | number | null>): number =>
+export const count = (db: Db, sql: string, ...params: (string | number | null)[]): number =>
   Number((db.prepare(sql).get(...params) as { n: number }).n);
 
 // ---- Admin test utilities ----

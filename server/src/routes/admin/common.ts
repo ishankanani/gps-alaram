@@ -80,7 +80,7 @@ export function queryText(v: Fields, q: URLSearchParams, key: string, max: numbe
   if (raw === null) return null;
   const s = raw.normalize('NFC').trim();
   if (s === '') return null;
-  // eslint-disable-next-line no-control-regex
+   
   if ([...s].length > max || /[\u0000-\u001F\u007F]/.test(s)) {
     v.add(key, [...s].length > max ? 'too_long' : 'invalid');
     return null;

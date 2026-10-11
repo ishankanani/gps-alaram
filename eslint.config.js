@@ -13,5 +13,9 @@ module.exports = defineConfig([
     languageOptions: {
       globals: { ...require("globals").node },
     },
+    rules: {
+      // Inlining EXPO_PUBLIC_* variables is a bundler concern; the server reads its environment at run time.
+      "expo/no-dynamic-env-var": "off",
+    },
   },
 ]);

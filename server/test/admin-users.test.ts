@@ -13,7 +13,7 @@ import { DAY, HOUR, iso, MINUTE } from '../src/clock.ts';
 import { DEMO_ADMIN_PASSWORD, DEMO_USERS, demoUserId } from '../src/seed/demo.ts';
 import { getUserByEmail, type UserRow } from '../src/domain/users.ts';
 import {
-  count, insertStoreSubscription, PASSWORD, rows, startTestServer, tracked, type AuditRow, type Session, type TestServer,
+  count, insertStoreSubscription, PASSWORD, rows, startTestServer, tracked, type AuditRow, type Session, type TestResponse, type TestServer,
 } from './helpers.ts';
 
 const LIST_ITEM_KEYS = [
@@ -92,7 +92,7 @@ describe('GET /v1/admin/users on the demo seed', () => {
   });
 
   it('filters: plan, source, kind, role, status, country', async () => {
-    const counts: Array<[string, number]> = [
+    const counts: [string, number][] = [
       ['plan=pro', 20], ['plan=free', 20], ['plan=trial', 2], ['plan=monthly', 7], ['plan=yearly', 9], ['plan=lifetime', 4],
       ['source=store', 14], ['source=grant', 3], ['source=promo', 3],
       ['kind=guest', 8], ['kind=account', 32], ['role=admin', 2], ['role=user', 38],
@@ -266,6 +266,84 @@ describe('GET /v1/admin/users on the demo seed', () => {
       assert.equal(res.body.error.code, 'not_found');
     }
   });
+
+  it('GET /v1/admin/audit: newest first, action prefix, actor and user filters, cursor paging', async () => {
+    const audit = async (query: string) => {
+      const res = await d.request('GET', `/v1/admin/audit?${query}`, { token });
+      assert.equal(res.status, 200, `${query}: ${res.text}`);
+      return res.body as { items: any[]; nextBefore: number | null };
+    };
+    const all = await audit('limit=100');
+    assert.equal(all.items.length, 16, '15 seeded entries and the admin sign-in');
+    assert.equal(all.nextBefore, null);
+    assert.deepEqual(Object.keys(all.items[0]).sort(), ['action', 'actor', 'at', 'details', 'id', 'ip', 'target', 'userId']);
+    assert.equal(all.items[0].action, 'admin.sign_in');
+    const ids = all.items.map((a) => a.id);
+    assert.deepEqual(ids, [...ids].sort((a, b) => b - a));
+
+    assert.deepEqual((await audit('action=grant.')).items.map((a) => a.target.label),
+      [demo('26').publicId, demo('18').publicId, demo('9').publicId, demo('5').publicId]);
+    assert.equal((await audit('action=promo.')).items.length, 4);
+    assert.equal((await audit('action=settings.update')).items.length, 2);
+    assert.equal((await audit('action=grant_')).items.length, 0, 'the prefix is matched literally');
+
+    const byA2 = await audit(`actor=${demo('A2').publicId.toLowerCase().replace(/-/g, '')}`);
+    assert.deepEqual(byA2.items.map((a) => a.action), ['note.create', 'user.disable', 'note.create', 'grant.create']);
+    assert.ok(byA2.items.every((a) => a.actor.displayName === 'Sam Support' && a.ip === '198.51.100.7'));
+    assert.equal((await audit(`actor=${demo('A2').id}`)).items.length, 4);
+    assert.equal((await audit('actor=cli')).items.length, 0);
+    const liam = await audit(`user=${demo('26').publicId}`);
+    assert.deepEqual(liam.items.map((a) => a.action), ['note.create', 'grant.create']);
+    assert.ok(liam.items.every((a) => a.userId === demo('26').id));
+    assert.equal((await audit(`user=${demo('26').publicId}&action=note.`)).items.length, 1);
+
+    const pages: number[] = [];
+    let before: number | null = null;
+    do {
+      const page = await audit(`limit=5${before ? `&before=${before}` : ''}`);
+      pages.push(...page.items.map((a) => a.id));
+      before = page.nextBefore;
+    } while (before !== null);
+    assert.deepEqual(pages, ids);
+
+    for (const query of ['actor=nobody!', 'user=xyz', 'limit=0', 'limit=101', 'before=abc']) {
+      const res = await d.request('GET', `/v1/admin/audit?${query}`, { token });
+      assert.equal(res.status, 400, query);
+    }
+  });
+
+  it('GET /v1/admin/store-events: newest first, status and user filters, cursor paging, detail', async () => {
+    const events = async (query: string) => {
+      const res = await d.request('GET', `/v1/admin/store-events?${query}`, { token });
+      assert.equal(res.status, 200, `${query}: ${res.text}`);
+      return res.body as { items: any[]; nextBefore: string | null };
+    };
+    const all = await events('limit=100');
+    assert.equal(all.items.length, 7);
+    assert.deepEqual(Object.keys(all.items[0]).sort(),
+      ['appUserId', 'environment', 'error', 'eventAt', 'id', 'processedAt', 'receivedAt', 'status', 'type', 'user']);
+    const received = all.items.map((e) => Date.parse(e.receivedAt));
+    assert.deepEqual(received, [...received].sort((a, b) => b - a));
+    assert.deepEqual((await events('status=ignored')).items.map((e) => e.type), ['TEST']);
+    assert.equal((await events('status=processed')).items.length, 6);
+    const jonas = await events(`user=${demo('2').publicId}`);
+    assert.deepEqual(jonas.items.map((e) => [e.type, e.user.publicId]), [['RENEWAL', demo('2').publicId]]);
+    assert.deepEqual((await events('user=SW-ZZZZ-ZZZZ')).items, []);
+
+    const first = await events('limit=4');
+    assert.equal(first.items.length, 4);
+    const second = await events(`limit=4&before=${encodeURIComponent(first.nextBefore!)}`);
+    assert.equal(second.items.length, 3);
+    assert.deepEqual([...first.items, ...second.items].map((e) => e.id), all.items.map((e) => e.id));
+
+    const detail = await d.request('GET', `/v1/admin/store-events/${encodeURIComponent(jonas.items[0].id)}`, { token });
+    assert.equal(detail.status, 200);
+    assert.deepEqual(Object.keys(detail.body).sort(), ['event', 'payload']);
+    assert.equal(detail.body.payload.type, 'RENEWAL');
+    assert.equal(detail.body.payload.original_transaction_id, 'GPA.3391-4210-7766-00002');
+    assert.equal((await d.request('GET', '/v1/admin/store-events/no-such-event', { token })).status, 404);
+    assert.equal((await d.request('GET', '/v1/admin/store-events?status=done', { token })).status, 400);
+  });
 });
 
 // ---------------------------------------------------------------------------------------------
@@ -284,7 +362,7 @@ before(async () => {
 });
 after(() => s.close());
 
-type Call = { res: Awaited<ReturnType<TestServer['request']>>; audit: AuditRow[]; requestId: string };
+type Call = { res: TestResponse; audit: AuditRow[]; requestId: string };
 
 /** An admin request; checks that it sent no email and returns the audit rows it wrote. */
 async function call(method: string, path: string, body?: unknown, token = admin): Promise<Call> {
@@ -435,7 +513,7 @@ describe('POST /v1/admin/users/:id/grants', () => {
   it('rejects invalid combinations without writing anything', async () => {
     const u = await newAccount();
     const at = (ms: number) => new Date(now() + ms).toISOString();
-    const cases: Array<[Record<string, unknown>, Record<string, string>]> = [
+    const cases: [Record<string, unknown>, Record<string, string>][] = [
       [{ plan: 'lifetime', durationDays: 10 }, { durationDays: 'not_allowed' }],
       [{ plan: 'lifetime', endsAt: at(5 * DAY) }, { endsAt: 'not_allowed' }],
       [{ plan: 'monthly', durationDays: 10, endsAt: at(5 * DAY) }, { endsAt: 'not_allowed' }],
@@ -536,7 +614,7 @@ describe('POST /v1/admin/users/:id/plan', () => {
 
   it('validates the plan and the duration rules', async () => {
     const u = await newAccount();
-    const cases: Array<[Record<string, unknown>, Record<string, string>]> = [
+    const cases: [Record<string, unknown>, Record<string, string>][] = [
       [{ plan: 'free', durationDays: 5 }, { durationDays: 'not_allowed' }],
       [{ plan: 'free', endsAt: new Date(now() + 5 * DAY).toISOString() }, { endsAt: 'not_allowed' }],
       [{ plan: 'lifetime', durationDays: 5 }, { durationDays: 'not_allowed' }],
@@ -644,7 +722,7 @@ describe('POST /v1/admin/users/:id/extend', () => {
 
   it('needs exactly one of days and endsAt', async () => {
     const u = await newAccount();
-    const cases: Array<[Record<string, unknown>, Record<string, string>]> = [
+    const cases: [Record<string, unknown>, Record<string, string>][] = [
       [{}, { days: 'required' }],
       [{ days: 5, endsAt: new Date(now() + 9 * DAY).toISOString() }, { endsAt: 'not_allowed' }],
       [{ days: 0 }, { days: 'out_of_range' }],
@@ -917,16 +995,18 @@ describe('merged guests', () => {
 });
 
 describe('search rule 3 (public ids)', () => {
-  it('a sw… prefix searches public ids only; a bare 8-character id also searches names and emails', async () => {
+  it('an id-like query searches public ids and also names and emails (a name may look like an id)', async () => {
     const target = await newAccount();
     s.db.prepare("UPDATE users SET public_id = 'SW-7K3P-92QX' WHERE id = ?").run(target.user.id);
     const decoy = await s.account('decoy.search@example.com', PASSWORD, { displayName: 'sw-7k3p fan' });
     const bareDecoy = await s.account('k3p92qx7@example.com', PASSWORD, { displayName: '7k3p92qx' });
+    const swantje = await s.account('s.k@example.com', PASSWORD, { displayName: 'Swantje Krüger' });
     const search = async (q: string) =>
       (await s.request('GET', `/v1/admin/users?limit=100&q=${encodeURIComponent(q)}`, { token: admin })).body.items.map((u: any) => u.id).sort();
-    assert.deepEqual(await search('sw-7k3p'), [target.user.id]);
+    assert.deepEqual(await search('sw-7k3p'), [target.user.id, decoy.user.id].sort());
     assert.deepEqual(await search('SW 7K3P 92QX'), [target.user.id]);
     assert.deepEqual(await search('7k3p92qx'), [target.user.id, bareDecoy.user.id].sort());
+    assert.deepEqual(await search('swantje'), [swantje.user.id]);
     assert.deepEqual(await search('7k3p fan'), [decoy.user.id]);
   });
 });

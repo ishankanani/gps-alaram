@@ -209,7 +209,7 @@ function reapplyDeletions(db: Db, args: Args): void {
   if (since === null) throw new CliError('--since=ISO is required (the time of the backup)');
   if (!from || !existsSync(from)) throw new CliError('--from=<newer db file> is required and must exist');
   const source = new DatabaseSync(resolve(from), { readOnly: true });
-  let entries: Array<{ target_id: string | null; target_label: string | null; details: string }>;
+  let entries: { target_id: string | null; target_label: string | null; details: string }[];
   try {
     entries = source
       .prepare("SELECT target_id, target_label, details FROM audit_log WHERE action = 'user.delete' AND at >= ? ORDER BY id")

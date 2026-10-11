@@ -36,11 +36,7 @@ export class Fields {
   }
 }
 
-export const codePoints = (s: string): number => {
-  let n = 0;
-  for (const _ of s) n++;
-  return n;
-};
+export const codePoints = (s: string): number => Array.from(s).length;
 
 // C0 and C1 controls, DEL, and the line/paragraph separators.
 const CONTROL = /[\u0000-\u001F\u007F-\u009F\u2028\u2029]/;

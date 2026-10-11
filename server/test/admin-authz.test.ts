@@ -83,7 +83,7 @@ function concretePath(path: string, params: Readonly<Record<string, RegExp>> | u
   });
 }
 
-function concreteRoutes(): Array<{ label: string; method: string; path: string }> {
+function concreteRoutes(): { label: string; method: string; path: string }[] {
   return adminRoutes().map((r) => ({ label: `${r.method} ${r.path}`, method: r.method, path: concretePath(r.path, r.params) }));
 }
 

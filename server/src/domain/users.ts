@@ -72,7 +72,7 @@ export function adminRef(db: Db, userId: string | null): AdminRef | null {
 function insertUser(db: Db, fields: Omit<Partial<UserRow>, 'id' | 'public_id'> & { created_at: number }): UserRow {
   const id = newUserId();
   const columns = ['id', 'public_id', ...Object.keys(fields)];
-  const values = Object.values(fields) as Array<string | number | null>;
+  const values = Object.values(fields) as (string | number | null)[];
   for (let attempt = 0; ; attempt++) {
     const publicId = newPublicId();
     try {

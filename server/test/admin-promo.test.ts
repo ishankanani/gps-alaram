@@ -118,7 +118,7 @@ describe('POST /v1/admin/promo-codes', () => {
   });
 
   it('validates every field', async () => {
-    const cases: Array<[Record<string, unknown>, Record<string, string>]> = [
+    const cases: [Record<string, unknown>, Record<string, string>][] = [
       [{}, { plan: 'required' }],
       [{ plan: 'free' }, { plan: 'invalid' }],
       [{ plan: 'monthly', code: 'ab' }, { code: 'too_short' }],
@@ -153,16 +153,16 @@ describe('POST /v1/admin/promo-codes', () => {
 
 describe('GET /v1/admin/promo-codes', () => {
   before(async () => {
-    await create({ code: 'ST-ACTIVE', plan: 'monthly', description: 'status test' });
-    await create({ code: 'ST-SCHEDULED', plan: 'monthly', startsAt: at(DAY), description: 'status test' });
-    await create({ code: 'ST-EXPIRED', plan: 'monthly', expiresAt: at(-DAY), description: 'status test' });
-    await create({ code: 'ST-EXHAUSTED', plan: 'monthly', maxRedemptions: 1, description: 'status test' });
-    await redeem('ST-EXHAUSTED');
-    await create({ code: 'ST-INACTIVE', plan: 'yearly', active: false, description: 'status test' });
+    await create({ code: 'STU-ACTIVE', plan: 'monthly', description: 'status test' });
+    await create({ code: 'STU-SCHEDULED', plan: 'monthly', startsAt: at(DAY), description: 'status test' });
+    await create({ code: 'STU-EXPIRED', plan: 'monthly', expiresAt: at(-DAY), description: 'status test' });
+    await create({ code: 'STU-EXHAUSTED', plan: 'monthly', maxRedemptions: 1, description: 'status test' });
+    await redeem('STU-EXHAUSTED');
+    await create({ code: 'STU-INACTIVE', plan: 'yearly', active: false, description: 'status test' });
     // Derivation order: !active wins over expired; expired wins over exhausted.
-    await create({ code: 'ST-INACTIVE-EXPIRED', plan: 'yearly', active: false, expiresAt: at(-DAY), description: 'status test' });
-    const both = await create({ code: 'ST-EXHAUSTED-EXPIRED', plan: 'monthly', maxRedemptions: 1, description: 'status test' });
-    await redeem('ST-EXHAUSTED-EXPIRED');
+    await create({ code: 'STU-INACTIVE-EXPIRED', plan: 'yearly', active: false, expiresAt: at(-DAY), description: 'status test' });
+    const both = await create({ code: 'STU-EXHAUSTED-EXPIRED', plan: 'monthly', maxRedemptions: 1, description: 'status test' });
+    await redeem('STU-EXHAUSTED-EXPIRED');
     const patched = await s.request('PATCH', `/v1/admin/promo-codes/${both.id}`, { token: admin, body: { expiresAt: at(-HOUR) } });
     assert.equal(patched.status, 200, patched.text);
   });
@@ -172,14 +172,14 @@ describe('GET /v1/admin/promo-codes', () => {
     assert.equal(res.status, 200, res.text);
     return res.body as { items: any[]; total: number; limit: number; offset: number };
   };
-  const codes = async (status: string) => (await list(`status=${status}&q=ST-&limit=100`)).items.map((p) => p.code).sort();
+  const codes = async (status: string) => (await list(`status=${status}&q=STU-&limit=100`)).items.map((p) => p.code).sort();
 
   it('filters by the derived status', async () => {
-    assert.deepEqual(await codes('active'), ['ST-ACTIVE']);
-    assert.deepEqual(await codes('scheduled'), ['ST-SCHEDULED']);
-    assert.deepEqual(await codes('expired'), ['ST-EXHAUSTED-EXPIRED', 'ST-EXPIRED']);
-    assert.deepEqual(await codes('exhausted'), ['ST-EXHAUSTED']);
-    assert.deepEqual(await codes('inactive'), ['ST-INACTIVE', 'ST-INACTIVE-EXPIRED']);
+    assert.deepEqual(await codes('active'), ['STU-ACTIVE']);
+    assert.deepEqual(await codes('scheduled'), ['STU-SCHEDULED']);
+    assert.deepEqual(await codes('expired'), ['STU-EXHAUSTED-EXPIRED', 'STU-EXPIRED']);
+    assert.deepEqual(await codes('exhausted'), ['STU-EXHAUSTED']);
+    assert.deepEqual(await codes('inactive'), ['STU-INACTIVE', 'STU-INACTIVE-EXPIRED']);
     assert.equal((await codes('all')).length, 7);
     for (const status of ['active', 'scheduled', 'expired', 'exhausted', 'inactive']) {
       for (const p of (await list(`status=${status}&limit=100`)).items) assert.equal(p.status, status, p.code);
@@ -210,7 +210,7 @@ describe('GET /v1/admin/promo-codes', () => {
     assert.equal(all.total, 7);
     const created = all.items.map((p) => [Date.parse(p.createdAt), p.id]);
     assert.deepEqual(all.items.map((p) => p.id), [...created].sort((a, b) => b[0]! - a[0]! || b[1]! - a[1]!).map((x) => x[1]));
-    const page = await list('q=st-&limit=3&offset=3');
+    const page = await list('q=stu-&limit=3&offset=3');
     assert.equal(page.total, 7);
     assert.equal(page.limit, 3);
     assert.equal(page.offset, 3);

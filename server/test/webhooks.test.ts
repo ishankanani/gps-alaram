@@ -383,7 +383,7 @@ describe('product mapping and sandbox', () => {
     const admin = await s.adminToken();
     await s.request('PATCH', '/v1/admin/settings', { token: admin, body: { values: { 'store.productPlans': { odd_sku_42: 'lifetime' } } } });
     const u = await s.account('mapping@example.com');
-    const cases: Array<[Record<string, unknown>, string]> = [
+    const cases: [Record<string, unknown>, string][] = [
       [{ product_id: 'odd_sku_42', expiration_at_ms: T0 + 30 * DAY }, 'lifetime'],
       [{ product_id: 'pro_annual' }, 'yearly'],
       [{ product_id: 'pro_month_v2' }, 'monthly'],
