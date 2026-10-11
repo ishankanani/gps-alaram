@@ -45,9 +45,11 @@ export function route<C>(def: RouteDef<C>): RouteDef<C> {
   return def;
 }
 
+type Segment = { literal: string } | { param: string };
+
 type Compiled<C> = {
   def: RouteDef<C>;
-  segments: Array<{ literal: string } | { param: string }>;
+  segments: Segment[];
   literals: number;
 };
 
@@ -83,7 +85,7 @@ export class Router<C> {
     const segments = def.path
       .split('/')
       .slice(1)
-      .map((s) => (s.startsWith(':') ? { param: s.slice(1) } : { literal: s }));
+      .map((s): Segment => (s.startsWith(':') ? { param: s.slice(1) } : { literal: s }));
     const names = segments.flatMap((s) => ('param' in s ? [s.param] : []));
     if (names.some((n) => !/^[A-Za-z][A-Za-z0-9]*$/.test(n)) || new Set(names).size !== names.length) {
       throw new Error(`Bad params in ${def.path}`);

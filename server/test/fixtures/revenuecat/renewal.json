@@ -1,0 +1,27 @@
+{
+  "api_version": "1.0",
+  "event": {
+    "id": "6A1F3C2E-0002-4C1E-9D3F-2B5A7C9E1F04",
+    "type": "RENEWAL",
+    "app_id": "app1a2b3c4d5",
+    "event_timestamp_ms": 1792224000000,
+    "app_user_id": "__USER__",
+    "original_app_user_id": "__USER__",
+    "aliases": ["__USER__"],
+    "product_id": "stopwake_pro:yearly",
+    "entitlement_ids": ["pro"],
+    "period_type": "NORMAL",
+    "purchased_at_ms": 1792224000000,
+    "expiration_at_ms": 1823760000000,
+    "environment": "PRODUCTION",
+    "store": "PLAY_STORE",
+    "transaction_id": "GPA.3391-0000-0000-00001..0",
+    "original_transaction_id": "GPA.3391-0000-0000-00001",
+    "is_family_share": false,
+    "country_code": "DE",
+    "currency": "EUR",
+    "price": 11.59,
+    "price_in_purchased_currency": 9.99,
+    "takehome_percentage": 0.85
+  }
+}

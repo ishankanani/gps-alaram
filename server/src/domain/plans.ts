@@ -266,7 +266,7 @@ export function grantEntitlement(g: GrantWithCode, now: number): Entitlement {
 }
 
 /** Status for display: a subscription whose access ended without an EXPIRATION event shows as expired. */
-function storeDisplayStatus(s: StoreSubscriptionRow, now: number): EntitlementStatus {
+export function storeDisplayStatus(s: StoreSubscriptionRow, now: number): EntitlementStatus {
   if (s.status === 'expired' || s.status === 'refunded') return s.status;
   return storeEnd(s) <= now ? 'expired' : s.status;
 }

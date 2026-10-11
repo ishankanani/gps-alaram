@@ -1,0 +1,13 @@
+{
+  "api_version": "1.0",
+  "event": {
+    "id": "6A1F3C2E-0007-4C1E-9D3F-2B5A7C9E1F04",
+    "type": "TRANSFER",
+    "app_id": "app1a2b3c4d5",
+    "event_timestamp_ms": 1791619200000,
+    "transferred_from": ["__FROM__"],
+    "transferred_to": ["$RCAnonymousID:77aa66bb55cc44dd33ee22ff11009988", "__TO__"],
+    "environment": "PRODUCTION",
+    "store": "PLAY_STORE"
+  }
+}

@@ -2,6 +2,8 @@
  * Devices: one row per app installation, keyed by sha256("install:" + installId) (spec 1.1, 1.2).
  * Metadata is minimal by design (4.10): platform, app and OS version, country and language.
  */
+import type { AdminDevice } from '../../../src/api/types.ts';
+import { iso } from '../clock.ts';
 import { many, one, run, type Db } from '../db/database.ts';
 import type { ClientInfo, LocaleInfo } from '../http/request.ts';
 import { installIdHash } from './ids.ts';
@@ -77,4 +79,18 @@ export function touchDevice(db: Db, deviceId: number, input: { client: ClientInf
     input.locale.country, input.locale.language,
     deviceId,
   );
+}
+
+/** AdminDevice rows of a user, with the number of unexpired sessions on each. */
+export function adminDevicesOf(db: Db, userId: string, now: number): AdminDevice[] {
+  return many<DeviceRow & { active_sessions: number }>(
+    db,
+    `SELECT d.*, (SELECT count(*) FROM sessions s WHERE s.device_id = d.id AND s.user_id = d.user_id AND s.expires_at > ?) AS active_sessions
+     FROM devices d WHERE d.user_id = ? ORDER BY d.last_seen_at DESC, d.id DESC`,
+    now, userId,
+  ).map((d) => ({
+    id: d.id, platform: d.platform, appVersion: d.app_version, build: d.build, osVersion: d.os_version,
+    country: d.country, language: d.language, createdAt: iso(d.created_at), lastSeenAt: iso(d.last_seen_at),
+    activeSessions: d.active_sessions,
+  }));
 }

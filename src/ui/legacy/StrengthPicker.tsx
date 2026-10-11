@@ -1,7 +1,7 @@
-import type { AlarmStrength } from '../../modules/trip-alarm/src';
-import { useI18n } from '../i18n';
-import { effectiveStrength, strengthAllowed } from '../lib/plans';
-import { usePro } from '../lib/pro';
+import type { AlarmStrength } from '../../../modules/trip-alarm/src';
+import { useI18n } from '../../i18n';
+import { effectiveStrength, strengthAllowed } from '../../lib/plans';
+import { usePro } from '../../lib/pro';
 import { Segmented } from './components';
 
 /** Gentle, Normal or Heavy sleeper. Heavy sleeper is Pro: without it, tapping it opens the paywall. */

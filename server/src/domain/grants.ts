@@ -5,12 +5,15 @@
  * passes (1.3). These functions change rows and recompute the plan; they run inside the caller's
  * transaction, and the admin routes add exactly one audit row per mutation (4.6).
  */
-import type { PaidPlan, PlanId, Warning } from '../../../src/api/types.ts';
-import { DAY, HOUR } from '../clock.ts';
+import type { AdminGrant, PaidPlan, PlanId, Warning } from '../../../src/api/types.ts';
+import { DAY, HOUR, iso, isoOrNull } from '../clock.ts';
 import { many, one, run, type Db } from '../db/database.ts';
 import { ApiError, notFound } from '../http/errors.ts';
 import type { Fields } from '../http/validate.ts';
-import { recomputePlan, storeCandidate, type GrantRow, type PlanOptions, type StoreSubscriptionRow } from './plans.ts';
+import {
+  getGrantWithCode, grantStatus, recomputePlan, storeCandidate, type GrantRow, type PlanOptions, type StoreSubscriptionRow,
+} from './plans.ts';
+import { adminRef } from './users.ts';
 
 export const DEFAULT_GRANT_DAYS: Record<'monthly' | 'yearly', number> = { monthly: 30, yearly: 365 };
 export const MAX_GRANT_DAYS = 3650;
@@ -200,3 +203,30 @@ export function changePlan(
   const warnings: Warning[] = subs.some((s) => storeCandidate(s, now, input.planOptions)) ? ['store_subscription_active'] : [];
   return { revokedGrantIds, grant, warnings };
 }
+
+/** AdminGrant for the admin screens. */
+export function toAdminGrant(db: Db, grantId: number, now: number): AdminGrant {
+  const g = getGrantWithCode(db, grantId);
+  if (!g) throw notFound();
+  return {
+    kind: 'grant',
+    id: g.id,
+    source: g.source,
+    plan: g.plan,
+    status: grantStatus(g, now),
+    startsAt: iso(g.starts_at),
+    endsAt: isoOrNull(g.ends_at),
+    reason: g.reason,
+    promoCode: g.promo_code,
+    createdBy: adminRef(db, g.created_by),
+    createdAt: iso(g.created_at),
+    updatedAt: iso(g.updated_at),
+    revokedAt: isoOrNull(g.revoked_at),
+    revokedBy: adminRef(db, g.revoked_by),
+    revokeReason: g.revoke_reason,
+  };
+}
+
+/** Every grant of a user (any status), newest first. */
+export const grantIdsOfUser = (db: Db, userId: string): number[] =>
+  many<{ id: number }>(db, 'SELECT id FROM grants WHERE user_id = ? ORDER BY created_at DESC, id DESC', userId).map((r) => r.id);

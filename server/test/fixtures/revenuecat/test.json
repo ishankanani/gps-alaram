@@ -1,0 +1,12 @@
+{
+  "api_version": "1.0",
+  "event": {
+    "id": "6A1F3C2E-0008-4C1E-9D3F-2B5A7C9E1F04",
+    "type": "TEST",
+    "app_id": "app1a2b3c4d5",
+    "event_timestamp_ms": 1791619200000,
+    "app_user_id": "$RCAnonymousID:test",
+    "environment": "SANDBOX",
+    "store": "PLAY_STORE"
+  }
+}

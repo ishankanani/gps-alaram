@@ -3,7 +3,7 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import type { ComponentProps, ReactNode } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 
-import { modeBadges, type StopKind } from '../lib/stations/text';
+import { modeBadges, type StopKind } from '../../lib/stations/text';
 import { BADGE_COLOR, KIND_COLOR, KIND_ICON, radius, useTheme } from './theme';
 
 export type IconName = ComponentProps<typeof MaterialCommunityIcons>['name'];

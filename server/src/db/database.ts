@@ -70,6 +70,16 @@ export function run(db: Db, sql: string, ...params: Params): { changes: number; 
   return { changes: Number(r.changes), lastInsertRowid: Number(r.lastInsertRowid) };
 }
 
+/**
+ * Only the named parameters the statement uses (node:sqlite rejects unknown names), e.g. when a
+ * shared params object feeds both a count query and a list query with a different ORDER BY.
+ */
+export function usedParams(sql: string, params: NamedParams): NamedParams {
+  const out: NamedParams = {};
+  for (const [k, v] of Object.entries(params)) if (new RegExp(`[:@$]${k}(?![A-Za-z0-9_])`).test(sql)) out[k] = v;
+  return out;
+}
+
 /** `?, ?, ?` for an IN list. */
 export const placeholders = (n: number): string => Array.from({ length: n }, () => '?').join(', ');
 

@@ -1,0 +1,26 @@
+{
+  "api_version": "1.0",
+  "event": {
+    "id": "6A1F3C2E-0005-4C1E-9D3F-2B5A7C9E1F04",
+    "type": "BILLING_ISSUE",
+    "app_id": "app1a2b3c4d5",
+    "event_timestamp_ms": 1791619200000,
+    "app_user_id": "__USER__",
+    "original_app_user_id": "__USER__",
+    "aliases": ["__USER__"],
+    "product_id": "stopwake_pro:monthly",
+    "entitlement_ids": ["pro"],
+    "period_type": "NORMAL",
+    "purchased_at_ms": 1789027200000,
+    "expiration_at_ms": 1791619200000,
+    "grace_period_expiration_at_ms": 1791878400000,
+    "environment": "PRODUCTION",
+    "store": "PLAY_STORE",
+    "transaction_id": "GPA.3391-0000-0000-00005..1",
+    "original_transaction_id": "GPA.3391-0000-0000-00005",
+    "country_code": "SE",
+    "currency": "SEK",
+    "price": 2.63,
+    "price_in_purchased_currency": 25
+  }
+}

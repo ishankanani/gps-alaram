@@ -2,14 +2,14 @@
  * Promo codes (spec 1.1, 2.8, 2.10, 3.4). Free marketing gifts only: never sold through any
  * channel the app links to (Google Play billing policy); `promo.redeemEnabled` is the kill switch.
  */
-import type { PaidPlan, PromoCode } from '../../../src/api/types.ts';
+import type { AdminRedemption, AdminRef, PaidPlan, PromoCode } from '../../../src/api/types.ts';
 import { DAY, iso, isoOrNull } from '../clock.ts';
 import { isUniqueViolation, many, one, run, type Db } from '../db/database.ts';
 import { ApiError } from '../http/errors.ts';
 import { Fields, hasOwn, readBool, readDescription, readEnum, readInt, readIsoDate, type Body } from '../http/validate.ts';
 import { insertGrant, latestGiftEnd, MAX_GRANT_DAYS } from './grants.ts';
 import { newPromoCode, normalizePromoCode } from './ids.ts';
-import { LIFETIME_UNTIL, recomputePlan, type GrantRow, type PlanOptions } from './plans.ts';
+import { grantStatus, LIFETIME_UNTIL, recomputePlan, type GrantRow, type PlanOptions } from './plans.ts';
 import { adminRef } from './users.ts';
 
 export { normalizePromoCode };
@@ -282,3 +282,65 @@ export function listPromos(
   });
   return { items, total };
 }
+
+type RedemptionJoin = {
+  promo_code_id: number;
+  code: string;
+  user_id: string;
+  redeemed_at: number;
+  grant_id: number | null;
+  revoked_at: number | null;
+  ends_at: number | null;
+  has_grant: number;
+};
+
+const REDEMPTION_SELECT = `SELECT r.promo_code_id, p.code, r.user_id, r.redeemed_at, r.grant_id, g.revoked_at, g.ends_at,
+    (g.id IS NOT NULL) AS has_grant
+  FROM promo_redemptions r JOIN promo_codes p ON p.id = r.promo_code_id LEFT JOIN grants g ON g.id = r.grant_id`;
+
+const redemptionGrantStatus = (r: RedemptionJoin, now: number): AdminRedemption['grantStatus'] =>
+  r.has_grant ? grantStatus(r, now) : null;
+
+/** A user's redemptions, newest first (admin user detail). */
+export function redemptionsOfUser(db: Db, userId: string, now: number): AdminRedemption[] {
+  return many<RedemptionJoin>(db, `${REDEMPTION_SELECT} WHERE r.user_id = ? ORDER BY r.redeemed_at DESC, r.id DESC`, userId).map((r) => ({
+    promoCodeId: r.promo_code_id, code: r.code, redeemedAt: iso(r.redeemed_at), grantId: r.grant_id,
+    grantStatus: redemptionGrantStatus(r, now),
+  }));
+}
+
+export type PromoRedemptionItem = {
+  user: AdminRef & { email: string | null };
+  redeemedAt: string;
+  grantId: number | null;
+  grantStatus: AdminRedemption['grantStatus'];
+};
+
+/** The newest 100 redemptions of a code (GET /v1/admin/promo-codes/:id). */
+export function redemptionsOfPromo(db: Db, promoId: number, now: number, limit = 100): PromoRedemptionItem[] {
+  return many<RedemptionJoin & { public_id: string; display_name: string | null; email: string | null }>(
+    db,
+    `SELECT r.promo_code_id, p.code, r.user_id, r.redeemed_at, r.grant_id, g.revoked_at, g.ends_at, (g.id IS NOT NULL) AS has_grant,
+       u.public_id, u.display_name, u.email
+     FROM promo_redemptions r JOIN promo_codes p ON p.id = r.promo_code_id
+       JOIN users u ON u.id = r.user_id LEFT JOIN grants g ON g.id = r.grant_id
+     WHERE r.promo_code_id = ? ORDER BY r.redeemed_at DESC, r.id DESC LIMIT ?`,
+    promoId, limit,
+  ).map((r) => ({
+    user: { id: r.user_id, publicId: r.public_id, displayName: r.display_name, email: r.email },
+    redeemedAt: iso(r.redeemed_at),
+    grantId: r.grant_id,
+    grantStatus: redemptionGrantStatus(r, now),
+  }));
+}
+
+/** The audit form of a code's settings (promo.update before/after). */
+export const promoAuditView = (p: PromoRow): Record<string, unknown> => ({
+  plan: p.plan,
+  durationDays: p.duration_days,
+  maxRedemptions: p.max_redemptions,
+  startsAt: isoOrNull(p.starts_at),
+  expiresAt: isoOrNull(p.expires_at),
+  active: p.active === 1,
+  description: p.description,
+});
