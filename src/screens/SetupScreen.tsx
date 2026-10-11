@@ -5,8 +5,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { TripAlarm, type AlarmStrength, type SettingsKind, type SetupStatus } from '../../modules/trip-alarm/src';
 import { useI18n, type Key } from '../i18n';
-import { Body, Button, Card, Icon, IconButton, Title, type IconName } from '../ui/components';
-import { radius, useTheme } from '../ui/theme';
+import { Body, Button, Card, Icon, IconButton, Title, type IconName } from '../ui/legacy/components';
+import { radius, useTheme } from '../ui/legacy/theme';
 
 type Props = {
   strength: AlarmStrength;

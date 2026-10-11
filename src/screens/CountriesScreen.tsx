@@ -6,8 +6,8 @@ import { useI18n, type Key } from '../i18n';
 import { formatBytes, formatCount } from '../lib/format';
 import { BUILT_IN_PACK, PACKS, type CountryPack, type Region } from '../lib/stations/countries';
 import { hasUpdate, installPack, packsSupported, refreshAvailable, removePack, usePacks, type PacksState } from '../lib/stations/packs';
-import { Body, Button, Card, Divider, Icon, IconButton, Label, Title } from '../ui/components';
-import { useTheme } from '../ui/theme';
+import { Body, Button, Card, Divider, Icon, IconButton, Label, Title } from '../ui/legacy/components';
+import { useTheme } from '../ui/legacy/theme';
 
 const REGIONS: Region[] = ['europe', 'americas', 'asiaPacific'];
 

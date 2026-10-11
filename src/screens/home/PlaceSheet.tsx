@@ -9,9 +9,9 @@ import type { Place } from '../../lib/geocode';
 import { effectiveStrength } from '../../lib/plans';
 import { usePro } from '../../lib/pro';
 import { DISTANCE_CHOICES, MINUTE_CHOICES, tooShortForTrain, type WakeOptions } from '../../lib/wake';
-import { Button, Chip, Icon, IconButton, KindIcon, Label, ModeBadges, Segmented } from '../../ui/components';
-import { StrengthPicker } from '../../ui/StrengthPicker';
-import { radius, useTheme } from '../../ui/theme';
+import { Button, Chip, Icon, IconButton, KindIcon, Label, ModeBadges, Segmented } from '../../ui/legacy/components';
+import { StrengthPicker } from '../../ui/legacy/StrengthPicker';
+import { radius, useTheme } from '../../ui/legacy/theme';
 
 type Props = {
   place: Place;

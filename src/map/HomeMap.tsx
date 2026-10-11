@@ -14,8 +14,8 @@ import { StyleSheet, View, type NativeSyntheticEvent } from 'react-native';
 
 import type { Place } from '../lib/geocode';
 import type { Bounds, Stop } from '../lib/stations/search';
-import { Icon } from '../ui/components';
-import { KIND_COLOR, KIND_ICON, useTheme } from '../ui/theme';
+import { Icon } from '../ui/legacy/components';
+import { KIND_COLOR, KIND_ICON, useTheme } from '../ui/legacy/theme';
 import { circlePolygon, GERMANY_CENTER, GERMANY_ZOOM, stopsToGeoJSON } from './geo';
 import { useMapStyle } from './useMapStyle';
 

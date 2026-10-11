@@ -4,8 +4,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { TripAlarm, type TripEndedEvent } from '../../modules/trip-alarm/src';
 import { useI18n } from '../i18n';
 import type { Place } from '../lib/geocode';
-import { Body, Button, Card, Heading, Icon, Title } from '../ui/components';
-import { useTheme } from '../ui/theme';
+import { Body, Button, Card, Heading, Icon, Title } from '../ui/legacy/components';
+import { useTheme } from '../ui/legacy/theme';
 
 type Props = {
   ended: TripEndedEvent;

@@ -3,61 +3,13 @@ import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 
 import { useTheme } from '../theme';
 import { AppText } from './AppText';
-import { Button } from './Button';
 import { RowPositionContext } from './ListItem';
+import { SectionHeader, type SectionHeaderProps } from './SectionHeader';
 import { SkeletonRow } from './Skeleton';
 
-export type SectionAction = { label: string; onPress: () => void; accessibilityLabel?: string };
+export type { SectionAction } from './SectionHeader';
 
-type HeaderProps = {
-  title: string;
-  /** Appended as "Favourites · 2 of 3"; pass the formatted count. */
-  count?: string;
-  /** A ghost Button S: "Clear", "See all", "Edit". */
-  action?: SectionAction;
-  /** Anything else on the right (a spinner, a bodyS note). */
-  trailing?: ReactNode;
-  /** The first header on a screen sits 16 from the top instead of 24. */
-  first?: boolean;
-  /** Inside the MapSheet: titleS in text, 16 from the left (the sheet is the surface). */
-  inSheet?: boolean;
-  style?: StyleProp<ViewStyle>;
-};
-
-/** Sentence-case group header (3.6): labelM textSecondary, aligned with the rows' text. */
-export function SectionHeader({ title, count, action, trailing, first, inSheet, style }: HeaderProps) {
-  return (
-    <View
-      style={[
-        styles.header,
-        // A ghost Button S brings its own 48 dp touch area, so the padding shrinks around it.
-        action
-          ? { paddingTop: first ? 4 : 12, paddingBottom: 0, paddingLeft: inSheet ? 16 : 32, paddingRight: 8 }
-          : { paddingTop: first ? 16 : 24, paddingBottom: 8, paddingLeft: inSheet ? 16 : 32, paddingRight: 16 },
-        style,
-      ]}>
-      <AppText
-        variant={inSheet ? 'titleS' : 'labelM'}
-        color={inSheet ? 'text' : 'textSecondary'}
-        accessibilityRole="header"
-        style={styles.headerText}>
-        {count ? `${title} · ${count}` : title}
-      </AppText>
-      {trailing}
-      {action ? (
-        <Button
-          label={action.label}
-          onPress={action.onPress}
-          accessibilityLabel={action.accessibilityLabel}
-          variant="ghost"
-          size="S"
-        />
-      ) : null}
-    </View>
-  );
-}
-
-type SectionProps = Partial<Omit<HeaderProps, 'style'>> & {
+type SectionProps = Partial<Omit<SectionHeaderProps, 'style'>> & {
   children?: ReactNode;
   /** A note under the section (bodyS textTertiary). */
   footer?: string;
@@ -117,8 +69,6 @@ export function Section({ title, count, action, trailing, first, inSheet, childr
 }
 
 const styles = StyleSheet.create({
-  header: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  headerText: { flex: 1 },
   container: { marginHorizontal: 16, overflow: 'hidden' },
   footer: { paddingTop: 8, paddingHorizontal: 32 },
   footerSheet: { paddingHorizontal: 16 },

@@ -6,8 +6,8 @@ import { useI18n } from '../../i18n';
 import { reversePlace } from '../../lib/geocode';
 import { usePro } from '../../lib/pro';
 import { deleteArea, downloadArea, listAreas, type OfflineArea } from '../../map/offline';
-import { Body, Button, Card, Icon, IconButton, Label } from '../../ui/components';
-import { radius, useTheme } from '../../ui/theme';
+import { Body, Button, Card, Icon, IconButton, Label } from '../../ui/legacy/components';
+import { radius, useTheme } from '../../ui/legacy/theme';
 
 const RADIUS_KM = 25;
 

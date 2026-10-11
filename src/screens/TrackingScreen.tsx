@@ -6,8 +6,8 @@ import { useI18n } from '../i18n';
 import { formatDistance, formatDuration, formatRadius } from '../lib/format';
 import type { StopKind } from '../lib/stations/text';
 import { TripMap } from '../map/TripMap';
-import { Button, Icon, KindIcon, Label, StatusDot } from '../ui/components';
-import { radius, useTheme, type Theme } from '../ui/theme';
+import { Button, Icon, KindIcon, Label, StatusDot } from '../ui/legacy/components';
+import { radius, useTheme, type Theme } from '../ui/legacy/theme';
 
 const HEALTH_COLOR: Record<GpsHealth, (t: Theme) => string> = {
   waiting: (t) => t.muted,

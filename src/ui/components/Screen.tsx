@@ -18,7 +18,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../theme';
 import { AppText } from './AppText';
 import { useToastInset } from './Toast';
-import { LargeHeader, TopBar, type TopBarProps } from './TopBar';
+import { LargeHeader } from './LargeHeader';
+import { TopBar, type TopBarProps } from './TopBar';
 
 export type ScreenProps = {
   children?: ReactNode;

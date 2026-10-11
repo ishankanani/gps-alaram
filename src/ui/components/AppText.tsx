@@ -33,20 +33,23 @@ export function AppText({
   style,
   accessibilityRole,
   maxFontSizeMultiplier,
+  numberOfLines,
+  adjustsFontSizeToFit,
+  minimumFontScale,
   ...rest
 }: AppTextProps) {
   const t = useTheme();
   const { lang } = useI18n();
   const spec = textStyle(variant, { weight, lang, os: Platform.OS, tabular });
-  const numeric = NUMERIC_VARIANTS.includes(variant);
-  const canShrink = shrink ?? (variant === 'numXL' || variant === 'numL');
+  // numXL and numL shrink to fit one line instead of truncating (2.2).
+  const fit = NUMERIC_VARIANTS.includes(variant) && (shrink ?? (variant === 'numXL' || variant === 'numL'));
   return (
     <Text
       accessibilityRole={accessibilityRole ?? (HEADER_VARIANTS.includes(variant) ? 'header' : undefined)}
       maxFontSizeMultiplier={maxFontSizeMultiplier ?? typeScale[variant].maxFontSizeMultiplier}
-      adjustsFontSizeToFit={numeric && canShrink ? true : undefined}
-      minimumFontScale={numeric && canShrink ? 0.8 : undefined}
-      numberOfLines={numeric && canShrink && rest.numberOfLines == null ? 1 : undefined}
+      adjustsFontSizeToFit={adjustsFontSizeToFit ?? (fit ? true : undefined)}
+      minimumFontScale={minimumFontScale ?? (fit ? 0.8 : undefined)}
+      numberOfLines={numberOfLines ?? (fit ? 1 : undefined)}
       style={[spec, styles.base, { color: t.color[color] }, align ? { textAlign: align } : null, style]}
       {...rest}
     />

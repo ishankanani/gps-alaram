@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { BUILTIN_PRICES, formatPrice, perMonth, resolvePrice, yearlySaving, type PriceRow } from '../pricing';
 
 const NBSP = ' ';
-const row = (country: string) => resolvePrice(country);
+const row = (country: string | null) => resolvePrice(country);
 const all = (country: string, lang: string) => {
   const r = row(country);
   return [r.monthly, r.yearly, r.lifetime].map((m) => formatPrice(m, r, lang)).join(' · ');

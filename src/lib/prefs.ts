@@ -6,6 +6,9 @@ import type { Place } from './geocode';
 
 export type WakeBy = 'distance' | 'time';
 
+/** Settings › Appearance: follow the phone, or always light or dark. */
+export type AppearanceChoice = 'system' | 'light' | 'dark';
+
 export type Preferences = {
   /** null follows the phone's language. */
   language: Lang | null;
@@ -16,6 +19,7 @@ export type Preferences = {
   strength: AlarmStrength;
   mode: AlarmMode;
   useMiles: boolean;
+  appearance: AppearanceChoice;
 };
 
 export type SavedData = {
@@ -33,4 +37,5 @@ export const DEFAULT_PREFERENCES: Preferences = {
   strength: 'normal',
   mode: 'arrive',
   useMiles: false,
+  appearance: 'system',
 };

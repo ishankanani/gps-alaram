@@ -6,9 +6,9 @@ import { LANGUAGES, useI18n, type Lang } from '../i18n';
 import { effectiveStrength, type ProReason } from '../lib/plans';
 import type { Preferences } from '../lib/prefs';
 import { storeConnected, usePro } from '../lib/pro';
-import { Body, Card, Divider, Icon, IconButton, Label, Row, Segmented, Title } from '../ui/components';
-import { StrengthPicker } from '../ui/StrengthPicker';
-import { radius, useTheme } from '../ui/theme';
+import { Body, Card, Divider, Icon, IconButton, Label, Row, Segmented, Title } from '../ui/legacy/components';
+import { StrengthPicker } from '../ui/legacy/StrengthPicker';
+import { radius, useTheme } from '../ui/legacy/theme';
 import { OfflineMapCard } from './settings/OfflineMapCard';
 
 type Props = {

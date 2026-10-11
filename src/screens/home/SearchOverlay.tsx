@@ -9,8 +9,8 @@ import { searchPlaces, type Place } from '../../lib/geocode';
 import { stopSources } from '../../lib/stations/packs';
 import { distanceKm, searchAllStops, type LatLon } from '../../lib/stations/search';
 import { stopToPlace } from '../../lib/stations/toPlace';
-import { Body, Icon, IconButton, KindIcon, Label, ModeBadges, Row } from '../../ui/components';
-import { radius, useTheme } from '../../ui/theme';
+import { Body, Icon, IconButton, KindIcon, Label, ModeBadges, Row } from '../../ui/legacy/components';
+import { radius, useTheme } from '../../ui/legacy/theme';
 
 type Props = {
   near: LatLon | null;

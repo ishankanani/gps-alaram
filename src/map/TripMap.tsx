@@ -4,8 +4,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import type { StopKind } from '../lib/stations/text';
-import { Icon } from '../ui/components';
-import { KIND_COLOR, KIND_ICON, useTheme } from '../ui/theme';
+import { Icon } from '../ui/legacy/components';
+import { KIND_COLOR, KIND_ICON, useTheme } from '../ui/legacy/theme';
 import { bearingDeg, boundsOf, circlePolygon } from './geo';
 import { useMapStyle } from './useMapStyle';
 

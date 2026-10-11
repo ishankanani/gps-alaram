@@ -5,8 +5,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useI18n, type Key } from '../i18n';
 import { FALLBACK_PRICES, FREE_FAVOURITES, TRIAL_DAYS, type PlanType, type ProReason } from '../lib/plans';
 import { buy, loadPlans, restore, storeConnected, usePro, type Plan } from '../lib/pro';
-import { Body, Button, Card, Icon, IconButton } from '../ui/components';
-import { radius, useTheme } from '../ui/theme';
+import { Body, Button, Card, Icon, IconButton } from '../ui/legacy/components';
+import { radius, useTheme } from '../ui/legacy/theme';
 
 type Props = { reason: ProReason; onBack: () => void };
 

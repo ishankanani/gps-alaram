@@ -9,16 +9,20 @@ import { Badge } from './Badge';
 
 export type ModeBadgeSize = keyof typeof modeBadgeSize;
 
+// Typed against the dictionaries: a badge word without a string fails the typecheck.
+const TEXT_KEY: Readonly<Record<string, Key>> = BADGE_TEXT_KEY;
+const SPOKEN_KEY: Readonly<Record<string, Key>> = BADGE_SPOKEN_KEY;
+
 /** A badge from modeBadges() as the rider reads it: "S", "ICE", or "Tram" in their language. */
 export function badgeText(badge: string, tr: (key: Key) => string): string {
-  const key = (BADGE_TEXT_KEY as Record<string, string>)[badge];
-  return key ? tr(key as Key) : badge;
+  const key = TEXT_KEY[badge];
+  return key ? tr(key) : badge;
 }
 
 /** What TalkBack says for a badge: "Regional train", "S-Bahn". */
 export function badgeSpoken(badge: string, tr: (key: Key) => string): string {
-  const key = (BADGE_SPOKEN_KEY as Record<string, string>)[badge];
-  return key ? tr(key as Key) : badge;
+  const key = SPOKEN_KEY[badge];
+  return key ? tr(key) : badge;
 }
 
 type Props = { badge: string; size?: ModeBadgeSize; style?: StyleProp<ViewStyle> };

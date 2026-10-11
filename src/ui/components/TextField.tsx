@@ -19,7 +19,7 @@ import { Icon, type IconName } from './Icon';
 import { IconButton } from './IconButton';
 
 export type TextFieldKind = 'text' | 'name' | 'email' | 'password' | 'newPassword' | 'oneTimeCode';
-export type TextFieldVariant = 'default' | 'multiline' | 'decimal' | 'code';
+export type TextFieldVariant = 'default' | 'multiline' | 'decimal' | 'number' | 'code';
 
 export type TextFieldProps = {
   /** Always visible above the field. No floating labels. */
@@ -101,7 +101,7 @@ export function TextField({
   const [revealed, setRevealed] = useState(false);
   const secure = (kind === 'password' || kind === 'newPassword') && !revealed;
   const multiline = variant === 'multiline';
-  const numeric = variant === 'decimal' || variant === 'code';
+  const numeric = variant === 'decimal' || variant === 'number' || variant === 'code';
   const strong = focused || !!error;
   const borderWidth = strong ? 2 : 1;
   const inputStyle = textStyle('bodyL', { lang, os: Platform.OS, tabular: numeric });
@@ -165,6 +165,7 @@ export function TextField({
           }}
           {...AUTOFILL[kind]}
           {...(variant === 'decimal' ? { keyboardType: 'decimal-pad' as const } : null)}
+          {...(variant === 'number' ? { keyboardType: 'number-pad' as const } : null)}
           {...(variant === 'code' ? { autoCapitalize: 'characters' as const } : null)}
           {...(autoCapitalize ? { autoCapitalize } : null)}
           style={[

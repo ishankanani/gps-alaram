@@ -3,8 +3,8 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { LANGUAGES, useI18n, type Key, type Lang } from '../i18n';
-import { Body, Button, Icon, Label, type IconName } from '../ui/components';
-import { KIND_COLOR, radius, useTheme } from '../ui/theme';
+import { Body, Button, Icon, Label, type IconName } from '../ui/legacy/components';
+import { KIND_COLOR, radius, useTheme } from '../ui/legacy/theme';
 
 type Props = {
   onLanguage: (lang: Lang) => void;

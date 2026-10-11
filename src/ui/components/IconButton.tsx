@@ -85,7 +85,18 @@ export function IconButton({
             styles.visual,
             { width: visual, height: visual, borderRadius: visual / 2 },
             bg ? { backgroundColor: t.color[bg] } : null,
-            Platform.OS === 'ios' && pressed && !bg ? { backgroundColor: t.color.pressed } : null,
+            Platform.OS === 'ios' && pressed && !disabled
+              ? {
+                  backgroundColor:
+                    variant === 'tonal'
+                      ? t.color.fillPressed
+                      : variant === 'filled'
+                        ? t.color.primaryPressed
+                        : variant === 'map'
+                          ? t.color.fill
+                          : t.color.pressed,
+                }
+              : null,
             variant === 'map' ? t.elevation(2) : null,
           ]}>
           {loading ? (
