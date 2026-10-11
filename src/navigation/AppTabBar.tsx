@@ -1,5 +1,5 @@
 import { BottomTabBarHeightCallbackContext, type BottomTabBarProps } from '@react-navigation/bottom-tabs';
-import { CommonActions } from '@react-navigation/native';
+import { CommonActions, useIsFocused } from '@react-navigation/native';
 import { useContext, useState } from 'react';
 
 import type { GpsHealth, TripStatus } from '../../modules/trip-alarm/src';
@@ -52,8 +52,10 @@ export function AppTabBar({ state, navigation, insets }: BottomTabBarProps) {
   const trip = useTrip();
   const hidden = useTabBarHidden();
   const setupNeedsAction = useSetupNeedsAction();
+  // Focused: the tabs are on top (pushed screens cover the bar and place toasts themselves).
+  const tabsFocused = useIsFocused();
   const [height, setHeight] = useState(0);
-  useToastInset(height, !hidden && height > 0);
+  useToastInset(height, tabsFocused && !hidden && height > 0);
 
   const items: TabItem[] = state.routes.map((route, index) => {
     const tab = TABS[route.name as keyof TabParamList];

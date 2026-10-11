@@ -11,12 +11,15 @@ import type { FontWeightValue } from './tokens';
 
 export type FontWeightName = 'regular' | 'medium' | 'semibold' | 'bold';
 
-/** The files in app.json → expo-font → fonts, relative to the project root. */
+/**
+ * The files in app.json → expo-font (android.fonts and ios.fonts), as module paths the plugin
+ * resolves from the project root. A test keeps app.json in step with this list.
+ */
 export const INTER_FILES: Record<FontWeightName, string> = {
-  regular: './node_modules/@expo-google-fonts/inter/400Regular/Inter_400Regular.ttf',
-  medium: './node_modules/@expo-google-fonts/inter/500Medium/Inter_500Medium.ttf',
-  semibold: './node_modules/@expo-google-fonts/inter/600SemiBold/Inter_600SemiBold.ttf',
-  bold: './node_modules/@expo-google-fonts/inter/700Bold/Inter_700Bold.ttf',
+  regular: '@expo-google-fonts/inter/400Regular/Inter_400Regular.ttf',
+  medium: '@expo-google-fonts/inter/500Medium/Inter_500Medium.ttf',
+  semibold: '@expo-google-fonts/inter/600SemiBold/Inter_600SemiBold.ttf',
+  bold: '@expo-google-fonts/inter/700Bold/Inter_700Bold.ttf',
 };
 
 /** Android font family names: the file names without extension. */

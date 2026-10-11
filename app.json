@@ -2,6 +2,7 @@
   "expo": {
     "name": "StopWake",
     "slug": "gps-alarm",
+    "scheme": "stopwake",
     "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -38,7 +39,28 @@
       ],
       "@maplibre/maplibre-react-native",
       "expo-sqlite",
-      "expo-localization"
+      "expo-localization",
+      [
+        "expo-font",
+        {
+          "android": {
+            "fonts": [
+              "@expo-google-fonts/inter/400Regular/Inter_400Regular.ttf",
+              "@expo-google-fonts/inter/500Medium/Inter_500Medium.ttf",
+              "@expo-google-fonts/inter/600SemiBold/Inter_600SemiBold.ttf",
+              "@expo-google-fonts/inter/700Bold/Inter_700Bold.ttf"
+            ]
+          },
+          "ios": {
+            "fonts": [
+              "@expo-google-fonts/inter/400Regular/Inter_400Regular.ttf",
+              "@expo-google-fonts/inter/500Medium/Inter_500Medium.ttf",
+              "@expo-google-fonts/inter/600SemiBold/Inter_600SemiBold.ttf",
+              "@expo-google-fonts/inter/700Bold/Inter_700Bold.ttf"
+            ]
+          }
+        }
+      ]
     ]
   }
 }

@@ -29,7 +29,12 @@ Run lint and typecheck before declaring any task done.
 - Anything that decides when to ring lives in native Kotlin (`modules/trip-alarm`), not in JS.
   The trip engine (`android/.../engine`) is pure Kotlin with no Android imports; keep it that way
   and run `npm run test:engine` after touching it.
-- The UI is a small screen state machine in `App.tsx` (no Expo Router).
+- Navigation is React Navigation 7 (no Expo Router): routes and params in `src/navigation/types.ts`,
+  tabs Map / Saved / Activity / Account, the admin group only for admins. App-wide state (saved
+  data, the trip lifecycle with the native module, language, setup, session role) lives in the
+  providers of `src/state`; `App.tsx` only wires providers and navigation. The design system
+  (tokens, theme, components) is `src/ui` (import from `src/ui/index.ts`); `src/ui/legacy` holds
+  the old components until every screen is rebuilt. The server is `server/` (see its README).
 - The offline stops database `assets/stations/germany-stops.db` is generated, not committed:
   run `npm run build:stations` after `npm install`. Metro bundles it as an asset.
 - Every user-facing text goes through `useI18n()`. Strings live in `src/i18n/<lang>/`, one file
