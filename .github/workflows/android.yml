@@ -29,6 +29,20 @@ jobs:
       - run: npm run typecheck
       - run: npm run lint
       - run: npm test
+      - run: npm run typecheck:server
+      - run: npm run test:server
+
+  server-image:
+    name: Server Docker image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -f server/Dockerfile --build-arg GIT_COMMIT=${GITHUB_SHA::7} -t stopwake-cloud:ci .
+      - name: Smoke test
+        run: |
+          docker run -d --name cloud -p 8787:8787 -e NODE_ENV=production -e PUBLIC_URL=http://localhost:8787 -e ALLOW_HTTP=true stopwake-cloud:ci
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:8787/v1/health && exit 0; sleep 1; done
+          docker logs cloud; exit 1
 
   engine:
     name: Trip engine tests
@@ -49,6 +63,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: [checks, engine]
     timeout-minutes: 60
+    env:
+      # The StopWake Cloud address (repository variable). Empty means a build without accounts.
+      EXPO_PUBLIC_API_URL: ${{ vars.STOPWAKE_API_URL }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

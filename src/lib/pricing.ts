@@ -28,6 +28,7 @@ const euroAfter: PriceFormat = { ...base, symbol: '€', position: 'after', spac
 const euroBefore: PriceFormat = { ...euroAfter, position: 'before' };
 const euroEnglish: PriceFormat = { ...base, symbol: '€', position: 'before', space: false, decimal: '.', group: ',' };
 const dollar: PriceFormat = { ...base, symbol: '$', position: 'before', space: false, decimal: '.', group: ',' };
+const swissFranc: PriceFormat = { ...base, symbol: 'CHF', position: 'before', space: true, decimal: '.', group: '\u2019', wordSymbol: true };
 const krone = (symbol: string, group: string): PriceFormat =>
   ({ ...base, symbol, position: 'after', space: true, decimal: ',', group, trimWhole: true, wordSymbol: true });
 const eur = (country: string, format: PriceFormat): PriceRow =>
@@ -36,7 +37,7 @@ const eur = (country: string, format: PriceFormat): PriceRow =>
 export const BUILTIN_PRICES: readonly PriceRow[] = [
   eur('DE', euroAfter), eur('AT', euroBefore),
   { country: 'CH', currency: 'CHF', monthly: 220, yearly: 1100, lifetime: 1600, trialDays: null,
-    format: { ...base, symbol: 'CHF', position: 'before', space: true, decimal: '.', group: '\u2019', wordSymbol: true } },
+    format: swissFranc },
   eur('LU', euroAfter), eur('NL', euroBefore), eur('BE', euroBefore),
   { country: 'GB', currency: 'GBP', monthly: 179, yearly: 899, lifetime: 1299, trialDays: null, format: { ...dollar, symbol: '£' } },
   eur('IE', euroEnglish),
@@ -58,7 +59,7 @@ export const EU_ALIAS: readonly string[] = ['BG','HR','CY','EE','GR','IT','LV','
 
 /** Formats for currencies an admin may add without giving one (country rows override these). */
 export const CURRENCY_FORMATS: Readonly<Record<string, PriceFormat>> = {
-  EUR: euroAfter, CHF: BUILTIN_PRICES[2].format, GBP: { ...dollar, symbol: '£' }, SEK: krone('kr', NBSP),
+  EUR: euroAfter, CHF: swissFranc, GBP: { ...dollar, symbol: '£' }, SEK: krone('kr', NBSP),
   NOK: krone('kr', NBSP), DKK: krone('kr.', '.'), USD: { ...dollar, symbol: 'US$' }, CAD: { ...dollar, symbol: 'CA$' },
   AUD: { ...dollar, symbol: 'A$' }, JPY: { ...dollar, symbol: '¥', decimals: 0 }, INR: { ...dollar, symbol: '₹', trimWhole: true, grouping: 'indian' },
   PLN: { ...euroAfter, symbol: 'zł', group: NBSP, wordSymbol: true }, CZK: { ...krone('Kč', NBSP) }, NZD: { ...dollar, symbol: 'NZ$' },

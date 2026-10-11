@@ -1,0 +1,5 @@
+*
+!server/
+!src/lib/pricing.ts
+server/data/
+server/test/

@@ -1,0 +1,28 @@
+# Copy to the repository root as fly.toml, set `app` and PUBLIC_URL, then `fly deploy`.
+app = "stopwake-cloud"
+primary_region = "fra"
+
+[build]
+  dockerfile = "server/Dockerfile"
+
+[env]
+  PUBLIC_URL = "https://api.example.com"
+  TRUST_PROXY = "1"
+
+[[mounts]]
+  source = "stopwake_data"
+  destination = "/data"
+
+[http_service]
+  internal_port = 8787
+  force_https = true
+  auto_stop_machines = "off"
+  auto_start_machines = true
+  min_machines_running = 1
+
+  [[http_service.checks]]
+    method = "GET"
+    path = "/v1/health"
+    interval = "30s"
+    timeout = "3s"
+    grace_period = "10s"

@@ -1,0 +1,52 @@
+<!doctype html>
+<!-- Template: review and adapt this page (and have it checked) before you publish the app. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy · StopWake</title>
+<style>
+  :root { color-scheme: light dark; --fg: #14181f; --muted: #5b6472; --bg: #ffffff; --accent: #1f6feb; }
+  @media (prefers-color-scheme: dark) { :root { --fg: #e8ecf2; --muted: #9aa4b2; --bg: #0f1216; --accent: #6ea8ff; } }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 680px; margin: 0 auto; padding: 40px 16px 64px; }
+  h1 { font-size: 28px; line-height: 1.2; margin: 0 0 4px; }
+  h2 { font-size: 19px; margin: 32px 0 8px; }
+  p.meta { color: var(--muted); margin: 0 0 24px; }
+  a { color: var(--accent); }
+  li { margin: 4px 0; }
+</style>
+</head>
+<body>
+<main>
+<h1>Privacy</h1>
+<p class="meta">StopWake wakes you before your stop. It is built to need as little of your data as possible.</p>
+
+<h2>Your location stays on your phone</h2>
+<p>StopWake uses your location only on your device, to know when you are near your stop. Your location is never sent to our servers, and we do not keep a history of where you travel. Trip history in the app is stored on your phone only.</p>
+
+<h2>What we store on our server</h2>
+<ul>
+  <li><strong>Your StopWake ID</strong> (for example SW-7K3P-92QX) and a random install ID, so your plan works on this phone.</li>
+  <li><strong>Your email address and name</strong>, only if you create an account.</li>
+  <li><strong>Your plan</strong>: purchases made through Google Play (processed by Google and RevenueCat), gifted plans and redeemed codes.</li>
+  <li><strong>App information</strong>: app version, Android version, language and country, used to show the right prices and to support you.</li>
+</ul>
+<p>We do not collect contacts, photos or advertising IDs, and we do not sell your data.</p>
+
+<h2>Service providers</h2>
+<ul>
+  <li><strong>Google Play</strong> and <strong>RevenueCat</strong> process purchases and subscriptions.</li>
+  <li>Our <strong>email provider</strong> sends account emails such as password reset codes.</li>
+  <li>Map tiles are loaded from <strong>OpenFreeMap</strong> (OpenStreetMap data). Like any website, the tile server sees your IP address.</li>
+</ul>
+
+<h2>How long we keep data</h2>
+<p>Account data is kept while you use StopWake. When you delete your account, it is removed at once; backups that still contain it expire within 30 days.</p>
+
+<h2>Your rights</h2>
+<p>You can see and export your data in the app (Account → Export my data), correct it (Account → Edit profile) and delete it (Account → Delete account). See also <a href="{{PUBLIC_URL}}/account-deletion">how to delete your account</a>.</p>
+<p class="meta" style="margin-top:40px">Questions? Write to <a href="mailto:{{SUPPORT_EMAIL}}">{{SUPPORT_EMAIL}}</a>.</p>
+</main>
+</body>
+</html>
