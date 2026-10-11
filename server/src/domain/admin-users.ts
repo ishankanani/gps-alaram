@@ -178,9 +178,14 @@ export function listAdminUsers(db: Db, query: UserListQuery, now: number): { ite
     } else {
       const pid = publicIdSearch(q);
       if (pid) {
-        where.push(`(u.public_id LIKE :pid OR ${text})`);
+        // Rule 3: only the bare 8-character form is also OR'ed with rule 5 (it may be a name).
+        if (pid.bare) {
+          where.push(`(u.public_id LIKE :pid OR ${text})`);
+          params.like = like;
+        } else {
+          where.push('u.public_id LIKE :pid');
+        }
         params.pid = pid.pattern;
-        params.like = like;
       } else if (q.includes('@')) {
         where.push("u.email LIKE :like ESCAPE '\\'");
         params.like = like;

@@ -12,6 +12,7 @@ import { createTestClock, type TestClock } from '../src/clock.ts';
 import { loadConfig, type Config } from '../src/config.ts';
 import { openDatabase, type Db } from '../src/db/database.ts';
 import { migrate } from '../src/db/migrate.ts';
+import { recomputePlan } from '../src/domain/plans.ts';
 import type { RevenueCatApi } from '../src/domain/revenuecat-api.ts';
 import { createAccount, getUserByEmail } from '../src/domain/users.ts';
 import { createLogger, type Logger } from '../src/log.ts';
@@ -166,3 +167,56 @@ export const rows = <T = Record<string, unknown>>(db: Db, sql: string, ...params
 
 export const count = (db: Db, sql: string, ...params: Array<string | number | null>): number =>
   Number((db.prepare(sql).get(...params) as { n: number }).n);
+
+// ---- Admin test utilities ----
+
+export type AuditRow = {
+  id: number;
+  at: number;
+  actor_id: string | null;
+  actor_label: string;
+  action: string;
+  target_type: string | null;
+  target_id: string | null;
+  target_user_id: string | null;
+  target_label: string | null;
+  details: string;
+  ip: string | null;
+  request_id: string | null;
+};
+
+/** The highest audit row id so far (0 when empty). */
+export const lastAuditId = (db: Db): number => count(db, 'SELECT coalesce(max(id), 0) AS n FROM audit_log');
+
+/** Audit rows written after `afterId`, oldest first. */
+export const auditRowsAfter = (db: Db, afterId: number): AuditRow[] =>
+  rows<AuditRow>(db, 'SELECT * FROM audit_log WHERE id > ? ORDER BY id', afterId);
+
+/** Runs `fn` and returns its result with the audit rows and the mails it produced. */
+export async function tracked<T>(s: TestServer, fn: () => Promise<T>): Promise<{ result: T; audit: AuditRow[]; mail: OutgoingMail[] }> {
+  const auditBefore = lastAuditId(s.db);
+  const mailBefore = s.mail.length;
+  const result = await fn();
+  return { result, audit: auditRowsAfter(s.db, auditBefore), mail: s.mail.slice(mailBefore) };
+}
+
+/** Inserts a production Play Store subscription row (default: monthly, active, renewing, ends in 20 days) and recomputes the plan. */
+export function insertStoreSubscription(
+  db: Db,
+  userId: string,
+  now: number,
+  opts: { plan?: 'monthly' | 'yearly' | 'lifetime'; status?: string; willRenew?: 0 | 1; expiresInDays?: number | null; transactionId?: string } = {},
+): number {
+  const plan = opts.plan ?? 'monthly';
+  const expires = opts.expiresInDays === null || plan === 'lifetime' ? null : now + (opts.expiresInDays ?? 20) * 86_400_000;
+  const r = db.prepare(
+    `INSERT INTO store_subscriptions (user_id, store, environment, product_id, plan, original_transaction_id, rc_app_user_id, status, will_renew,
+       purchased_at, expires_at, last_event_at, created_at, updated_at)
+     VALUES (?, 'play_store', 'production', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+  ).run(
+    userId, plan === 'lifetime' ? 'stopwake_lifetime' : `stopwake_pro:${plan}`, plan, opts.transactionId ?? `GPA.test-${randomUUID()}`, userId,
+    opts.status ?? 'active', plan === 'lifetime' ? 0 : (opts.willRenew ?? 1), now - 86_400_000, expires, now, now, now,
+  );
+  recomputePlan(db, userId, now, { sandboxGrantsPro: true });
+  return Number(r.lastInsertRowid);
+}

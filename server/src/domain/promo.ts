@@ -169,7 +169,9 @@ export function validatePromoInput(body: Body, mode: 'create' | 'update', existi
 
   // Cross-field rules on the resulting row.
   const finalPlan = out.plan ?? existing?.plan;
-  const finalDays = out.durationDays !== undefined ? out.durationDays : (out.plan === undefined ? existing?.duration_days ?? null : null);
+  // An absent durationDays keeps the stored one unless the plan actually changes.
+  const planChanges = out.plan !== undefined && out.plan !== existing?.plan;
+  const finalDays = out.durationDays !== undefined ? out.durationDays : (planChanges ? null : existing?.duration_days ?? null);
   if (finalPlan === 'lifetime' && finalDays !== null && finalDays !== undefined && !v.has('durationDays')) v.add('durationDays', 'not_allowed');
   if (finalPlan && finalPlan !== 'lifetime' && (finalDays === null || finalDays === undefined) && !v.has('durationDays')) {
     // Grant rules: monthly and yearly default to 30 or 365 days.
