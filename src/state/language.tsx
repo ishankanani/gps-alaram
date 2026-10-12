@@ -1,6 +1,7 @@
 import { useEffect, useMemo, type ReactNode } from 'react';
 
 import { TripAlarm } from '../../modules/trip-alarm/src';
+import { setApiLanguage } from '../api';
 import { deviceLanguage, I18nProvider, translator, type Lang } from '../i18n';
 import { useSavedData } from './saved';
 
@@ -14,9 +15,11 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const lang: Lang = data.preferences.language ?? deviceLang;
   const i18n = useMemo(() => ({ lang, t: translator(lang) }), [lang]);
 
-  // The alarm screen and notifications are native: tell them the language too.
+  // The alarm screen and notifications are native, and the server answers in the app language
+  // (Accept-Language, remote config texts): tell them the language too.
   useEffect(() => {
     TripAlarm?.setLanguage(lang);
+    setApiLanguage(lang);
   }, [lang]);
 
   return <I18nProvider value={i18n}>{children}</I18nProvider>;

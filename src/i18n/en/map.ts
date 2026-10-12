@@ -18,6 +18,11 @@ export const map = {
   'map.firstOffline': 'The map needs internet the first time. Search and alarms work offline.',
   'map.pinCrosshair': 'Pin position',
 
+  // Update required (below the server's minimum version; alarms keep working)
+  'map.update.body': 'Update StopWake. Your alarms keep working.',
+  'map.update.action': 'Update',
+  'map.announcement.open': 'Learn more',
+
   // Country pack suggestion
   'map.pack.title': 'Stops for {country} · {size}',
   'map.pack.body': 'Download them to find stops here, also without internet.',

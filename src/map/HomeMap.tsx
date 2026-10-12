@@ -59,6 +59,8 @@ type Props = {
   onPressMap: () => void;
   onLongPress: (point: LatLon) => void;
   onViewChange: (view: ViewChange) => void;
+  /** The style has loaded and the map is showing. */
+  onLoaded?: () => void;
 };
 
 /** Stop name under its dot. */
@@ -113,6 +115,7 @@ export function HomeMap({
   onPressMap,
   onLongPress,
   onViewChange,
+  onLoaded: onMapLoaded,
 }: Props) {
   const t = useTheme();
   const { style } = useMapStyle();
@@ -171,6 +174,7 @@ export function HomeMap({
       }
     }
     Animated.timing(fade, { toValue: 1, duration: t.motion.duration.base, useNativeDriver: true }).start();
+    onMapLoaded?.();
   }
 
   function onStopPress(event: NativeSyntheticEvent<PressEventWithFeatures>) {

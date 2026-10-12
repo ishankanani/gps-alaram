@@ -1,3 +1,4 @@
+import * as Application from 'expo-application';
 import { useSyncExternalStore } from 'react';
 import { AppState, Platform } from 'react-native';
 import Purchases, {
@@ -42,8 +43,10 @@ export const storeConnected = !!API_KEY;
 /** unlocked (no server, no store: test builds), store (store only) or server (server ∪ store). */
 export const buildMode: BuildMode = buildModeFor(apiConfigured, storeConnected);
 
-/** Google Play's subscriptions page, when RevenueCat has no management URL. */
-export const PLAY_SUBSCRIPTIONS_URL = 'https://play.google.com/store/account/subscriptions';
+/** Google Play's subscriptions page (for this app), when RevenueCat has no management URL. */
+export const PLAY_SUBSCRIPTIONS_URL = `https://play.google.com/store/account/subscriptions${
+  Application.applicationId ? `?package=${encodeURIComponent(Application.applicationId)}` : ''
+}`;
 
 export type Plan = {
   type: PlanType;

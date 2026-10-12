@@ -413,6 +413,8 @@ export async function signUp(input: { email: string; password: string; displayNa
  * purchases into the account (3.6). Resolves with what moved, or null.
  */
 export async function signIn(input: { email: string; password: string }): Promise<MergeSummary | null> {
+  // A guest being created right now would take this installation's sessions with it: let it land first.
+  if (guestInflight) await guestInflight;
   const s = getSession();
   const res = await endpoints.auth.signIn({ email: input.email, password: input.password, installId: getInstallId() }, s?.token ?? null);
   applyAuth(res);
@@ -478,6 +480,7 @@ export async function forgotPassword(email: string): Promise<void> {
 
 /** Sets a new password with a code from the email or from support, and signs in. */
 export async function resetPassword(input: { email: string; code: string; newPassword: string }): Promise<void> {
+  if (guestInflight) await guestInflight;
   const res = await endpoints.auth.resetPassword({ ...input, installId: getInstallId() });
   applyAuth(res);
 }

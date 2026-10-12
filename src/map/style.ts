@@ -3,6 +3,7 @@ import type {
   FilterSpecification,
   LayerSpecification,
   StyleSpecification,
+  SymbolLayerSpecification,
 } from '@maplibre/maplibre-gl-style-spec';
 
 import type { Lang } from '../i18n';
@@ -205,12 +206,12 @@ export function ruleFor(layer: Layer): RecolourRule | null {
 
 function localNames(layer: Layer, lang: Lang): Layer {
   if (layer.type !== 'symbol') return layer;
-  let next = layer;
+  let next: SymbolLayerSpecification = layer;
   if (layer.id === 'poi_transit') next = { ...next, filter: AIRPORTS_ONLY };
   const field = layer.layout?.['text-field'];
   if (field != null && JSON.stringify(field).includes('name')) {
     const name = layer.id.startsWith('label_country') ? countryName(lang) : LOCAL_NAME;
-    next = { ...next, layout: { ...next.layout, 'text-field': name } } as Layer;
+    next = { ...next, layout: { ...next.layout, 'text-field': name } };
   }
   return next;
 }

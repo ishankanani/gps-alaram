@@ -7,11 +7,12 @@
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 
 import { getSessionRole, onSessionRoleChange, setSessionRole } from '../state/session';
-import { reauthenticate } from './account';
+import { accountUser, reauthenticate, useAccount } from './account';
 import { createAdminEndpoints } from './adminEndpoints';
 import type { ApiRequester, HttpMethod, RequestOptions } from './contract';
-import { api, apiConfigured } from './index';
-import type { FieldError, MeResponse } from './types';
+import { API_URL, api, apiConfigured } from './index';
+import { refreshConfig } from './config';
+import type { FieldError, User } from './types';
 
 export * from './adminEndpoints';
 
@@ -149,7 +150,7 @@ export const adminApi = createAdminEndpoints(requester);
 export const adminAvailable: boolean = apiConfigured;
 
 /** The server the admin is changing (shown in the dashboard footer and the Staging badge). */
-export const ADMIN_SERVER_URL: string = process.env.EXPO_PUBLIC_API_URL ?? '';
+export const ADMIN_SERVER_URL: string = API_URL;
 
 /** A plain-http server (local or staging): admin TopBars carry a warning badge. */
 export const isStagingServer: boolean = /^http:\/\//i.test(ADMIN_SERVER_URL);
@@ -250,7 +251,6 @@ export function peekAdmin<T>(key: string): T | undefined {
 export function clearAdminCache() {
   entries.clear();
   runs.clear();
-  meCache = null;
   listeners.forEach((set) => set.forEach((l) => l()));
 }
 
@@ -468,18 +468,12 @@ export function useAdminMutation<A extends unknown[], R>(
 
 // ---- The signed-in admin ----
 
-let meCache: Promise<MeResponse> | null = null;
+/** The admin using the app (to grey out actions on yourself), from the account store. */
+export function useAdminMe(): User | null {
+  return accountUser(useAccount());
+}
 
-/** The admin using the app (to grey out actions on yourself); fetched once per session, memory only. */
-export function useAdminMe(): MeResponse['user'] | null {
-  const query = useAdminQuery<MeResponse>('me', () => {
-    if (!meCache) {
-      meCache = adminApi.me().catch((e) => {
-        meCache = null;
-        throw e;
-      });
-    }
-    return meCache;
-  });
-  return query.data?.user ?? null;
+/** Phones read prices and settings from /v1/config; this phone refetches at once after a save (7.3). */
+export function refreshConfigAfterAdminSave() {
+  void refreshConfig({ force: true }).catch(() => {});
 }

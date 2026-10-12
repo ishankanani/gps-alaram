@@ -193,3 +193,10 @@ export function movedEnough(from: { latitude: number; longitude: number } | null
   const east = (to.longitude - from.longitude) * 111_320 * Math.cos((from.latitude * Math.PI) / 180);
   return Math.hypot(north, east) >= metres;
 }
+
+/** A theme colour ("#RRGGBB") at an opacity, for gradients over the map. Other formats pass through. */
+export function withAlpha(color: string, alpha: number): string {
+  const m = /^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(color);
+  if (!m) return color;
+  return `rgba(${parseInt(m[1], 16)},${parseInt(m[2], 16)},${parseInt(m[3], 16)},${alpha})`;
+}
