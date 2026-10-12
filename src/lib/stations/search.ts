@@ -220,3 +220,19 @@ export async function nearestStopAll(sources: StopsSource[], point: LatLon, maxM
   );
   return closest(found.flat(), point, maxMeters);
 }
+
+/**
+ * The stops closest to a point, nearest first: at most `limit`, all within `maxKm`, from every
+ * database that covers the area (the Map home's "Nearby stops").
+ */
+export async function nearestStopsAll(sources: StopsSource[], point: LatLon, limit = 8, maxKm = 1.5): Promise<Stop[]> {
+  const area = boundsAround(point, maxKm);
+  const covering = sources.filter((s) => intersects(s.bounds, area));
+  const found = await Promise.all(covering.map((s) => stopsInBounds(s.db, area, 1000, 0, s.slot).catch(() => [])));
+  return withoutDuplicates(found.flat())
+    .map((stop) => ({ stop, km: distanceKm(point, stop) }))
+    .filter((x) => x.km <= maxKm)
+    .sort((a, b) => a.km - b.km)
+    .slice(0, limit)
+    .map((x) => x.stop);
+}

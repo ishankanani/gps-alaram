@@ -1,0 +1,4150 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`prepareStyle: calm recolour of Liberty (2.1.1) > matches the recorded recolour 1`] = `
+{
+  "dark": [
+    {
+      "id": "background",
+      "paint": {
+        "background-color": "#121821",
+      },
+      "visibility": null,
+    },
+    {
+      "id": "natural_earth",
+      "paint": {
+        "raster-opacity": [
+          "interpolate",
+          [
+            "exponential",
+            1.5,
+          ],
+          [
+            "zoom",
+          ],
+          0,
+          0.6,
+          6,
+          0.1,
+        ],
+      },
+      "visibility": "none",
+    },
+    {
+      "id": "park",
+      "paint": {
+        "fill-color": "#15251D",
+        "fill-opacity": 0.7,
+        "fill-outline-color": "#15251D",
+      },
+      "visibility": null,
+    },
+    {
+      "id": "park_outline",
+      "paint": {
+        "line-color": "rgba(228, 241, 215, 1)",
+        "line-dasharray": [
+          1,
+          1.5,
+        ],
+      },
+      "visibility": "none",
+    },
+    {
+      "id": "landuse_residential",
+      "paint": {
+        "fill-color": "#151C26",
+      },
+      "visibility": null,
+    },
+    {
+      "id": "landcover_wood",
+      "paint": {
+        "fill-antialias": false,
+        "fill-color": "#15251D",
+        "fill-opacity": 0.6,
+        "fill-outline-color": "#15251D",
+      },
+      "visibility": null,
+    },
+    {
+      "id": "landcover_grass",
+      "paint": {
+        "fill-antialias": false,
+        "fill-color": "#15251D",
+        "fill-opacity": 0.6,
+        "fill-outline-color": "#15251D",
+      },
+      "visibility": null,
+    },
+    {
+      "id": "landcover_ice",
+      "paint": {
+        "fill-antialias": false,
+        "fill-color": "#151C26",
+        "fill-opacity": 0.8,
+      },
+      "visibility": null,
+    },
+    {
+      "id": "landcover_wetland",
+      "paint": {
+        "fill-antialias": true,
+        "fill-opacity": 0.8,
+        "fill-pattern": "wetland_bg_11",
+        "fill-translate-anchor": "map",
+      },
+      "visibility": "none",
+    },
+    {
+      "id": "landuse_pitch",
+      "paint": {
+        "fill-color": "#15251D",
+        "fill-outline-color": "#15251D",
+      },
+      "visibility": null,
+    },
+    {
+      "id": "landuse_track",
+      "paint": {
+        "fill-color": "#15251D",
+        "fill-outline-color": "#15251D",
+      },
+      "visibility": null,
+    },
+    {
+      "id": "landuse_cemetery",
+      "paint": {
+        "fill-color": "#15251D",
+        "fill-outline-color": "#15251D",
+      },
+      "visibility": null,
+    },
+    {
+      "id": "landuse_hospital",
+      "paint": {
+        "fill-color": "#151C26",
+      },
+      "visibility": null,
+    },
+    {
+      "id": "landuse_school",
+      "paint": {
+        "fill-color": "#151C26",
+      },
+      "visibility": null,
+    },
+    {
+      "id": "waterway_tunnel",
+      "paint": {
+        "line-color": "#0D2136",
+        "line-dasharray": [
+          3,
+          3,
+        ],
+        "line-gap-width": [
+          "interpolate",
+          [
+            "linear",
+          ],
+          [
+            "zoom",
+          ],
+          12,
+          0,
+          20,
+          6,
+        ],
+        "line-opacity": 1,
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.4,
+          ],
+          [
+            "zoom",
+          ],
+          8,
+          1,
+          20,
+          2,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "waterway_river",
+      "paint": {
+        "line-color": "#0D2136",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          11,
+          0.5,
+          20,
+          6,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "waterway_other",
+      "paint": {
+        "line-color": "#0D2136",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.3,
+          ],
+          [
+            "zoom",
+          ],
+          13,
+          0.5,
+          20,
+          6,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "water",
+      "paint": {
+        "fill-color": "#0D2136",
+      },
+      "visibility": null,
+    },
+    {
+      "id": "landcover_sand",
+      "paint": {
+        "fill-color": "#151C26",
+      },
+      "visibility": null,
+    },
+    {
+      "id": "aeroway_fill",
+      "paint": {
+        "fill-color": "#151C26",
+        "fill-opacity": 0.7,
+      },
+      "visibility": null,
+    },
+    {
+      "id": "aeroway_runway",
+      "paint": {
+        "line-color": "#222A36",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          11,
+          3,
+          20,
+          16,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "aeroway_taxiway",
+      "paint": {
+        "line-color": "#222A36",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          11,
+          0.5,
+          20,
+          6,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "tunnel_motorway_link_casing",
+      "paint": {
+        "line-color": "#0B1017",
+        "line-dasharray": [
+          0.5,
+          0.25,
+        ],
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          12,
+          1,
+          13,
+          3,
+          14,
+          4,
+          20,
+          15,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "tunnel_service_track_casing",
+      "paint": {
+        "line-color": "#0F141C",
+        "line-dasharray": [
+          0.5,
+          0.25,
+        ],
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          15,
+          1,
+          16,
+          4,
+          20,
+          11,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "tunnel_link_casing",
+      "paint": {
+        "line-color": "#0B1017",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          12,
+          1,
+          13,
+          3,
+          14,
+          4,
+          20,
+          15,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "tunnel_street_casing",
+      "paint": {
+        "line-color": "#0F141C",
+        "line-opacity": [
+          "interpolate",
+          [
+            "linear",
+          ],
+          [
+            "zoom",
+          ],
+          12,
+          0,
+          12.5,
+          1,
+        ],
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          12,
+          0.5,
+          13,
+          1,
+          14,
+          4,
+          20,
+          15,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "tunnel_secondary_tertiary_casing",
+      "paint": {
+        "line-color": "#0B1017",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          8,
+          1.5,
+          20,
+          17,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "tunnel_trunk_primary_casing",
+      "paint": {
+        "line-color": "#0B1017",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          5,
+          0.4,
+          6,
+          0.7,
+          7,
+          1.75,
+          20,
+          22,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "tunnel_motorway_casing",
+      "paint": {
+        "line-color": "#0B1017",
+        "line-dasharray": [
+          0.5,
+          0.25,
+        ],
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          5,
+          0.4,
+          6,
+          0.7,
+          7,
+          1.75,
+          20,
+          22,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "tunnel_path_pedestrian",
+      "paint": {
+        "line-color": "#252E3C",
+        "line-dasharray": [
+          1,
+          0.75,
+        ],
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          14,
+          0.5,
+          20,
+          10,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "tunnel_motorway_link",
+      "paint": {
+        "line-color": "#333D4F",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          12.5,
+          0,
+          13,
+          1.5,
+          14,
+          2.5,
+          20,
+          11.5,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "tunnel_service_track",
+      "paint": {
+        "line-color": "#222A36",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          15.5,
+          0,
+          16,
+          2,
+          20,
+          7.5,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "tunnel_link",
+      "paint": {
+        "line-color": "#2A3342",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          12.5,
+          0,
+          13,
+          1.5,
+          14,
+          2.5,
+          20,
+          11.5,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "tunnel_minor",
+      "paint": {
+        "line-color": "#222A36",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          13.5,
+          0,
+          14,
+          2.5,
+          20,
+          11.5,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "tunnel_secondary_tertiary",
+      "paint": {
+        "line-color": "#2A3342",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          6.5,
+          0,
+          7,
+          0.5,
+          20,
+          10,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "tunnel_trunk_primary",
+      "paint": {
+        "line-color": "#2A3342",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          5,
+          0,
+          7,
+          1,
+          20,
+          18,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "tunnel_motorway",
+      "paint": {
+        "line-color": "#333D4F",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          5,
+          0,
+          7,
+          1,
+          20,
+          18,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "tunnel_major_rail",
+      "paint": {
+        "line-color": "#343C4C",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.4,
+          ],
+          [
+            "zoom",
+          ],
+          14,
+          0.4,
+          15,
+          0.75,
+          20,
+          2,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "tunnel_major_rail_hatching",
+      "paint": {
+        "line-color": "#343C4C",
+        "line-dasharray": [
+          0.2,
+          8,
+        ],
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.4,
+          ],
+          [
+            "zoom",
+          ],
+          14.5,
+          0,
+          15,
+          3,
+          20,
+          8,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "tunnel_transit_rail",
+      "paint": {
+        "line-color": "#343C4C",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.4,
+          ],
+          [
+            "zoom",
+          ],
+          14,
+          0.4,
+          15,
+          0.75,
+          20,
+          2,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "tunnel_transit_rail_hatching",
+      "paint": {
+        "line-color": "#343C4C",
+        "line-dasharray": [
+          0.2,
+          8,
+        ],
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.4,
+          ],
+          [
+            "zoom",
+          ],
+          14.5,
+          0,
+          15,
+          3,
+          20,
+          8,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "road_area_pattern",
+      "paint": {
+        "fill-pattern": "pedestrian_polygon",
+      },
+      "visibility": "none",
+    },
+    {
+      "id": "road_motorway_link_casing",
+      "paint": {
+        "line-color": "#0B1017",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          12,
+          1,
+          13,
+          3,
+          14,
+          4,
+          20,
+          15,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "road_service_track_casing",
+      "paint": {
+        "line-color": "#0F141C",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          15,
+          1,
+          16,
+          4,
+          20,
+          11,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "road_link_casing",
+      "paint": {
+        "line-color": "#0B1017",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          12,
+          1,
+          13,
+          3,
+          14,
+          4,
+          20,
+          15,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "road_minor_casing",
+      "paint": {
+        "line-color": "#0F141C",
+        "line-opacity": [
+          "interpolate",
+          [
+            "linear",
+          ],
+          [
+            "zoom",
+          ],
+          12,
+          0,
+          12.5,
+          1,
+        ],
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          12,
+          0.5,
+          13,
+          1,
+          14,
+          4,
+          20,
+          20,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "road_secondary_tertiary_casing",
+      "paint": {
+        "line-color": "#0B1017",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          8,
+          1.5,
+          20,
+          17,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "road_trunk_primary_casing",
+      "paint": {
+        "line-color": "#0B1017",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          5,
+          0.4,
+          6,
+          0.7,
+          7,
+          1.75,
+          20,
+          22,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "road_motorway_casing",
+      "paint": {
+        "line-color": "#0B1017",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          5,
+          0.4,
+          6,
+          0.7,
+          7,
+          1.75,
+          20,
+          22,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "road_path_pedestrian",
+      "paint": {
+        "line-color": "#252E3C",
+        "line-dasharray": [
+          1,
+          0.7,
+        ],
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          14,
+          1,
+          20,
+          10,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "road_motorway_link",
+      "paint": {
+        "line-color": "#333D4F",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          12.5,
+          0,
+          13,
+          1.5,
+          14,
+          2.5,
+          20,
+          11.5,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "road_service_track",
+      "paint": {
+        "line-color": "#222A36",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          15.5,
+          0,
+          16,
+          2,
+          20,
+          7.5,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "road_link",
+      "paint": {
+        "line-color": "#2A3342",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          12.5,
+          0,
+          13,
+          1.5,
+          14,
+          2.5,
+          20,
+          11.5,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "road_minor",
+      "paint": {
+        "line-color": "#222A36",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          13.5,
+          0,
+          14,
+          2.5,
+          20,
+          18,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "road_secondary_tertiary",
+      "paint": {
+        "line-color": "#2A3342",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          6.5,
+          0,
+          8,
+          0.5,
+          20,
+          13,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "road_trunk_primary",
+      "paint": {
+        "line-color": "#2A3342",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          5,
+          0,
+          7,
+          1,
+          20,
+          18,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "road_motorway",
+      "paint": {
+        "line-color": "#333D4F",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          5,
+          0,
+          7,
+          1,
+          20,
+          18,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "road_major_rail",
+      "paint": {
+        "line-color": "#4A5466",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.4,
+          ],
+          [
+            "zoom",
+          ],
+          14,
+          0.4,
+          15,
+          0.75,
+          20,
+          2,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "road_major_rail_hatching",
+      "paint": {
+        "line-color": "#4A5466",
+        "line-dasharray": [
+          0.2,
+          8,
+        ],
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.4,
+          ],
+          [
+            "zoom",
+          ],
+          14.5,
+          0,
+          15,
+          3,
+          20,
+          8,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "road_transit_rail",
+      "paint": {
+        "line-color": "#4A5466",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.4,
+          ],
+          [
+            "zoom",
+          ],
+          14,
+          0.4,
+          15,
+          0.75,
+          20,
+          2,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "road_transit_rail_hatching",
+      "paint": {
+        "line-color": "#4A5466",
+        "line-dasharray": [
+          0.2,
+          8,
+        ],
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.4,
+          ],
+          [
+            "zoom",
+          ],
+          14.5,
+          0,
+          15,
+          3,
+          20,
+          8,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "road_one_way_arrow",
+      "paint": null,
+      "visibility": "none",
+    },
+    {
+      "id": "road_one_way_arrow_opposite",
+      "paint": null,
+      "visibility": "none",
+    },
+    {
+      "id": "bridge_motorway_link_casing",
+      "paint": {
+        "line-color": "#0B1017",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          12,
+          1,
+          13,
+          3,
+          14,
+          4,
+          20,
+          15,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "bridge_service_track_casing",
+      "paint": {
+        "line-color": "#0F141C",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          15,
+          1,
+          16,
+          4,
+          20,
+          11,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "bridge_link_casing",
+      "paint": {
+        "line-color": "#0B1017",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          12,
+          1,
+          13,
+          3,
+          14,
+          4,
+          20,
+          15,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "bridge_street_casing",
+      "paint": {
+        "line-color": "#0F141C",
+        "line-opacity": [
+          "interpolate",
+          [
+            "linear",
+          ],
+          [
+            "zoom",
+          ],
+          12,
+          0,
+          12.5,
+          1,
+        ],
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          12,
+          0.5,
+          13,
+          1,
+          14,
+          4,
+          20,
+          25,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "bridge_path_pedestrian_casing",
+      "paint": {
+        "line-color": "#0F141C",
+        "line-dasharray": [
+          1,
+          0,
+        ],
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          14,
+          1.5,
+          20,
+          18,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "bridge_secondary_tertiary_casing",
+      "paint": {
+        "line-color": "#0B1017",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          8,
+          1.5,
+          20,
+          17,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "bridge_trunk_primary_casing",
+      "paint": {
+        "line-color": "#0B1017",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          5,
+          0.4,
+          6,
+          0.7,
+          7,
+          1.75,
+          20,
+          22,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "bridge_motorway_casing",
+      "paint": {
+        "line-color": "#0B1017",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          5,
+          0.4,
+          6,
+          0.7,
+          7,
+          1.75,
+          20,
+          22,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "bridge_path_pedestrian",
+      "paint": {
+        "line-color": "#252E3C",
+        "line-dasharray": [
+          1,
+          0.3,
+        ],
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          14,
+          0.5,
+          20,
+          10,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "bridge_motorway_link",
+      "paint": {
+        "line-color": "#333D4F",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          12.5,
+          0,
+          13,
+          1.5,
+          14,
+          2.5,
+          20,
+          11.5,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "bridge_service_track",
+      "paint": {
+        "line-color": "#222A36",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          15.5,
+          0,
+          16,
+          2,
+          20,
+          7.5,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "bridge_link",
+      "paint": {
+        "line-color": "#2A3342",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          12.5,
+          0,
+          13,
+          1.5,
+          14,
+          2.5,
+          20,
+          11.5,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "bridge_street",
+      "paint": {
+        "line-color": "#222A36",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          13.5,
+          0,
+          14,
+          2.5,
+          20,
+          18,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "bridge_secondary_tertiary",
+      "paint": {
+        "line-color": "#2A3342",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          6.5,
+          0,
+          7,
+          0.5,
+          20,
+          10,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "bridge_trunk_primary",
+      "paint": {
+        "line-color": "#2A3342",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          5,
+          0,
+          7,
+          1,
+          20,
+          18,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "bridge_motorway",
+      "paint": {
+        "line-color": "#333D4F",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          5,
+          0,
+          7,
+          1,
+          20,
+          18,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "bridge_major_rail",
+      "paint": {
+        "line-color": "#4A5466",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.4,
+          ],
+          [
+            "zoom",
+          ],
+          14,
+          0.4,
+          15,
+          0.75,
+          20,
+          2,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "bridge_major_rail_hatching",
+      "paint": {
+        "line-color": "#4A5466",
+        "line-dasharray": [
+          0.2,
+          8,
+        ],
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.4,
+          ],
+          [
+            "zoom",
+          ],
+          14.5,
+          0,
+          15,
+          3,
+          20,
+          8,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "bridge_transit_rail",
+      "paint": {
+        "line-color": "#4A5466",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.4,
+          ],
+          [
+            "zoom",
+          ],
+          14,
+          0.4,
+          15,
+          0.75,
+          20,
+          2,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "bridge_transit_rail_hatching",
+      "paint": {
+        "line-color": "#4A5466",
+        "line-dasharray": [
+          0.2,
+          8,
+        ],
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.4,
+          ],
+          [
+            "zoom",
+          ],
+          14.5,
+          0,
+          15,
+          3,
+          20,
+          8,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "building",
+      "paint": {
+        "fill-color": "#1B2230",
+        "fill-outline-color": "#232B38",
+      },
+      "visibility": null,
+    },
+    {
+      "id": "building-3d",
+      "paint": {
+        "fill-extrusion-base": [
+          "get",
+          "render_min_height",
+        ],
+        "fill-extrusion-color": "hsl(35,8%,85%)",
+        "fill-extrusion-height": [
+          "get",
+          "render_height",
+        ],
+        "fill-extrusion-opacity": 0.8,
+      },
+      "visibility": "none",
+    },
+    {
+      "id": "boundary_3",
+      "paint": {
+        "line-color": "#4A5568",
+        "line-dasharray": [
+          1,
+          1,
+        ],
+        "line-width": [
+          "interpolate",
+          [
+            "linear",
+            1,
+          ],
+          [
+            "zoom",
+          ],
+          7,
+          1,
+          11,
+          2,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "boundary_2",
+      "paint": {
+        "line-color": "#4A5568",
+        "line-opacity": [
+          "interpolate",
+          [
+            "linear",
+          ],
+          [
+            "zoom",
+          ],
+          0,
+          0.4,
+          4,
+          1,
+        ],
+        "line-width": [
+          "interpolate",
+          [
+            "linear",
+          ],
+          [
+            "zoom",
+          ],
+          3,
+          1,
+          5,
+          1.2,
+          12,
+          3,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "boundary_disputed",
+      "paint": {
+        "line-color": "#4A5568",
+        "line-dasharray": [
+          1,
+          2,
+        ],
+        "line-width": [
+          "interpolate",
+          [
+            "linear",
+          ],
+          [
+            "zoom",
+          ],
+          3,
+          1,
+          5,
+          1.2,
+          12,
+          3,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "waterway_line_label",
+      "paint": {
+        "text-color": "#6F93BC",
+        "text-halo-color": "#0E131A",
+        "text-halo-width": 1.5,
+      },
+      "visibility": null,
+    },
+    {
+      "id": "water_name_point_label",
+      "paint": {
+        "text-color": "#6F93BC",
+        "text-halo-color": "#0E131A",
+        "text-halo-width": 1.5,
+      },
+      "visibility": null,
+    },
+    {
+      "id": "water_name_line_label",
+      "paint": {
+        "text-color": "#6F93BC",
+        "text-halo-color": "#0E131A",
+        "text-halo-width": 1.5,
+      },
+      "visibility": null,
+    },
+    {
+      "id": "poi_r20",
+      "paint": {
+        "text-color": "#666",
+        "text-halo-blur": 0.5,
+        "text-halo-color": "#ffffff",
+        "text-halo-width": 1,
+      },
+      "visibility": "none",
+    },
+    {
+      "id": "poi_r7",
+      "paint": {
+        "text-color": "#666",
+        "text-halo-blur": 0.5,
+        "text-halo-color": "#ffffff",
+        "text-halo-width": 1,
+      },
+      "visibility": "none",
+    },
+    {
+      "id": "poi_r1",
+      "paint": {
+        "icon-opacity": 0,
+        "text-color": "#A3AEBD",
+        "text-halo-blur": 0.5,
+        "text-halo-color": "#0E131A",
+        "text-halo-width": 1.5,
+      },
+      "visibility": null,
+    },
+    {
+      "id": "poi_transit",
+      "paint": {
+        "icon-opacity": 0,
+        "text-color": "#A3AEBD",
+        "text-halo-blur": 0.5,
+        "text-halo-color": "#0E131A",
+        "text-halo-width": 1.5,
+      },
+      "visibility": null,
+    },
+    {
+      "id": "highway-name-path",
+      "paint": {
+        "text-color": "#8A95A5",
+        "text-halo-color": "#0E131A",
+        "text-halo-width": 1.5,
+      },
+      "visibility": null,
+    },
+    {
+      "id": "highway-name-minor",
+      "paint": {
+        "text-color": "#8A95A5",
+        "text-halo-blur": 0.5,
+        "text-halo-color": "#0E131A",
+        "text-halo-width": 1.5,
+      },
+      "visibility": null,
+    },
+    {
+      "id": "highway-name-major",
+      "paint": {
+        "text-color": "#8A95A5",
+        "text-halo-blur": 0.5,
+        "text-halo-color": "#0E131A",
+        "text-halo-width": 1.5,
+      },
+      "visibility": null,
+    },
+    {
+      "id": "highway-shield-non-us",
+      "paint": null,
+      "visibility": "none",
+    },
+    {
+      "id": "highway-shield-us-interstate",
+      "paint": null,
+      "visibility": "none",
+    },
+    {
+      "id": "road_shield_us",
+      "paint": null,
+      "visibility": "none",
+    },
+    {
+      "id": "airport",
+      "paint": {
+        "icon-opacity": 0,
+        "text-color": "#A3AEBD",
+        "text-halo-blur": 0.5,
+        "text-halo-color": "#0E131A",
+        "text-halo-width": 1.5,
+      },
+      "visibility": null,
+    },
+    {
+      "id": "label_other",
+      "paint": {
+        "text-color": "#A3AEBD",
+        "text-halo-blur": 1,
+        "text-halo-color": "#0E131A",
+        "text-halo-width": 1.5,
+      },
+      "visibility": null,
+    },
+    {
+      "id": "label_village",
+      "paint": {
+        "text-color": "#A3AEBD",
+        "text-halo-blur": 1,
+        "text-halo-color": "#0E131A",
+        "text-halo-width": 1.5,
+      },
+      "visibility": null,
+    },
+    {
+      "id": "label_town",
+      "paint": {
+        "text-color": "#D6DCE5",
+        "text-halo-blur": 1,
+        "text-halo-color": "#0E131A",
+        "text-halo-width": 1.5,
+      },
+      "visibility": null,
+    },
+    {
+      "id": "label_state",
+      "paint": {
+        "text-color": "#D6DCE5",
+        "text-halo-blur": 1,
+        "text-halo-color": "#0E131A",
+        "text-halo-width": 1.5,
+      },
+      "visibility": null,
+    },
+    {
+      "id": "label_city",
+      "paint": {
+        "text-color": "#D6DCE5",
+        "text-halo-blur": 1,
+        "text-halo-color": "#0E131A",
+        "text-halo-width": 1.5,
+      },
+      "visibility": null,
+    },
+    {
+      "id": "label_city_capital",
+      "paint": {
+        "text-color": "#D6DCE5",
+        "text-halo-blur": 1,
+        "text-halo-color": "#0E131A",
+        "text-halo-width": 1.5,
+      },
+      "visibility": null,
+    },
+    {
+      "id": "label_country_3",
+      "paint": {
+        "text-color": "#D6DCE5",
+        "text-halo-blur": 1,
+        "text-halo-color": "#0E131A",
+        "text-halo-width": 1.5,
+      },
+      "visibility": null,
+    },
+    {
+      "id": "label_country_2",
+      "paint": {
+        "text-color": "#D6DCE5",
+        "text-halo-blur": 1,
+        "text-halo-color": "#0E131A",
+        "text-halo-width": 1.5,
+      },
+      "visibility": null,
+    },
+    {
+      "id": "label_country_1",
+      "paint": {
+        "text-color": "#D6DCE5",
+        "text-halo-blur": 1,
+        "text-halo-color": "#0E131A",
+        "text-halo-width": 1.5,
+      },
+      "visibility": null,
+    },
+  ],
+  "light": [
+    {
+      "id": "background",
+      "paint": {
+        "background-color": "#F2F3F5",
+      },
+      "visibility": null,
+    },
+    {
+      "id": "natural_earth",
+      "paint": {
+        "raster-opacity": [
+          "interpolate",
+          [
+            "exponential",
+            1.5,
+          ],
+          [
+            "zoom",
+          ],
+          0,
+          0.25,
+          6,
+          0.1,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "park",
+      "paint": {
+        "fill-color": "#DCEBD8",
+        "fill-opacity": 0.7,
+        "fill-outline-color": "#DCEBD8",
+      },
+      "visibility": null,
+    },
+    {
+      "id": "park_outline",
+      "paint": {
+        "line-color": "rgba(228, 241, 215, 1)",
+        "line-dasharray": [
+          1,
+          1.5,
+        ],
+      },
+      "visibility": "none",
+    },
+    {
+      "id": "landuse_residential",
+      "paint": {
+        "fill-color": "#ECEEF1",
+      },
+      "visibility": null,
+    },
+    {
+      "id": "landcover_wood",
+      "paint": {
+        "fill-antialias": false,
+        "fill-color": "#DCEBD8",
+        "fill-opacity": 0.6,
+        "fill-outline-color": "#DCEBD8",
+      },
+      "visibility": null,
+    },
+    {
+      "id": "landcover_grass",
+      "paint": {
+        "fill-antialias": false,
+        "fill-color": "#DCEBD8",
+        "fill-opacity": 0.6,
+        "fill-outline-color": "#DCEBD8",
+      },
+      "visibility": null,
+    },
+    {
+      "id": "landcover_ice",
+      "paint": {
+        "fill-antialias": false,
+        "fill-color": "#ECEEF1",
+        "fill-opacity": 0.8,
+      },
+      "visibility": null,
+    },
+    {
+      "id": "landcover_wetland",
+      "paint": {
+        "fill-antialias": true,
+        "fill-opacity": 0.8,
+        "fill-pattern": "wetland_bg_11",
+        "fill-translate-anchor": "map",
+      },
+      "visibility": null,
+    },
+    {
+      "id": "landuse_pitch",
+      "paint": {
+        "fill-color": "#DCEBD8",
+        "fill-outline-color": "#DCEBD8",
+      },
+      "visibility": null,
+    },
+    {
+      "id": "landuse_track",
+      "paint": {
+        "fill-color": "#DCEBD8",
+        "fill-outline-color": "#DCEBD8",
+      },
+      "visibility": null,
+    },
+    {
+      "id": "landuse_cemetery",
+      "paint": {
+        "fill-color": "#DCEBD8",
+        "fill-outline-color": "#DCEBD8",
+      },
+      "visibility": null,
+    },
+    {
+      "id": "landuse_hospital",
+      "paint": {
+        "fill-color": "#ECEEF1",
+      },
+      "visibility": null,
+    },
+    {
+      "id": "landuse_school",
+      "paint": {
+        "fill-color": "#ECEEF1",
+      },
+      "visibility": null,
+    },
+    {
+      "id": "waterway_tunnel",
+      "paint": {
+        "line-color": "#C4DCF4",
+        "line-dasharray": [
+          3,
+          3,
+        ],
+        "line-gap-width": [
+          "interpolate",
+          [
+            "linear",
+          ],
+          [
+            "zoom",
+          ],
+          12,
+          0,
+          20,
+          6,
+        ],
+        "line-opacity": 1,
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.4,
+          ],
+          [
+            "zoom",
+          ],
+          8,
+          1,
+          20,
+          2,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "waterway_river",
+      "paint": {
+        "line-color": "#C4DCF4",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          11,
+          0.5,
+          20,
+          6,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "waterway_other",
+      "paint": {
+        "line-color": "#C4DCF4",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.3,
+          ],
+          [
+            "zoom",
+          ],
+          13,
+          0.5,
+          20,
+          6,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "water",
+      "paint": {
+        "fill-color": "#C4DCF4",
+      },
+      "visibility": null,
+    },
+    {
+      "id": "landcover_sand",
+      "paint": {
+        "fill-color": "#ECEEF1",
+      },
+      "visibility": null,
+    },
+    {
+      "id": "aeroway_fill",
+      "paint": {
+        "fill-color": "#ECEEF1",
+        "fill-opacity": 0.7,
+      },
+      "visibility": null,
+    },
+    {
+      "id": "aeroway_runway",
+      "paint": {
+        "line-color": "#FFFFFF",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          11,
+          3,
+          20,
+          16,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "aeroway_taxiway",
+      "paint": {
+        "line-color": "#FFFFFF",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          11,
+          0.5,
+          20,
+          6,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "tunnel_motorway_link_casing",
+      "paint": {
+        "line-color": "#C8CED7",
+        "line-dasharray": [
+          0.5,
+          0.25,
+        ],
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          12,
+          1,
+          13,
+          3,
+          14,
+          4,
+          20,
+          15,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "tunnel_service_track_casing",
+      "paint": {
+        "line-color": "#D9DDE3",
+        "line-dasharray": [
+          0.5,
+          0.25,
+        ],
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          15,
+          1,
+          16,
+          4,
+          20,
+          11,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "tunnel_link_casing",
+      "paint": {
+        "line-color": "#C8CED7",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          12,
+          1,
+          13,
+          3,
+          14,
+          4,
+          20,
+          15,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "tunnel_street_casing",
+      "paint": {
+        "line-color": "#D9DDE3",
+        "line-opacity": [
+          "interpolate",
+          [
+            "linear",
+          ],
+          [
+            "zoom",
+          ],
+          12,
+          0,
+          12.5,
+          1,
+        ],
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          12,
+          0.5,
+          13,
+          1,
+          14,
+          4,
+          20,
+          15,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "tunnel_secondary_tertiary_casing",
+      "paint": {
+        "line-color": "#C8CED7",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          8,
+          1.5,
+          20,
+          17,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "tunnel_trunk_primary_casing",
+      "paint": {
+        "line-color": "#C8CED7",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          5,
+          0.4,
+          6,
+          0.7,
+          7,
+          1.75,
+          20,
+          22,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "tunnel_motorway_casing",
+      "paint": {
+        "line-color": "#C8CED7",
+        "line-dasharray": [
+          0.5,
+          0.25,
+        ],
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          5,
+          0.4,
+          6,
+          0.7,
+          7,
+          1.75,
+          20,
+          22,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "tunnel_path_pedestrian",
+      "paint": {
+        "line-color": "#FFFFFF",
+        "line-dasharray": [
+          1,
+          0.75,
+        ],
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          14,
+          0.5,
+          20,
+          10,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "tunnel_motorway_link",
+      "paint": {
+        "line-color": "#FFFFFF",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          12.5,
+          0,
+          13,
+          1.5,
+          14,
+          2.5,
+          20,
+          11.5,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "tunnel_service_track",
+      "paint": {
+        "line-color": "#FFFFFF",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          15.5,
+          0,
+          16,
+          2,
+          20,
+          7.5,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "tunnel_link",
+      "paint": {
+        "line-color": "#FFFFFF",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          12.5,
+          0,
+          13,
+          1.5,
+          14,
+          2.5,
+          20,
+          11.5,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "tunnel_minor",
+      "paint": {
+        "line-color": "#FFFFFF",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          13.5,
+          0,
+          14,
+          2.5,
+          20,
+          11.5,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "tunnel_secondary_tertiary",
+      "paint": {
+        "line-color": "#FFFFFF",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          6.5,
+          0,
+          7,
+          0.5,
+          20,
+          10,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "tunnel_trunk_primary",
+      "paint": {
+        "line-color": "#FFFFFF",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          5,
+          0,
+          7,
+          1,
+          20,
+          18,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "tunnel_motorway",
+      "paint": {
+        "line-color": "#FFFFFF",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          5,
+          0,
+          7,
+          1,
+          20,
+          18,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "tunnel_major_rail",
+      "paint": {
+        "line-color": "#C3C9D2",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.4,
+          ],
+          [
+            "zoom",
+          ],
+          14,
+          0.4,
+          15,
+          0.75,
+          20,
+          2,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "tunnel_major_rail_hatching",
+      "paint": {
+        "line-color": "#C3C9D2",
+        "line-dasharray": [
+          0.2,
+          8,
+        ],
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.4,
+          ],
+          [
+            "zoom",
+          ],
+          14.5,
+          0,
+          15,
+          3,
+          20,
+          8,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "tunnel_transit_rail",
+      "paint": {
+        "line-color": "#C3C9D2",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.4,
+          ],
+          [
+            "zoom",
+          ],
+          14,
+          0.4,
+          15,
+          0.75,
+          20,
+          2,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "tunnel_transit_rail_hatching",
+      "paint": {
+        "line-color": "#C3C9D2",
+        "line-dasharray": [
+          0.2,
+          8,
+        ],
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.4,
+          ],
+          [
+            "zoom",
+          ],
+          14.5,
+          0,
+          15,
+          3,
+          20,
+          8,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "road_area_pattern",
+      "paint": {
+        "fill-pattern": "pedestrian_polygon",
+      },
+      "visibility": null,
+    },
+    {
+      "id": "road_motorway_link_casing",
+      "paint": {
+        "line-color": "#C8CED7",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          12,
+          1,
+          13,
+          3,
+          14,
+          4,
+          20,
+          15,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "road_service_track_casing",
+      "paint": {
+        "line-color": "#D9DDE3",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          15,
+          1,
+          16,
+          4,
+          20,
+          11,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "road_link_casing",
+      "paint": {
+        "line-color": "#C8CED7",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          12,
+          1,
+          13,
+          3,
+          14,
+          4,
+          20,
+          15,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "road_minor_casing",
+      "paint": {
+        "line-color": "#D9DDE3",
+        "line-opacity": [
+          "interpolate",
+          [
+            "linear",
+          ],
+          [
+            "zoom",
+          ],
+          12,
+          0,
+          12.5,
+          1,
+        ],
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          12,
+          0.5,
+          13,
+          1,
+          14,
+          4,
+          20,
+          20,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "road_secondary_tertiary_casing",
+      "paint": {
+        "line-color": "#C8CED7",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          8,
+          1.5,
+          20,
+          17,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "road_trunk_primary_casing",
+      "paint": {
+        "line-color": "#C8CED7",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          5,
+          0.4,
+          6,
+          0.7,
+          7,
+          1.75,
+          20,
+          22,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "road_motorway_casing",
+      "paint": {
+        "line-color": "#C8CED7",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          5,
+          0.4,
+          6,
+          0.7,
+          7,
+          1.75,
+          20,
+          22,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "road_path_pedestrian",
+      "paint": {
+        "line-color": "#FFFFFF",
+        "line-dasharray": [
+          1,
+          0.7,
+        ],
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          14,
+          1,
+          20,
+          10,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "road_motorway_link",
+      "paint": {
+        "line-color": "#FFFFFF",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          12.5,
+          0,
+          13,
+          1.5,
+          14,
+          2.5,
+          20,
+          11.5,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "road_service_track",
+      "paint": {
+        "line-color": "#FFFFFF",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          15.5,
+          0,
+          16,
+          2,
+          20,
+          7.5,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "road_link",
+      "paint": {
+        "line-color": "#FFFFFF",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          12.5,
+          0,
+          13,
+          1.5,
+          14,
+          2.5,
+          20,
+          11.5,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "road_minor",
+      "paint": {
+        "line-color": "#FFFFFF",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          13.5,
+          0,
+          14,
+          2.5,
+          20,
+          18,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "road_secondary_tertiary",
+      "paint": {
+        "line-color": "#FFFFFF",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          6.5,
+          0,
+          8,
+          0.5,
+          20,
+          13,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "road_trunk_primary",
+      "paint": {
+        "line-color": "#FFFFFF",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          5,
+          0,
+          7,
+          1,
+          20,
+          18,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "road_motorway",
+      "paint": {
+        "line-color": "#FFFFFF",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          5,
+          0,
+          7,
+          1,
+          20,
+          18,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "road_major_rail",
+      "paint": {
+        "line-color": "#9AA2AE",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.4,
+          ],
+          [
+            "zoom",
+          ],
+          14,
+          0.4,
+          15,
+          0.75,
+          20,
+          2,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "road_major_rail_hatching",
+      "paint": {
+        "line-color": "#9AA2AE",
+        "line-dasharray": [
+          0.2,
+          8,
+        ],
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.4,
+          ],
+          [
+            "zoom",
+          ],
+          14.5,
+          0,
+          15,
+          3,
+          20,
+          8,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "road_transit_rail",
+      "paint": {
+        "line-color": "#9AA2AE",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.4,
+          ],
+          [
+            "zoom",
+          ],
+          14,
+          0.4,
+          15,
+          0.75,
+          20,
+          2,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "road_transit_rail_hatching",
+      "paint": {
+        "line-color": "#9AA2AE",
+        "line-dasharray": [
+          0.2,
+          8,
+        ],
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.4,
+          ],
+          [
+            "zoom",
+          ],
+          14.5,
+          0,
+          15,
+          3,
+          20,
+          8,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "road_one_way_arrow",
+      "paint": null,
+      "visibility": "none",
+    },
+    {
+      "id": "road_one_way_arrow_opposite",
+      "paint": null,
+      "visibility": "none",
+    },
+    {
+      "id": "bridge_motorway_link_casing",
+      "paint": {
+        "line-color": "#C8CED7",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          12,
+          1,
+          13,
+          3,
+          14,
+          4,
+          20,
+          15,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "bridge_service_track_casing",
+      "paint": {
+        "line-color": "#D9DDE3",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          15,
+          1,
+          16,
+          4,
+          20,
+          11,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "bridge_link_casing",
+      "paint": {
+        "line-color": "#C8CED7",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          12,
+          1,
+          13,
+          3,
+          14,
+          4,
+          20,
+          15,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "bridge_street_casing",
+      "paint": {
+        "line-color": "#D9DDE3",
+        "line-opacity": [
+          "interpolate",
+          [
+            "linear",
+          ],
+          [
+            "zoom",
+          ],
+          12,
+          0,
+          12.5,
+          1,
+        ],
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          12,
+          0.5,
+          13,
+          1,
+          14,
+          4,
+          20,
+          25,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "bridge_path_pedestrian_casing",
+      "paint": {
+        "line-color": "#D9DDE3",
+        "line-dasharray": [
+          1,
+          0,
+        ],
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          14,
+          1.5,
+          20,
+          18,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "bridge_secondary_tertiary_casing",
+      "paint": {
+        "line-color": "#C8CED7",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          8,
+          1.5,
+          20,
+          17,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "bridge_trunk_primary_casing",
+      "paint": {
+        "line-color": "#C8CED7",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          5,
+          0.4,
+          6,
+          0.7,
+          7,
+          1.75,
+          20,
+          22,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "bridge_motorway_casing",
+      "paint": {
+        "line-color": "#C8CED7",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          5,
+          0.4,
+          6,
+          0.7,
+          7,
+          1.75,
+          20,
+          22,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "bridge_path_pedestrian",
+      "paint": {
+        "line-color": "#FFFFFF",
+        "line-dasharray": [
+          1,
+          0.3,
+        ],
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          14,
+          0.5,
+          20,
+          10,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "bridge_motorway_link",
+      "paint": {
+        "line-color": "#FFFFFF",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          12.5,
+          0,
+          13,
+          1.5,
+          14,
+          2.5,
+          20,
+          11.5,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "bridge_service_track",
+      "paint": {
+        "line-color": "#FFFFFF",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          15.5,
+          0,
+          16,
+          2,
+          20,
+          7.5,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "bridge_link",
+      "paint": {
+        "line-color": "#FFFFFF",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          12.5,
+          0,
+          13,
+          1.5,
+          14,
+          2.5,
+          20,
+          11.5,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "bridge_street",
+      "paint": {
+        "line-color": "#FFFFFF",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          13.5,
+          0,
+          14,
+          2.5,
+          20,
+          18,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "bridge_secondary_tertiary",
+      "paint": {
+        "line-color": "#FFFFFF",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          6.5,
+          0,
+          7,
+          0.5,
+          20,
+          10,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "bridge_trunk_primary",
+      "paint": {
+        "line-color": "#FFFFFF",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          5,
+          0,
+          7,
+          1,
+          20,
+          18,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "bridge_motorway",
+      "paint": {
+        "line-color": "#FFFFFF",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.2,
+          ],
+          [
+            "zoom",
+          ],
+          5,
+          0,
+          7,
+          1,
+          20,
+          18,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "bridge_major_rail",
+      "paint": {
+        "line-color": "#9AA2AE",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.4,
+          ],
+          [
+            "zoom",
+          ],
+          14,
+          0.4,
+          15,
+          0.75,
+          20,
+          2,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "bridge_major_rail_hatching",
+      "paint": {
+        "line-color": "#9AA2AE",
+        "line-dasharray": [
+          0.2,
+          8,
+        ],
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.4,
+          ],
+          [
+            "zoom",
+          ],
+          14.5,
+          0,
+          15,
+          3,
+          20,
+          8,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "bridge_transit_rail",
+      "paint": {
+        "line-color": "#9AA2AE",
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.4,
+          ],
+          [
+            "zoom",
+          ],
+          14,
+          0.4,
+          15,
+          0.75,
+          20,
+          2,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "bridge_transit_rail_hatching",
+      "paint": {
+        "line-color": "#9AA2AE",
+        "line-dasharray": [
+          0.2,
+          8,
+        ],
+        "line-width": [
+          "interpolate",
+          [
+            "exponential",
+            1.4,
+          ],
+          [
+            "zoom",
+          ],
+          14.5,
+          0,
+          15,
+          3,
+          20,
+          8,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "building",
+      "paint": {
+        "fill-color": "#E2E5EA",
+        "fill-outline-color": "#D5D9E0",
+      },
+      "visibility": null,
+    },
+    {
+      "id": "building-3d",
+      "paint": {
+        "fill-extrusion-base": [
+          "get",
+          "render_min_height",
+        ],
+        "fill-extrusion-color": "hsl(35,8%,85%)",
+        "fill-extrusion-height": [
+          "get",
+          "render_height",
+        ],
+        "fill-extrusion-opacity": 0.8,
+      },
+      "visibility": "none",
+    },
+    {
+      "id": "boundary_3",
+      "paint": {
+        "line-color": "#A3A9B3",
+        "line-dasharray": [
+          1,
+          1,
+        ],
+        "line-width": [
+          "interpolate",
+          [
+            "linear",
+            1,
+          ],
+          [
+            "zoom",
+          ],
+          7,
+          1,
+          11,
+          2,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "boundary_2",
+      "paint": {
+        "line-color": "#A3A9B3",
+        "line-opacity": [
+          "interpolate",
+          [
+            "linear",
+          ],
+          [
+            "zoom",
+          ],
+          0,
+          0.4,
+          4,
+          1,
+        ],
+        "line-width": [
+          "interpolate",
+          [
+            "linear",
+          ],
+          [
+            "zoom",
+          ],
+          3,
+          1,
+          5,
+          1.2,
+          12,
+          3,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "boundary_disputed",
+      "paint": {
+        "line-color": "#A3A9B3",
+        "line-dasharray": [
+          1,
+          2,
+        ],
+        "line-width": [
+          "interpolate",
+          [
+            "linear",
+          ],
+          [
+            "zoom",
+          ],
+          3,
+          1,
+          5,
+          1.2,
+          12,
+          3,
+        ],
+      },
+      "visibility": null,
+    },
+    {
+      "id": "waterway_line_label",
+      "paint": {
+        "text-color": "#4E74A0",
+        "text-halo-color": "#FFFFFF",
+        "text-halo-width": 1.5,
+      },
+      "visibility": null,
+    },
+    {
+      "id": "water_name_point_label",
+      "paint": {
+        "text-color": "#4E74A0",
+        "text-halo-color": "#FFFFFF",
+        "text-halo-width": 1.5,
+      },
+      "visibility": null,
+    },
+    {
+      "id": "water_name_line_label",
+      "paint": {
+        "text-color": "#4E74A0",
+        "text-halo-color": "#FFFFFF",
+        "text-halo-width": 1.5,
+      },
+      "visibility": null,
+    },
+    {
+      "id": "poi_r20",
+      "paint": {
+        "text-color": "#666",
+        "text-halo-blur": 0.5,
+        "text-halo-color": "#ffffff",
+        "text-halo-width": 1,
+      },
+      "visibility": "none",
+    },
+    {
+      "id": "poi_r7",
+      "paint": {
+        "text-color": "#666",
+        "text-halo-blur": 0.5,
+        "text-halo-color": "#ffffff",
+        "text-halo-width": 1,
+      },
+      "visibility": "none",
+    },
+    {
+      "id": "poi_r1",
+      "paint": {
+        "icon-opacity": 0.7,
+        "text-color": "#556070",
+        "text-halo-blur": 0.5,
+        "text-halo-color": "#FFFFFF",
+        "text-halo-width": 1.5,
+      },
+      "visibility": null,
+    },
+    {
+      "id": "poi_transit",
+      "paint": {
+        "icon-opacity": 0.7,
+        "text-color": "#556070",
+        "text-halo-blur": 0.5,
+        "text-halo-color": "#FFFFFF",
+        "text-halo-width": 1.5,
+      },
+      "visibility": null,
+    },
+    {
+      "id": "highway-name-path",
+      "paint": {
+        "text-color": "#6B7480",
+        "text-halo-color": "#FFFFFF",
+        "text-halo-width": 1.5,
+      },
+      "visibility": null,
+    },
+    {
+      "id": "highway-name-minor",
+      "paint": {
+        "text-color": "#6B7480",
+        "text-halo-blur": 0.5,
+        "text-halo-color": "#FFFFFF",
+        "text-halo-width": 1.5,
+      },
+      "visibility": null,
+    },
+    {
+      "id": "highway-name-major",
+      "paint": {
+        "text-color": "#6B7480",
+        "text-halo-blur": 0.5,
+        "text-halo-color": "#FFFFFF",
+        "text-halo-width": 1.5,
+      },
+      "visibility": null,
+    },
+    {
+      "id": "highway-shield-non-us",
+      "paint": null,
+      "visibility": null,
+    },
+    {
+      "id": "highway-shield-us-interstate",
+      "paint": null,
+      "visibility": null,
+    },
+    {
+      "id": "road_shield_us",
+      "paint": null,
+      "visibility": null,
+    },
+    {
+      "id": "airport",
+      "paint": {
+        "icon-opacity": 0.7,
+        "text-color": "#556070",
+        "text-halo-blur": 0.5,
+        "text-halo-color": "#FFFFFF",
+        "text-halo-width": 1.5,
+      },
+      "visibility": null,
+    },
+    {
+      "id": "label_other",
+      "paint": {
+        "text-color": "#556070",
+        "text-halo-blur": 1,
+        "text-halo-color": "#FFFFFF",
+        "text-halo-width": 1.5,
+      },
+      "visibility": null,
+    },
+    {
+      "id": "label_village",
+      "paint": {
+        "text-color": "#556070",
+        "text-halo-blur": 1,
+        "text-halo-color": "#FFFFFF",
+        "text-halo-width": 1.5,
+      },
+      "visibility": null,
+    },
+    {
+      "id": "label_town",
+      "paint": {
+        "text-color": "#27303F",
+        "text-halo-blur": 1,
+        "text-halo-color": "#FFFFFF",
+        "text-halo-width": 1.5,
+      },
+      "visibility": null,
+    },
+    {
+      "id": "label_state",
+      "paint": {
+        "text-color": "#27303F",
+        "text-halo-blur": 1,
+        "text-halo-color": "#FFFFFF",
+        "text-halo-width": 1.5,
+      },
+      "visibility": null,
+    },
+    {
+      "id": "label_city",
+      "paint": {
+        "text-color": "#27303F",
+        "text-halo-blur": 1,
+        "text-halo-color": "#FFFFFF",
+        "text-halo-width": 1.5,
+      },
+      "visibility": null,
+    },
+    {
+      "id": "label_city_capital",
+      "paint": {
+        "text-color": "#27303F",
+        "text-halo-blur": 1,
+        "text-halo-color": "#FFFFFF",
+        "text-halo-width": 1.5,
+      },
+      "visibility": null,
+    },
+    {
+      "id": "label_country_3",
+      "paint": {
+        "text-color": "#27303F",
+        "text-halo-blur": 1,
+        "text-halo-color": "#FFFFFF",
+        "text-halo-width": 1.5,
+      },
+      "visibility": null,
+    },
+    {
+      "id": "label_country_2",
+      "paint": {
+        "text-color": "#27303F",
+        "text-halo-blur": 1,
+        "text-halo-color": "#FFFFFF",
+        "text-halo-width": 1.5,
+      },
+      "visibility": null,
+    },
+    {
+      "id": "label_country_1",
+      "paint": {
+        "text-color": "#27303F",
+        "text-halo-blur": 1,
+        "text-halo-color": "#FFFFFF",
+        "text-halo-width": 1.5,
+      },
+      "visibility": null,
+    },
+  ],
+}
+`;

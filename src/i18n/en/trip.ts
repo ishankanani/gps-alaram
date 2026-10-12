@@ -1,6 +1,65 @@
 /**
  * English strings of the live trip, the in-app alarm, Arrived and the TripBar.
  * Owned by package M: map and trip. Keys use the prefix "trip." and define the set the other
- * languages translate.
+ * languages translate. Numbers and units are joined by a non-breaking space ( ).
+ *
+ * Also used from core.ts: trip.onTheWay, trip.leaving, trip.distance, trip.gps.good,
+ * trip.gps.weak, trip.wakeUp, trip.snooze, trip.notYet, trip.stopConfirm.keep, reason.*,
+ * done.errorBody, strength.*, common.done.
  */
-export const trip = {} as const satisfies Record<string, string>;
+export const trip = {
+  // Trip screen
+  'trip.overline.demo': 'Demo trip to',
+  'trip.badge.good': 'GPS good · ±{meters} m',
+  'trip.badge.searching': 'Searching for GPS…',
+  'trip.badge.estimating': 'No GPS · estimating',
+  'trip.badge.demo': 'Demo',
+  'trip.stat.arrives': 'Arrives',
+  'trip.stat.at': 'at {time}',
+  'trip.stat.ringsAt': 'Rings at',
+  'trip.stat.speed': 'Working out your speed…',
+  'trip.stat.firstFix': 'This can take a minute underground.',
+  'trip.progress': 'Trip progress',
+  'trip.rule.predicted': 'Rings at about {time} · {strength}',
+  'trip.info.lock': 'You can lock your phone. It rings even on silent.',
+  'trip.info.far': 'Saving battery while you’re far away.',
+  'trip.tunnel': 'No GPS in the tunnel. We’re estimating your position and will still wake you.',
+  'trip.armWait': 'Waiting until you’re inside the area.',
+  'trip.end': 'End trip',
+  'trip.endConfirm.title': 'End this trip?',
+  'trip.endConfirm.body': 'The alarm won’t ring.',
+  'trip.recentre': 'Recentre the map',
+  'trip.awake': 'I’m awake',
+  'trip.alarm.body': '{name} in about {minutes} min',
+  'trip.snoozedFor': 'Snoozed · rings again in {time}',
+  'trip.snoozedSoon': 'Snoozed · rings again any moment',
+
+  // Arrived
+  'trip.arrived.title': 'You made it',
+  'trip.arrived.subtitle': '{name} · {time}',
+  'trip.arrived.tileTrip': 'Trip',
+  'trip.arrived.tileDistance': 'Distance',
+  'trip.arrived.tileRang': 'Rang',
+  'trip.arrived.before': '{value} before',
+  'trip.arrived.save': 'Save {name} to favourites',
+  'trip.arrived.saved': 'Saved to favourites',
+  'trip.arrived.share': 'Share trip log',
+  'trip.arrived.shareBody': 'Helps us tune when the alarm rings',
+  'trip.feedback.title': 'Did it wake you at the right time?',
+  'trip.feedback.right': 'Right time',
+  'trip.feedback.early': 'Too early',
+  'trip.feedback.late': 'Too late',
+  'trip.feedback.thanks': 'Thanks. This helps us tune the alarm.',
+  'trip.upsell.title': 'Slept through it?',
+  'trip.upsell.body': 'Heavy sleeper reaches full volume within seconds, with strong vibration.',
+  'trip.upsell.trial': 'Try Pro free',
+  'trip.upsell.buy': 'Get Pro',
+  'trip.ended.title': 'Trip ended',
+  'trip.ended.again': 'Start again',
+  'trip.error.title': 'The trip couldn’t start',
+  'trip.error.permissions': 'Check permissions',
+  'trip.error.retry': 'Try again',
+  'trip.phone.title': 'Your phone stopped the trip',
+  'trip.phone.body': 'A battery saver closed StopWake before you arrived. It takes a minute to fix.',
+  'trip.phone.fix': 'Fix battery settings',
+} as const satisfies Record<string, string>;

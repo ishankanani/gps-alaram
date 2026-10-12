@@ -4,7 +4,7 @@ import { createRequire } from 'node:module';
 
 import { describe, expect, it } from 'vitest';
 
-import { nearestStop, searchStops, stopsInBounds, type StopsDb } from '../search';
+import { distanceKm, nearestStop, nearestStopsAll, searchStops, stopsInBounds, type StopsDb } from '../search';
 
 // Runs the app's search code against the real generated database (npm run build:stations).
 const DB_PATH = 'assets/stations/germany-stops.db';
@@ -62,6 +62,18 @@ describe.skipIf(!existsSync(DB_PATH))('station search on the real database', () 
     const snapped = await nearestStop(db, { latitude: hbf.latitude + 0.0004, longitude: hbf.longitude }, 120);
     expect(snapped?.name).toBe('Heilbronn Hbf');
     expect(await nearestStop(db, { latitude: 54.9, longitude: 7.0 }, 120)).toBeNull();
+  });
+
+  it('lists the stops nearest to you, closest first', async () => {
+    const odeonsplatz = { latitude: 48.1427, longitude: 11.5772 };
+    const sources = [{ slot: 0, db, bounds: [5.5, 47.0, 15.5, 55.2] as [number, number, number, number] }];
+    const nearby = await nearestStopsAll(sources, odeonsplatz, 8, 1.5);
+    expect(nearby).toHaveLength(8);
+    const km = nearby.map((s) => distanceKm(odeonsplatz, s));
+    expect(km).toEqual([...km].sort((a, b) => a - b));
+    expect(km[km.length - 1]).toBeLessThanOrEqual(1.5);
+    expect(nearby[0].title).toContain('Odeonsplatz');
+    expect(await nearestStopsAll(sources, { latitude: 54.9, longitude: 7.0 }, 8, 1.5)).toEqual([]);
   });
 
   it('answers quickly', async () => {

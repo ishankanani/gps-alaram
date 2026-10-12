@@ -1,6 +1,40 @@
 /**
  * English strings of the Saved tab: favourites and recents.
  * Owned by package L. Keys use the prefix "saved." and define the set the other
- * languages translate.
+ * languages translate. (The section titles reuse home.favourites and home.recent.)
  */
-export const saved = {} as const satisfies Record<string, string>;
+export const saved = {
+  'saved.edit': 'Edit',
+  'saved.limit': '{count} of {max} favourites used. Pro keeps as many as you like.',
+  'saved.getPro': 'Get Pro',
+  'saved.favouritesCount': '{count} of {max}',
+  'saved.more': 'More options for {name}',
+  'saved.menu.showOnMap': 'Show on map',
+  'saved.menu.rename': 'Rename',
+  'saved.menu.moveTop': 'Move to top',
+  'saved.menu.remove': 'Remove',
+  'saved.menu.removeRecent': 'Remove from recent',
+  'saved.moveUp': 'Move up',
+  'saved.moveDown': 'Move down',
+  'saved.remove': 'Remove {name}',
+  'saved.removed': 'Removed {name}',
+  'saved.removedRecent': 'Removed {name} from recent',
+  'saved.undo': 'Undo',
+  'saved.empty.title': 'No favourites yet',
+  'saved.empty.body': 'Tap the star on any stop to keep it here.',
+  'saved.findStop': 'Find a stop',
+  'saved.emptyAll.title': 'Nothing saved yet',
+  'saved.emptyAll.body': 'Stops you star and stops you ride to show up here, one tap away.',
+  'saved.clearRecent.title': 'Clear recent stops?',
+  'saved.clearRecent.body': 'Your favourites and trip history stay.',
+  'saved.clearRecent.confirm': 'Clear',
+  'saved.rename.title': 'Rename favourite',
+  'saved.rename.label': 'Name',
+  'saved.rename.helper': 'Shown on the map and on the alarm.',
+  'saved.rename.original': 'Original name: {name}',
+  'saved.rename.save': 'Save',
+  'saved.rename.reset': 'Use the original name',
+  'saved.rename.missing.title': 'This favourite is gone',
+  'saved.rename.missing.body': 'It was removed from your favourites.',
+  'saved.renamed': 'Renamed to {name}',
+} as const satisfies Record<string, string>;

@@ -1,19 +1,27 @@
 import type { StyleSpecification } from '@maplibre/maplibre-gl-style-spec';
 import { File, Paths } from 'expo-file-system';
-import { useEffect, useMemo, useState } from 'react';
+import { useNetworkState } from 'expo-network';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { useI18n } from '../i18n';
+import { useTheme } from '../ui/theme';
 import { MAP_STYLE } from './geo';
 import { prepareMapCache } from './offline';
 import { prepareStyle } from './style';
 
-type MapStyle = string | StyleSpecification;
+export type MapStyle = string | StyleSpecification;
 
 const FETCH_TIMEOUT_MS = 6000;
 
+type Loaded = {
+  style: MapStyle;
+  /** Neither a saved copy nor the network had the style: MapLibre tries the URL from its own cache. */
+  noCopy: boolean;
+};
+
 // Loaded once per app run and shared by the home and trip maps.
-let loading: Promise<MapStyle> | null = null;
-let loaded: MapStyle | null = null;
+let loading: Promise<Loaded> | null = null;
+let loaded: Loaded | null = null;
 
 function cacheFile() {
   return new File(Paths.cache, 'map-style-liberty.json');
@@ -48,38 +56,79 @@ async function fetchStyle(): Promise<StyleSpecification> {
   }
 }
 
-function load(): Promise<MapStyle> {
+function load(): Promise<Loaded> {
   if (!loading) {
     void prepareMapCache();
     const cached = readCache();
     const fresh = fetchStyle();
-    // A cached style opens the map at once; the fresh copy is saved for the next start.
-    // Without either, MapLibre loads the original style itself (English place names).
-    loading = cached ? Promise.resolve(cached) : fresh.catch(() => MAP_STYLE);
+    // A cached style opens the map at once; the fresh copy is saved for the next start. Without
+    // either, MapLibre loads the original style itself (from an offline area, if one was saved).
+    loading = cached
+      ? Promise.resolve({ style: cached, noCopy: false })
+      : fresh.then(
+          (style): Loaded => ({ style, noCopy: false }),
+          (): Loaded => ({ style: MAP_STYLE, noCopy: true }),
+        );
     fresh.catch(() => {});
-    void loading.then((style) => {
-      loaded = style;
+    void loading.then((result) => {
+      loaded = result;
     });
   }
   return loading;
 }
 
+/** Forgets a style that could not be fetched, so the next attempt asks the network again. */
+function retryable(): boolean {
+  if (!loaded?.noCopy) return false;
+  loading = null;
+  loaded = null;
+  return true;
+}
+
+export type MapStyleResult = {
+  /** The prepared style (or the style URL as a last resort); null while it loads. */
+  style: MapStyle | null;
+  /**
+   * The first launch without internet: there is no copy of the map style yet. Show
+   * `map.placeholder` with a note until the map has loaded (MapLibre may still find an offline area).
+   */
+  noCopy: boolean;
+};
+
 /**
- * The map style with local place names and country names in the app's language,
- * or null while it loads (usually a fraction of a second).
+ * The map style for the current colour scheme (the calm recolour, 2.1.1) with local place names
+ * and country names in the app's language. It switches when the scheme or language changes, and
+ * tries the network again when the phone comes back online after a first launch offline.
  */
-export function useMapStyle(): MapStyle | null {
+export function useMapStyle(): MapStyleResult {
   const { lang } = useI18n();
-  const [style, setStyle] = useState<MapStyle | null>(loaded);
+  const { scheme } = useTheme();
+  const network = useNetworkState();
+  const online = network.isConnected !== false && network.isInternetReachable !== false;
+  const [result, setResult] = useState<Loaded | null>(loaded);
+  const [attempt, setAttempt] = useState(0);
+  // A style that could not be fetched is asked for again once, each time the phone comes online.
+  const wasOnline = useRef(!loaded?.noCopy);
+
   useEffect(() => {
-    if (style) return;
+    const cameOnline = online && !wasOnline.current;
+    wasOnline.current = online;
+    if (cameOnline && retryable()) setAttempt((a) => a + 1);
+  }, [online]);
+
+  useEffect(() => {
     let cancelled = false;
-    void load().then((s) => {
-      if (!cancelled) setStyle(s);
+    void load().then((r) => {
+      if (!cancelled) setResult(r);
     });
     return () => {
       cancelled = true;
     };
-  }, [style]);
-  return useMemo(() => (style && typeof style === 'object' ? prepareStyle(style, lang) : style), [style, lang]);
+  }, [attempt]);
+
+  const style = useMemo(
+    () => (result && typeof result.style === 'object' ? prepareStyle(result.style, lang, scheme) : (result?.style ?? null)),
+    [result, lang, scheme],
+  );
+  return { style, noCopy: result?.noCopy ?? false };
 }
