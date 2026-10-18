@@ -30,6 +30,9 @@ export function parseMoney(input: string, decimals: 0 | 2): { minor: number } | 
   if (lastDot >= 0 && lastComma >= 0) {
     const mark = lastDot > lastComma ? '.' : ',';
     const other = mark === '.' ? ',' : '.';
+    // "1.234,50": the other mark only groups thousands in the whole part.
+    const groups = s.slice(0, s.lastIndexOf(mark)).split(other);
+    if (groups[0].length < 1 || groups[0].length > 3 || groups.slice(1).some((g) => g.length !== 3)) return { error: 'invalid' };
     s = s.split(other).join('');
     const i = s.lastIndexOf(mark);
     if (s.indexOf(mark) !== i) return { error: 'invalid' };
