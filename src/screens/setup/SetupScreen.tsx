@@ -54,6 +54,25 @@ const ITEM: Record<SetupItemKey, { icon: IconName; title: Key; why: Key; done: K
   battery: { icon: 'battery-heart-variant', title: 'setup.battery.title', why: 'setup.battery.why', done: 'onboarding.setup.on', ok: 'onboarding.setup.ok.battery' },
 };
 
+/** The verb button of an item that isn't done, and which choices to show for it. */
+function fixFor(key: SetupItemKey, status: SetupStatus): { label: Key; hint?: HintKind } {
+  switch (key) {
+    case 'location':
+      return status.location === 'approximate'
+        ? { label: 'setup.switchPrecise', hint: 'precise' }
+        : { label: 'onboarding.setup.allowLocation', hint: 'location' };
+    case 'services':
+      return { label: 'setup.turnOn' };
+    case 'notifications':
+      return { label: 'onboarding.setup.allowNotifications', hint: 'notifications' };
+    case 'fullscreen':
+    case 'exact':
+      return { label: 'setup.allow' };
+    case 'battery':
+      return { label: 'setup.openSettings' };
+  }
+}
+
 /**
  * Setup, "Get ready" (ui-direction-a 4.3 Setup merged with Permissions priming, ui-critiques):
  * the required steps (precise location, location on, notifications), each with its own sentence,
@@ -152,17 +171,25 @@ function Checklist({ initial, entry, focus, onLeave }: ChecklistProps) {
     }
   }
 
-  const fixes: Record<SetupItemKey, { label: Key; run: () => void; hint?: HintKind }> = {
-    location:
-      status.location === 'approximate'
-        ? { label: 'setup.switchPrecise', run: () => void askLocation(), hint: 'precise' }
-        : { label: 'onboarding.setup.allowLocation', run: () => void askLocation(), hint: 'location' },
-    services: { label: 'setup.turnOn', run: open('location') },
-    notifications: { label: 'onboarding.setup.allowNotifications', run: () => void askNotifications(), hint: 'notifications' },
-    fullscreen: { label: 'setup.allow', run: open('fullScreenAlarm') },
-    exact: { label: 'setup.allow', run: open('exactAlarms') },
-    battery: { label: 'setup.openSettings', run: open('battery') },
-  };
+  /** The button of an item that isn't done (an event handler: it may read refs). */
+  function runFix(key: SetupItemKey) {
+    switch (key) {
+      case 'location':
+        void askLocation();
+        return;
+      case 'notifications':
+        void askNotifications();
+        return;
+      case 'services':
+        return open('location')();
+      case 'fullscreen':
+        return open('fullScreenAlarm')();
+      case 'exact':
+        return open('exactAlarms')();
+      case 'battery':
+        return open('battery')();
+    }
+  }
 
   const summary = summarize(status);
   const oemHint = batteryHint(status.manufacturer);
@@ -187,45 +214,40 @@ function Checklist({ initial, entry, focus, onLeave }: ChecklistProps) {
     headColor = 'success';
   }
 
-  const row = (key: SetupItemKey, required: boolean, step: number) => {
-    const item = ITEM[key];
-    const why = key === 'battery' && oemHint ? tr(oemHint) : tr(item.why);
-    if (itemDone(status, key)) {
+  const missingRequired = REQUIRED_ITEMS.filter((key) => !itemDone(status, key));
+  const items = (keys: readonly SetupItemKey[], required: boolean) =>
+    keys.map((key) => {
+      const item = ITEM[key];
+      if (itemDone(status, key)) {
+        return (
+          <ListItem
+            key={key}
+            leading={<Icon name="check-circle" size={24} color="success" />}
+            leadingWidth={24}
+            title={tr(item.title)}
+            subtitle={tr(item.done)}
+            testID={`setup-${key}`}
+          />
+        );
+      }
+      const fix = fixFor(key, status);
       return (
-        <ListItem
+        <StepRow
           key={key}
-          leading={<Icon name="check-circle" size={24} color="success" />}
-          leadingWidth={24}
+          icon={required ? 'alert-circle-outline' : 'alert-outline'}
+          iconColor={required ? 'danger' : 'warning'}
           title={tr(item.title)}
-          subtitle={tr(item.done)}
+          step={required ? tr('onboarding.setup.step', { step: missingRequired.indexOf(key) + 1 }) : undefined}
+          why={key === 'battery' && oemHint ? tr(oemHint) : tr(item.why)}
+          hint={fix.hint}
+          action={tr(fix.label)}
+          itemKey={key}
+          onAction={runFix}
+          highlight={focus === key}
           testID={`setup-${key}`}
         />
       );
-    }
-    const fix = fixes[key];
-    return (
-      <StepRow
-        key={key}
-        icon={required ? 'alert-circle-outline' : 'alert-outline'}
-        iconColor={required ? 'danger' : 'warning'}
-        title={tr(item.title)}
-        step={required ? tr('onboarding.setup.step', { step }) : undefined}
-        why={why}
-        hint={fix.hint}
-        action={tr(fix.label)}
-        onAction={fix.run}
-        highlight={focus === key}
-        testID={`setup-${key}`}
-      />
-    );
-  };
-
-  let step = 0;
-  const required = REQUIRED_ITEMS.map((key) => {
-    if (!itemDone(status, key)) step += 1;
-    return row(key, true, step);
-  });
-  const recommended = RECOMMENDED_ITEMS.map((key) => row(key, false, 0));
+    });
 
   const footer =
     entry === 'onboarding' || entry === 'trip' ? (
@@ -268,7 +290,7 @@ function Checklist({ initial, entry, focus, onLeave }: ChecklistProps) {
       </Card>
 
       <Section title={tr('setup.required')} footer={tr('onboarding.setup.privacy')}>
-        {required}
+        {items(REQUIRED_ITEMS, true)}
       </Section>
 
       <View
@@ -278,7 +300,7 @@ function Checklist({ initial, entry, focus, onLeave }: ChecklistProps) {
           const y = e.nativeEvent.layout.y;
           setTimeout(() => scroll.current?.scrollTo({ y: Math.max(0, y - 8), animated: !t.reduceMotion }), 50);
         }}>
-        <Section title={tr('setup.recommended')}>{recommended}</Section>
+        <Section title={tr('setup.recommended')}>{items(RECOMMENDED_ITEMS, false)}</Section>
       </View>
 
       <Section title={tr('onboarding.setup.check')}>
@@ -313,14 +335,15 @@ type StepRowProps = {
   why: string;
   hint?: HintKind;
   action: string;
-  onAction: () => void;
+  itemKey: SetupItemKey;
+  onAction: (key: SetupItemKey) => void;
   /** Opened from "Fix battery settings": marked with an indigo edge. */
   highlight?: boolean;
   testID?: string;
 };
 
 /** A checklist item that still needs doing: why, which choices to tap, and one button. */
-function StepRow({ icon, iconColor, title, step, why, hint, action, onAction, highlight, testID }: StepRowProps) {
+function StepRow({ icon, iconColor, title, step, why, hint, action, itemKey, onAction, highlight, testID }: StepRowProps) {
   const t = useTheme();
   return (
     <View testID={testID} style={[styles.step, { borderBottomColor: t.color.border }]}>
@@ -343,7 +366,7 @@ function StepRow({ icon, iconColor, title, step, why, hint, action, onAction, hi
       </View>
       <View style={styles.stepBody}>
         {hint ? <PermissionHint kind={hint} /> : null}
-        <Button label={action} variant="secondary" size="M" onPress={onAction} style={styles.stepButton} />
+        <Button label={action} variant="secondary" size="M" onPress={() => onAction(itemKey)} style={styles.stepButton} />
       </View>
     </View>
   );

@@ -646,4 +646,16 @@ export const admin = {
   'admin.note.added': 'Note added',
   'admin.note.updated': 'Note saved',
   'admin.note.gone': 'This note no longer exists.',
+  // ---- Promo codes ----
+  'admin.promos.title': 'Promo codes',
+  'admin.promos.loadFailed': 'Couldn’t load promo codes',
+  'admin.promos.search': 'Search codes and notes',
+  'admin.promos.filters': 'Filter by status',
+  'admin.promos.count': '{count} codes',
+  'admin.promos.create': 'New code',
+  'admin.promos.empty': 'No promo codes yet',
+  'admin.promos.emptyBody': 'Codes give Pro for free: for testers, the press or support. They are never sold.',
+  'admin.promos.noMatch': 'No {status} codes',
+  'admin.promos.noMatchQuery': 'No codes match “{query}”',
+  'admin.promos.showAll': 'Show all codes',
 } as const satisfies Record<string, string>;
