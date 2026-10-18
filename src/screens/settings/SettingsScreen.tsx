@@ -4,6 +4,7 @@ import { StyleSheet } from 'react-native';
 
 import { LANGUAGES, useI18n, type Key } from '../../i18n';
 import { formatBytes, formatRadius } from '../../lib/format';
+import { useRemoteConfig } from '../../api/config';
 import { offlineMapAllowed } from '../../lib/plans';
 import type { AppearanceChoice } from '../../lib/prefs';
 import { usePro } from '../../lib/pro';
@@ -31,6 +32,7 @@ export function SettingsScreen({ navigation }: RootScreenProps<'Settings'>) {
   const { t: tr, lang } = useI18n();
   const saved = useSavedData();
   const { isPro } = usePro();
+  const { proFeatures } = useRemoteConfig();
   const packs = usePacks();
   const links = useAppLinks();
   const prefs = saved.data.preferences;
@@ -60,7 +62,7 @@ export function SettingsScreen({ navigation }: RootScreenProps<'Settings'>) {
   const language = LANGUAGES.find((l) => l.code === lang)?.name ?? lang;
   const germany = tr('country.de');
   const countriesValue = packs.installed.length ? tr('settings.countries.value', { country: germany, count: packs.installed.length }) : germany;
-  const offlineLocked = !offlineMapAllowed(isPro);
+  const offlineLocked = !offlineMapAllowed(isPro, proFeatures);
   const offlineValue =
     areas == null || offlineLocked
       ? undefined

@@ -85,6 +85,7 @@ export function ArrivedScreen({ navigation, route }: RootScreenProps<'Arrived'>)
   const record = history.trips.find((r) => r.id === tripId) ?? null;
   const [clock24] = useState(uses24h);
   const [lastUpsell] = useState(upsellShownAt);
+  const [openedAt] = useState(() => Date.now());
   const [feedback, setFeedback] = useState<TripFeedback | null>(record?.feedback ?? null);
 
   useEffect(() => startTripRecorder(), []);
@@ -119,7 +120,8 @@ export function ArrivedScreen({ navigation, route }: RootScreenProps<'Arrived'>)
     recordPlace ??
     (active ? { id: `pin:${active.latitude.toFixed(5)},${active.longitude.toFixed(5)}`, name: active.label, context: '', latitude: active.latitude, longitude: active.longitude } : null);
 
-  const stoppedByPhone = trip.stoppedNotice || !!facts?.stoppedByPhone || record?.outcome === 'stoppedByPhone';
+  // What this app run saw decides; the map's notice only stands in when the app restarted.
+  const stoppedByPhone = (facts ? facts.stoppedByPhone : trip.stoppedNotice) || record?.outcome === 'stoppedByPhone';
   const rang = facts?.rang ?? record?.rang ?? null;
   const variant = arrivedVariant(event ?? (record?.outcome === 'error' ? { reason: 'error' } : null), stoppedByPhone, rang != null);
   const demo = !!choices?.demo;
@@ -144,10 +146,10 @@ export function ArrivedScreen({ navigation, route }: RootScreenProps<'Arrived'>)
   const trialOffered = pro.storeConnected ? !!pro.plans?.some((p) => (p.trialDays ?? 0) > 0) : config.trialDays > 0;
   const upsell =
     variant === 'arrived' &&
-    shouldUpsell({ isPro: pro.isPro, demo, feedback, snoozes: facts?.snoozes ?? 0, lastShownAt: lastUpsell, now: Date.now() });
+    shouldUpsell({ isPro: pro.isPro, demo, feedback, snoozes: facts?.snoozes ?? 0, lastShownAt: lastUpsell, now: openedAt });
   useEffect(() => {
-    if (upsell) markUpsellShown(Date.now());
-  }, [upsell]);
+    if (upsell) markUpsellShown(openedAt);
+  }, [upsell, openedAt]);
 
   if (!known) return <View style={[styles.flex, { backgroundColor: t.color.bg }]} />;
 

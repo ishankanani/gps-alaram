@@ -5,6 +5,7 @@ import { useRemoteConfig } from '../../api/config';
 import { useI18n } from '../../i18n';
 import type { Place } from '../../lib/geocode';
 import { lastTripTo, useHistory } from '../../lib/history';
+import { canAddFavourite } from '../../lib/plans';
 import { usePro } from '../../lib/pro';
 import { samePlace } from '../../lib/storage';
 import { defaultWake } from '../../lib/wake';
@@ -54,9 +55,10 @@ export function SavedScreen({ navigation }: TabScreenProps<'SavedTab'>) {
 
   const { favourites, recents, preferences } = saved.data;
   const editing = editMode && favourites.length > 0;
-  const limited = !isPro && config.proFeatures.unlimitedFavourites;
   const limit = config.limits.freeFavourites;
-  const atLimit = limited && favourites.length >= limit;
+  // A limit applies only to Free, and only while the config makes unlimited favourites a Pro feature.
+  const limited = !isPro && config.proFeatures.unlimitedFavourites;
+  const atLimit = limited && !canAddFavourite(favourites.length, isPro, config.limits, config.proFeatures);
 
   const showOnMap = (place: Place) => navigation.navigate('MapTab', { stopId: place.id });
   const findStop = () => navigation.navigate('MapTab');

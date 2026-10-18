@@ -4,6 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import { TripAlarm, type AlarmStrength } from '../../../modules/trip-alarm/src';
 import { useI18n, type Key } from '../../i18n';
 import { formatRadius } from '../../lib/format';
+import { useRemoteConfig } from '../../api/config';
 import { effectiveStrength, strengthAllowed } from '../../lib/plans';
 import { usePro } from '../../lib/pro';
 import { DISTANCE_CHOICES, MINUTE_CHOICES } from '../../lib/wake';
@@ -26,9 +27,10 @@ export function AlarmDefaultsScreen({ navigation }: RootScreenProps<'AlarmDefaul
   const toast = useToast();
   const theme = useTheme();
   const { isPro } = usePro();
+  const { proFeatures } = useRemoteConfig();
   const [testing, setTesting] = useState(false);
   const prefs = saved.data.preferences;
-  const effective = effectiveStrength(prefs.strength, isPro);
+  const effective = effectiveStrength(prefs.strength, isPro, proFeatures);
   const distance = (m: number) => nbsp(formatRadius(m, prefs.useMiles, lang));
 
   async function test() {
@@ -77,7 +79,7 @@ export function AlarmDefaultsScreen({ navigation }: RootScreenProps<'AlarmDefaul
             options={STRENGTHS.map((s) => ({
               value: s,
               label: tr(`strength.${s}` as Key),
-              locked: !strengthAllowed(s, isPro),
+              locked: !strengthAllowed(s, isPro, proFeatures),
             }))}
             testID="alarm-defaults-strength"
           />

@@ -47,14 +47,13 @@ function uses24h(): boolean {
   }
 }
 
-/** Ticks every second while `active` (the snooze countdown). */
-function useNow(active: boolean): number {
+/** The time, ticking every `everyMs` (each second for the snooze countdown, else for clock times). */
+function useNow(everyMs: number): number {
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
-    if (!active) return;
-    const timer = setInterval(() => setNow(Date.now()), 1000);
+    const timer = setInterval(() => setNow(Date.now()), everyMs);
     return () => clearInterval(timer);
-  }, [active]);
+  }, [everyMs]);
   return now;
 }
 
@@ -119,7 +118,7 @@ function LiveTrip({ status, activeTrip: trip, kind, trail, onMinimise, onEnd }: 
 
   const ringing = status.state === 'ringing';
   const snoozed = status.state === 'snoozed';
-  const now = useNow(snoozed);
+  const now = useNow(snoozed ? 1000 : 10_000);
   const leave = trip.mode === 'leave';
   const estimated = status.estimated === true;
   const approx = estimated ? '≈ ' : '';
@@ -129,7 +128,7 @@ function LiveTrip({ status, activeTrip: trip, kind, trail, onMinimise, onEnd }: 
 
   const distance = status.distanceM != null ? approx + nbsp(formatDistance(status.distanceM, trip.useMiles, lang)) : null;
   const eta = status.etaSec != null ? approx + nbsp(formatDuration(status.etaSec)) : null;
-  const arrivesAt = status.etaSec != null ? formatClock(Date.now() + status.etaSec * 1000, clock24) : null;
+  const arrivesAt = status.etaSec != null ? formatClock(now + status.etaSec * 1000, clock24) : null;
   const waitingForFix = status.distanceM == null;
   const layout = heroLayout(trip);
   const progress = tripProgress(trip, status, facts?.firstDistanceM ?? null);
@@ -137,7 +136,7 @@ function LiveTrip({ status, activeTrip: trip, kind, trail, onMinimise, onEnd }: 
     { mode: trip.mode, wakeBy: trip.minutesBefore ? 'time' : 'distance', minutesBefore: trip.minutesBefore ?? 0 },
     formatRadius(trip.radiusM, trip.useMiles, lang),
   );
-  const ringAt = predictRingAt(trip, status, Date.now());
+  const ringAt = predictRingAt(trip, status, now);
   const strength = tr(`strength.${trip.strength}`);
   const badge = gpsBadge(status);
   const overline = tr(trip.demo ? 'trip.overline.demo' : leave ? 'trip.leaving' : 'trip.onTheWay');

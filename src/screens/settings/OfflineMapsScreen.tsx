@@ -5,6 +5,7 @@ import { StyleSheet } from 'react-native';
 import { useI18n } from '../../i18n';
 import { formatBytes } from '../../lib/format';
 import { reversePlace } from '../../lib/geocode';
+import { useRemoteConfig } from '../../api/config';
 import { offlineMapAllowed } from '../../lib/plans';
 import { usePro } from '../../lib/pro';
 import { deleteArea, downloadArea, listAreas, type OfflineArea } from '../../map/offline';
@@ -39,7 +40,8 @@ export function OfflineMapsScreen({ navigation }: RootScreenProps<'OfflineMaps'>
   const { isPro } = usePro();
   const toast = useToast();
   const dialogs = useDialogs();
-  const allowed = offlineMapAllowed(isPro);
+  const { proFeatures } = useRemoteConfig();
+  const allowed = offlineMapAllowed(isPro, proFeatures);
   const [areas, setAreas] = useState<OfflineArea[] | null>(null);
   const [busy, setBusyState] = useState(false);
   // Also read from MapLibre's progress callbacks, which outlive a render.
