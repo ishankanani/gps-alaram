@@ -83,7 +83,7 @@ function PromoEditor({
   const act = useAdminAction();
   const { offline } = useAdminContext();
   const [form, setForm] = useState<PromoForm>(() => promoFormFrom(existing));
-  const [custom, setCustom] = useState(!!existing || false);
+  const [custom, setCustom] = useState(false);
   const [preset, setPreset] = useState<DurationPreset>(() => promoPresetFor(existing ? existing.durationDays : 30));
   const [daysText, setDaysText] = useState(existing?.durationDays ? String(existing.durationDays) : '');
   const [tried, setTried] = useState(false);
@@ -110,7 +110,11 @@ function PromoEditor({
   const choosePreset = (p: DurationPreset) => {
     setPreset(p);
     if (p === 'custom') set({ durationDays: Number(daysText) || null });
-    else set({ durationDays: PROMO_PRESET_DAYS[p] ?? 30, plan: p === '1y' ? 'yearly' : form.plan === 'yearly' && p !== '1y' ? 'monthly' : form.plan });
+    else {
+      // A year suggests Yearly; going shorter from Yearly suggests Monthly. The plan stays editable.
+      const plan: PaidPlan = p === '1y' ? 'yearly' : form.plan === 'yearly' ? 'monthly' : form.plan;
+      set({ durationDays: PROMO_PRESET_DAYS[p] ?? 30, plan });
+    }
   };
 
   const gift = describeGift(form.plan, form.plan === 'lifetime' ? null : form.durationDays, t);
