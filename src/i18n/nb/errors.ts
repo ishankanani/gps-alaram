@@ -1,4 +1,67 @@
 import type { Strings } from '../en';
 
 /** Strings of user-facing API errors: errors.<code> from src/api/types.ts, plus errors.network and errors.timeout (English keys in ../en/errors.ts). */
-export const errors: Partial<Strings> = {};
+export const errors: Partial<Strings> = {
+  // ---- Server codes (backend-spec 2.3) ----
+  'errors.bad_request': 'Noe i forespørselen var feil. Prøv igjen.',
+  'errors.validation_failed': 'Noen opplysninger må rettes. Sjekk feltene over.',
+  'errors.unsupported_media_type': 'Denne versjonen av StopWake kan ikke gjøre dette. Oppdater appen.',
+  'errors.payload_too_large': 'Det er for mye tekst. Kort den ned og prøv igjen.',
+  'errors.unauthorized': 'Du ble logget ut på denne telefonen. Logg inn igjen.',
+  'errors.invalid_credentials': 'E-postadressen eller passordet er feil.',
+  'errors.reauth_required': 'Bekreft at det er deg: skriv inn passordet ditt på nytt.',
+  'errors.forbidden': 'Kontoen din har ikke tilgang til dette.',
+  'errors.account_disabled': 'Denne kontoen er deaktivert. Kontakt brukerstøtten.',
+  'errors.signup_disabled': 'Det er ikke mulig å opprette kontoer akkurat nå. Prøv igjen senere.',
+  'errors.redeem_disabled': 'Det er ikke mulig å løse inn koder akkurat nå. Prøv igjen senere.',
+  'errors.not_found': 'Vi fant det ikke. Det kan ha blitt fjernet.',
+  'errors.method_not_allowed': 'Denne versjonen av StopWake kan ikke gjøre dette. Oppdater appen.',
+  'errors.email_taken': 'Det finnes allerede en konto med denne e-postadressen.',
+  'errors.already_signed_up': 'Du er allerede logget inn på en konto.',
+  'errors.not_an_account': 'Opprett en gratis konto først.',
+  'errors.subscription_active': 'Google Play-abonnementet ditt er fortsatt aktivt.',
+  'errors.last_admin': 'Du er den eneste administratoren. Gjør noen andre til administrator først.',
+  'errors.cannot_target_self': 'Du kan ikke gjøre dette med din egen konto.',
+  'errors.confirm_mismatch': 'Det stemmer ikke. Skriv inn ID-en nøyaktig slik den vises.',
+  'errors.already_revoked': 'Dette er allerede avsluttet.',
+  'errors.already_lifetime': 'Du har allerede Pro for livet, så du trenger ingen kode.',
+  'errors.promo_invalid': 'Vi kjenner ikke igjen denne koden. Sjekk stavemåten.',
+  'errors.promo_expired': 'Koden har utløpt.',
+  'errors.promo_exhausted': 'Koden er brukt opp.',
+  'errors.promo_already_redeemed': 'Du har allerede brukt denne koden.',
+  'errors.code_taken': 'Denne koden finnes allerede. Velg en annen.',
+  'errors.promo_in_use': 'Koden er allerede brukt og kan derfor ikke endres på denne måten.',
+  'errors.invalid_reset_code': 'Koden er feil eller har utløpt.',
+  'errors.rate_limited': 'For mange forsøk. Vent noen minutter og prøv igjen.',
+  'errors.mail_unavailable': 'Vi kan ikke sende e-post akkurat nå. Send e-post til brukerstøtten for å få en kode.',
+  'errors.not_configured': 'Denne versjonen fungerer uten konto.',
+  'errors.unavailable': 'StopWake har litt mye å gjøre akkurat nå. Prøv igjen om et minutt.',
+  'errors.internal': 'Noe gikk galt hos oss. Prøv igjen senere.',
+
+  // ---- No answer ----
+  'errors.network': 'Fikk ikke kontakt med StopWake. Sjekk internettforbindelsen.',
+  'errors.timeout': 'StopWake brukte for lang tid på å svare. Prøv igjen.',
+  'errors.bad_response': 'StopWake sendte et svar vi ikke ventet. Prøv igjen senere.',
+
+  // ---- With details ----
+  'errors.rate_limitedMinutes': 'For mange forsøk. Prøv igjen om {minutes} min.',
+  'errors.rate_limitedSeconds': 'For mange forsøk. Prøv igjen om {seconds} s.',
+  'errors.retry': 'Prøv igjen',
+
+  // ---- Field errors (validation_failed) ----
+  'errors.field.required': 'Fyll ut dette.',
+  'errors.field.invalid': 'Dette ser ikke riktig ut.',
+  'errors.field.invalid_email': 'Skriv inn en e-postadresse som name@example.com.',
+  'errors.field.too_short': 'Dette er for kort.',
+  'errors.field.too_long': 'Dette er for langt.',
+  'errors.field.too_common': 'Dette passordet er for vanlig. Prøv et lengre.',
+  'errors.field.same_as_email': 'Passordet kan ikke være e-postadressen din.',
+  'errors.field.out_of_range': 'Dette tallet er utenfor tillatt område.',
+  'errors.field.invalid_date': 'Skriv inn en gyldig dato.',
+  'errors.field.in_past': 'Velg en dato i fremtiden.',
+  'errors.field.unknown_key': 'Denne innstillingen finnes ikke.',
+  'errors.field.not_allowed': 'Dette kan ikke endres.',
+  'errors.password.too_short': 'Bruk minst 8 tegn.',
+  'errors.password.too_long': 'Bruk høyst 128 tegn.',
+  'errors.name.too_long': 'Bruk høyst 60 tegn.',
+};

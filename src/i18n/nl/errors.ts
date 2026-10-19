@@ -1,4 +1,67 @@
 import type { Strings } from '../en';
 
 /** Strings of user-facing API errors: errors.<code> from src/api/types.ts, plus errors.network and errors.timeout (English keys in ../en/errors.ts). */
-export const errors: Partial<Strings> = {};
+export const errors: Partial<Strings> = {
+  // ---- Server codes (backend-spec 2.3) ----
+  'errors.bad_request': 'Er klopte iets niet aan die aanvraag. Probeer het opnieuw.',
+  'errors.validation_failed': 'Een paar gegevens moeten worden aangepast. Controleer de velden hierboven.',
+  'errors.unsupported_media_type': 'Dat kan deze versie van StopWake niet. Werk de app bij.',
+  'errors.payload_too_large': 'Dat is te veel tekst. Kort het in en probeer het opnieuw.',
+  'errors.unauthorized': 'Je bent uitgelogd op deze telefoon. Log opnieuw in.',
+  'errors.invalid_credentials': 'E-mailadres of wachtwoord klopt niet.',
+  'errors.reauth_required': 'Bevestig dat jij het bent: vul je wachtwoord opnieuw in.',
+  'errors.forbidden': 'Je account mag dit niet.',
+  'errors.account_disabled': 'Dit account is uitgeschakeld. Neem contact op met support.',
+  'errors.signup_disabled': 'Accounts maken is nu even uitgeschakeld. Probeer het later opnieuw.',
+  'errors.redeem_disabled': 'Codes kunnen nu niet worden ingewisseld. Probeer het later opnieuw.',
+  'errors.not_found': 'We konden dat niet vinden. Misschien is het verwijderd.',
+  'errors.method_not_allowed': 'Dat kan deze versie van StopWake niet. Werk de app bij.',
+  'errors.email_taken': 'Er bestaat al een account met dit e-mailadres.',
+  'errors.already_signed_up': 'Je bent al ingelogd bij een account.',
+  'errors.not_an_account': 'Maak eerst een gratis account.',
+  'errors.subscription_active': 'Je Google Play-abonnement loopt nog.',
+  'errors.last_admin': 'Je bent de enige admin. Maak eerst iemand anders admin.',
+  'errors.cannot_target_self': 'Dit kun je niet met je eigen account doen.',
+  'errors.confirm_mismatch': 'Dat komt niet overeen. Typ het ID precies zoals getoond.',
+  'errors.already_revoked': 'Dit is al beëindigd.',
+  'errors.already_lifetime': 'Je hebt al levenslang Pro, dus je hebt geen code nodig.',
+  'errors.promo_invalid': 'We kennen deze code niet. Controleer de spelling.',
+  'errors.promo_expired': 'Deze code is verlopen.',
+  'errors.promo_exhausted': 'Deze code is opgebruikt.',
+  'errors.promo_already_redeemed': 'Je hebt deze code al gebruikt.',
+  'errors.code_taken': 'Deze code bestaat al. Kies een andere.',
+  'errors.promo_in_use': 'Deze code is al gebruikt, dus je kunt hem niet zo wijzigen.',
+  'errors.invalid_reset_code': 'Deze code klopt niet of is verlopen.',
+  'errors.rate_limited': 'Te veel pogingen. Wacht een paar minuten en probeer het dan opnieuw.',
+  'errors.mail_unavailable': 'We kunnen nu geen e-mails versturen. Mail support voor een code.',
+  'errors.not_configured': 'Deze versie werkt zonder account.',
+  'errors.unavailable': 'StopWake is nu druk bezig. Probeer het over een minuut opnieuw.',
+  'errors.internal': 'Er ging iets mis aan onze kant. Probeer het later opnieuw.',
+
+  // ---- No answer ----
+  'errors.network': 'Kan StopWake niet bereiken. Controleer je verbinding.',
+  'errors.timeout': 'StopWake deed er te lang over om te antwoorden. Probeer het opnieuw.',
+  'errors.bad_response': 'StopWake stuurde een onverwacht antwoord. Probeer het later opnieuw.',
+
+  // ---- With details ----
+  'errors.rate_limitedMinutes': 'Te veel pogingen. Probeer het over {minutes} min opnieuw.',
+  'errors.rate_limitedSeconds': 'Te veel pogingen. Probeer het over {seconds} s opnieuw.',
+  'errors.retry': 'Opnieuw proberen',
+
+  // ---- Field errors (validation_failed) ----
+  'errors.field.required': 'Vul dit in.',
+  'errors.field.invalid': 'Dit klopt niet.',
+  'errors.field.invalid_email': 'Vul een e-mailadres in zoals name@example.com.',
+  'errors.field.too_short': 'Dit is te kort.',
+  'errors.field.too_long': 'Dit is te lang.',
+  'errors.field.too_common': 'Dit wachtwoord is te gangbaar. Kies een langer wachtwoord.',
+  'errors.field.same_as_email': 'Je wachtwoord mag niet je e-mailadres zijn.',
+  'errors.field.out_of_range': 'Dit getal valt buiten het toegestane bereik.',
+  'errors.field.invalid_date': 'Vul een echte datum in.',
+  'errors.field.in_past': 'Kies een datum in de toekomst.',
+  'errors.field.unknown_key': 'Deze instelling bestaat niet.',
+  'errors.field.not_allowed': 'Dit kan niet worden gewijzigd.',
+  'errors.password.too_short': 'Gebruik minstens 8 tekens.',
+  'errors.password.too_long': 'Gebruik hoogstens 128 tekens.',
+  'errors.name.too_long': 'Gebruik hoogstens 60 tekens.',
+};

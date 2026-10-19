@@ -1,4 +1,67 @@
 import type { Strings } from '../en';
 
 /** Strings of user-facing API errors: errors.<code> from src/api/types.ts, plus errors.network and errors.timeout (English keys in ../en/errors.ts). */
-export const errors: Partial<Strings> = {};
+export const errors: Partial<Strings> = {
+  // ---- Server codes (backend-spec 2.3) ----
+  'errors.bad_request': 'Något i begäran blev fel. Försök igen.',
+  'errors.validation_failed': 'Några uppgifter behöver rättas. Kontrollera fälten ovan.',
+  'errors.unsupported_media_type': 'Den här versionen av StopWake kan inte göra det. Uppdatera appen.',
+  'errors.payload_too_large': 'Det är för mycket text. Korta ned den och försök igen.',
+  'errors.unauthorized': 'Du loggades ut på den här telefonen. Logga in igen.',
+  'errors.invalid_credentials': 'E-postadressen eller lösenordet är fel.',
+  'errors.reauth_required': 'Bekräfta att det är du: ange ditt lösenord igen.',
+  'errors.forbidden': 'Ditt konto har inte behörighet till det här.',
+  'errors.account_disabled': 'Det här kontot är inaktiverat. Kontakta supporten.',
+  'errors.signup_disabled': 'Det går inte att skapa konton just nu. Försök igen senare.',
+  'errors.redeem_disabled': 'Det går inte att lösa in koder just nu. Försök igen senare.',
+  'errors.not_found': 'Vi hittade inte det. Det kan ha tagits bort.',
+  'errors.method_not_allowed': 'Den här versionen av StopWake kan inte göra det. Uppdatera appen.',
+  'errors.email_taken': 'Det finns redan ett konto med den här e-postadressen.',
+  'errors.already_signed_up': 'Du är redan inloggad på ett konto.',
+  'errors.not_an_account': 'Skapa ett gratiskonto först.',
+  'errors.subscription_active': 'Din prenumeration i Google Play är fortfarande aktiv.',
+  'errors.last_admin': 'Du är den enda administratören. Gör någon annan till administratör först.',
+  'errors.cannot_target_self': 'Du kan inte göra det här med ditt eget konto.',
+  'errors.confirm_mismatch': 'Det stämmer inte. Skriv ID:t exakt som det visas.',
+  'errors.already_revoked': 'Det här har redan avslutats.',
+  'errors.already_lifetime': 'Du har redan Pro för livet, så du behöver ingen kod.',
+  'errors.promo_invalid': 'Vi känner inte igen koden. Kontrollera stavningen.',
+  'errors.promo_expired': 'Koden har gått ut.',
+  'errors.promo_exhausted': 'Koden är förbrukad.',
+  'errors.promo_already_redeemed': 'Du har redan använt den här koden.',
+  'errors.code_taken': 'Den här koden finns redan. Välj en annan.',
+  'errors.promo_in_use': 'Koden har redan använts och kan därför inte ändras så här.',
+  'errors.invalid_reset_code': 'Koden är fel eller har gått ut.',
+  'errors.rate_limited': 'För många försök. Vänta några minuter och försök igen.',
+  'errors.mail_unavailable': 'Vi kan inte skicka e-post just nu. Mejla supporten för att få en kod.',
+  'errors.not_configured': 'Den här versionen fungerar utan konto.',
+  'errors.unavailable': 'StopWake har fullt upp just nu. Försök igen om en minut.',
+  'errors.internal': 'Något gick fel hos oss. Försök igen senare.',
+
+  // ---- No answer ----
+  'errors.network': 'Kunde inte nå StopWake. Kontrollera internetanslutningen.',
+  'errors.timeout': 'StopWake svarade inte i tid. Försök igen.',
+  'errors.bad_response': 'StopWake skickade ett svar vi inte förväntade oss. Försök igen senare.',
+
+  // ---- With details ----
+  'errors.rate_limitedMinutes': 'För många försök. Försök igen om {minutes} min.',
+  'errors.rate_limitedSeconds': 'För många försök. Försök igen om {seconds} s.',
+  'errors.retry': 'Försök igen',
+
+  // ---- Field errors (validation_failed) ----
+  'errors.field.required': 'Fyll i det här.',
+  'errors.field.invalid': 'Det här ser inte rätt ut.',
+  'errors.field.invalid_email': 'Ange en e-postadress som name@example.com.',
+  'errors.field.too_short': 'Det här är för kort.',
+  'errors.field.too_long': 'Det här är för långt.',
+  'errors.field.too_common': 'Det här lösenordet är för vanligt. Prova ett längre.',
+  'errors.field.same_as_email': 'Lösenordet får inte vara din e-postadress.',
+  'errors.field.out_of_range': 'Det här talet ligger utanför intervallet.',
+  'errors.field.invalid_date': 'Ange ett giltigt datum.',
+  'errors.field.in_past': 'Välj ett datum i framtiden.',
+  'errors.field.unknown_key': 'Den här inställningen finns inte.',
+  'errors.field.not_allowed': 'Det här går inte att ändra.',
+  'errors.password.too_short': 'Använd minst 8 tecken.',
+  'errors.password.too_long': 'Använd högst 128 tecken.',
+  'errors.name.too_long': 'Använd högst 60 tecken.',
+};

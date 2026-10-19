@@ -1,4 +1,67 @@
 import type { Strings } from '../en';
 
 /** Strings of user-facing API errors: errors.<code> from src/api/types.ts, plus errors.network and errors.timeout (English keys in ../en/errors.ts). */
-export const errors: Partial<Strings> = {};
+export const errors: Partial<Strings> = {
+  // ---- Server codes (backend-spec 2.3) ----
+  'errors.bad_request': 'Pyynnössä oli jotain vikaa. Yritä uudelleen.',
+  'errors.validation_failed': 'Joitakin tietoja pitää korjata. Tarkista yllä olevat kentät.',
+  'errors.unsupported_media_type': 'Tämä StopWake-versio ei osaa tehdä sitä. Päivitä sovellus.',
+  'errors.payload_too_large': 'Teksti on liian pitkä. Lyhennä sitä ja yritä uudelleen.',
+  'errors.unauthorized': 'Sinut kirjattiin ulos tässä puhelimessa. Kirjaudu uudelleen sisään.',
+  'errors.invalid_credentials': 'Sähköposti tai salasana on väärin.',
+  'errors.reauth_required': 'Vahvista, että se olet sinä: anna salasanasi uudelleen.',
+  'errors.forbidden': 'Tilisi ei voi tehdä tätä.',
+  'errors.account_disabled': 'Tämä tili on poistettu käytöstä. Ota yhteyttä tukeen.',
+  'errors.signup_disabled': 'Tilien luonti on nyt tauolla. Yritä myöhemmin uudelleen.',
+  'errors.redeem_disabled': 'Koodeja ei voi nyt lunastaa. Yritä myöhemmin uudelleen.',
+  'errors.not_found': 'Emme löytäneet sitä. Se on voitu poistaa.',
+  'errors.method_not_allowed': 'Tämä StopWake-versio ei osaa tehdä sitä. Päivitä sovellus.',
+  'errors.email_taken': 'Tällä sähköpostiosoitteella on jo tili.',
+  'errors.already_signed_up': 'Olet jo kirjautunut tilille.',
+  'errors.not_an_account': 'Luo ensin ilmainen tili.',
+  'errors.subscription_active': 'Google Play -tilauksesi on yhä voimassa.',
+  'errors.last_admin': 'Olet ainoa ylläpitäjä. Tee ensin joku toinen ylläpitäjäksi.',
+  'errors.cannot_target_self': 'Et voi tehdä tätä omalle tilillesi.',
+  'errors.confirm_mismatch': 'Ei täsmää. Kirjoita ID täsmälleen kuten se näytetään.',
+  'errors.already_revoked': 'Tämä on jo päättynyt.',
+  'errors.already_lifetime': 'Sinulla on jo elinikäinen Pro, joten et tarvitse koodia.',
+  'errors.promo_invalid': 'Emme tunnista tätä koodia. Tarkista kirjoitusasu.',
+  'errors.promo_expired': 'Tämä koodi on vanhentunut.',
+  'errors.promo_exhausted': 'Tämä koodi on käytetty loppuun.',
+  'errors.promo_already_redeemed': 'Olet jo käyttänyt tämän koodin.',
+  'errors.code_taken': 'Tämä koodi on jo olemassa. Valitse toinen.',
+  'errors.promo_in_use': 'Tätä koodia on jo käytetty, joten sitä ei voi muuttaa näin.',
+  'errors.invalid_reset_code': 'Koodi on väärä tai vanhentunut.',
+  'errors.rate_limited': 'Liian monta yritystä. Odota muutama minuutti ja yritä uudelleen.',
+  'errors.mail_unavailable': 'Emme voi nyt lähettää sähköpostia. Pyydä koodi kirjoittamalla tukeen.',
+  'errors.not_configured': 'Tämä versio toimii ilman tiliä.',
+  'errors.unavailable': 'StopWake on juuri nyt kuormittunut. Yritä minuutin päästä uudelleen.',
+  'errors.internal': 'Meillä tapahtui virhe. Yritä myöhemmin uudelleen.',
+
+  // ---- No answer ----
+  'errors.network': 'StopWakeen ei saatu yhteyttä. Tarkista verkkoyhteys.',
+  'errors.timeout': 'StopWake vastasi liian hitaasti. Yritä uudelleen.',
+  'errors.bad_response': 'StopWake lähetti odottamattoman vastauksen. Yritä myöhemmin uudelleen.',
+
+  // ---- With details ----
+  'errors.rate_limitedMinutes': 'Liian monta yritystä. Yritä uudelleen {minutes} min kuluttua.',
+  'errors.rate_limitedSeconds': 'Liian monta yritystä. Yritä uudelleen {seconds} s kuluttua.',
+  'errors.retry': 'Yritä uudelleen',
+
+  // ---- Field errors (validation_failed) ----
+  'errors.field.required': 'Täytä tämä kenttä.',
+  'errors.field.invalid': 'Tämä ei näytä oikealta.',
+  'errors.field.invalid_email': 'Anna sähköpostiosoite, esimerkiksi name@example.com.',
+  'errors.field.too_short': 'Tämä on liian lyhyt.',
+  'errors.field.too_long': 'Tämä on liian pitkä.',
+  'errors.field.too_common': 'Salasana on liian yleinen. Kokeile pidempää.',
+  'errors.field.same_as_email': 'Salasana ei voi olla sama kuin sähköpostiosoite.',
+  'errors.field.out_of_range': 'Luku on sallitun alueen ulkopuolella.',
+  'errors.field.invalid_date': 'Anna oikea päivämäärä.',
+  'errors.field.in_past': 'Valitse päivämäärä tulevaisuudesta.',
+  'errors.field.unknown_key': 'Tätä asetusta ei ole.',
+  'errors.field.not_allowed': 'Tätä ei voi muuttaa.',
+  'errors.password.too_short': 'Käytä vähintään 8 merkkiä.',
+  'errors.password.too_long': 'Käytä enintään 128 merkkiä.',
+  'errors.name.too_long': 'Käytä enintään 60 merkkiä.',
+};

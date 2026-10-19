@@ -1,4 +1,71 @@
 import type { Strings } from '../en';
 
 /** Strings of the map home: MapSheet browse, search and stop modes, banners and map controls (English keys in ../en/map.ts). */
-export const map: Partial<Strings> = {};
+export const map: Partial<Strings> = {
+  'map.control.locate': 'मेरी लोकेशन दिखाएँ',
+  'map.control.locateDenied': 'लोकेशन बंद है। सेटअप खोलें',
+  'map.control.credits': 'मैप क्रेडिट',
+  'map.zoomHint': 'सभी स्टॉप देखने के लिए ज़ूम इन करें',
+  'map.offline': 'ऑफ़लाइन · स्टॉप और अलार्म काम करते हैं',
+  'map.firstOffline': 'पहली बार मैप के लिए इंटरनेट चाहिए। खोज और अलार्म ऑफ़लाइन भी चलते हैं।',
+  'map.pinCrosshair': 'पिन की जगह',
+
+  'map.update.body': 'StopWake अपडेट करें। आपके अलार्म चलते रहेंगे।',
+  'map.update.action': 'अपडेट करें',
+  'map.announcement.open': 'और जानें',
+
+  'map.pack.title': '{country} के स्टॉप · {size}',
+  'map.pack.body': 'यहाँ स्टॉप खोजने के लिए उन्हें डाउनलोड करें, बिना इंटरनेट के भी।',
+  'map.pack.download': 'डाउनलोड',
+  'map.pack.downloading': 'डाउनलोड हो रहा है {percent}¤%',
+  'map.pack.installing': 'इंस्टॉल हो रहा है…',
+  'map.pack.failed': 'डाउनलोड रुक गया। फिर से कोशिश करें।',
+  'map.pack.hint': '{country} खोज रहे हैं? उसके स्टॉप डाउनलोड करें ({size})।',
+
+  'map.nearby.title': 'आसपास के स्टॉप',
+  'map.nearby.within': '{distance} के भीतर',
+  'map.nearby.showAll': 'आसपास के सभी दिखाएँ',
+  'map.nearby.showFewer': 'कम दिखाएँ',
+  'map.nearby.emptyTitle': 'आसपास कोई स्टॉप नहीं',
+  'map.nearby.emptyBody': 'इसके बजाय अपनी मंज़िल खोजें।',
+  'map.location.title': 'अपने पास के स्टॉप देखें',
+  'map.location.body': 'आसपास के स्टॉप की सूची के लिए लोकेशन की अनुमति दें।',
+  'map.location.allow': 'लोकेशन की अनुमति दें',
+  'map.location.deniedBody': 'StopWake के लिए लोकेशन बंद है। आसपास के स्टॉप की सूची के लिए उसे चालू करें।',
+  'map.location.openSetup': 'सेटअप खोलें',
+  'map.longPressHint': 'कहीं भी पिन लगाने के लिए मैप को दबाकर रखें।',
+
+  'map.search.leaveHere': 'यहाँ से निकलने पर बजाएँ',
+  'map.search.leaveHereBody': 'आप जहाँ अभी हैं, वहाँ से दूर जाते ही जगाएगा',
+  'map.search.dropPin': 'मैप पर पिन लगाएँ',
+  'map.search.tip': 'सुझाव: कोऑर्डिनेट या Google Maps लिंक पेस्ट करें।',
+  'map.search.stops': 'स्टॉप',
+  'map.search.addressesOffline': 'पतों के लिए इंटरनेट चाहिए। स्टॉप ऑफ़लाइन भी काम करते हैं।',
+  'map.search.noResultsTitle': '“{query}” के लिए कुछ नहीं मिला',
+  'map.search.noResultsBody': 'स्पेलिंग जाँचें या शहर का नाम जोड़ें, जैसे “Bahnhofstraße Ulm”।',
+  'map.search.recentsCleared': 'हाल के स्टॉप साफ़ किए गए',
+  'map.search.undo': 'पूर्ववत करें',
+
+  'map.pin.title': 'पिन लगाने के लिए मैप खिसकाएँ',
+  'map.pin.finding': 'पता ढूँढ रहे हैं…',
+  'map.pin.use': 'यह जगह चुनें',
+
+  'map.stop.minutes': '{minutes}¤मिनट',
+  'map.stop.trainWarning': 'ट्रेन में {distance} बस कुछ सेकंड होते हैं। इसकी जगह 2¤मिनट पहले जगाएँ?',
+  'map.stop.useTwoMinutes': '2¤मिनट रखें',
+  'map.stop.options': 'अलार्म विकल्प',
+  'map.stop.optionsArrive': 'पहुँचने पर',
+  'map.stop.optionsLeave': 'निकलने पर',
+  'map.stop.whenLabel': 'अलार्म कब बजे',
+  'map.stop.strengthLabel': 'अलार्म की तीव्रता',
+  'map.stop.demo': 'डेमो यात्रा आज़माएँ',
+  'map.stop.demoBody': 'अलार्म देखने और सुनने के लिए 1 मिनट का सिमुलेशन।',
+  'map.stop.switch': 'अलार्म को इस स्टॉप पर बदलें',
+  'map.stop.saved': 'पसंदीदा में जोड़ा गया',
+  'map.stop.removed': 'पसंदीदा से हटाया गया',
+  'map.stop.notFound': 'यह स्टॉप इस फ़ोन में मौजूद स्टॉप में नहीं है।',
+
+  'map.rule.time': 'पहुँचने से लगभग {minutes}¤मिनट पहले बजेगा',
+  'map.rule.distance': 'स्टॉप से {distance} पहले बजेगा',
+  'map.rule.leave': '{distance} दूर होने पर बजेगा',
+};

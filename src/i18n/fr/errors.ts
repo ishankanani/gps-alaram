@@ -1,4 +1,67 @@
 import type { Strings } from '../en';
 
 /** Strings of user-facing API errors: errors.<code> from src/api/types.ts, plus errors.network and errors.timeout (English keys in ../en/errors.ts). */
-export const errors: Partial<Strings> = {};
+export const errors: Partial<Strings> = {
+  // ---- Server codes (backend-spec 2.3) ----
+  'errors.bad_request': 'Quelque chose clochait dans cette demande. Veuillez réessayer.',
+  'errors.validation_failed': 'Certaines informations sont à corriger. Vérifiez les champs ci-dessus.',
+  'errors.unsupported_media_type': 'Cette version de StopWake ne peut pas faire cela. Mettez l’appli à jour.',
+  'errors.payload_too_large': 'Le texte est trop long. Raccourcissez-le et réessayez.',
+  'errors.unauthorized': 'Vous avez été déconnecté de ce téléphone. Reconnectez-vous.',
+  'errors.invalid_credentials': 'L’e-mail ou le mot de passe est incorrect.',
+  'errors.reauth_required': 'Confirmez que c’est bien vous : saisissez à nouveau votre mot de passe.',
+  'errors.forbidden': 'Votre compte ne peut pas faire cela.',
+  'errors.account_disabled': 'Ce compte est désactivé. Contactez l’assistance.',
+  'errors.signup_disabled': 'La création de comptes est suspendue pour le moment. Réessayez plus tard.',
+  'errors.redeem_disabled': 'Les codes ne peuvent pas être utilisés pour le moment. Réessayez plus tard.',
+  'errors.not_found': 'Impossible de trouver cet élément. Il a peut-être été supprimé.',
+  'errors.method_not_allowed': 'Cette version de StopWake ne peut pas faire cela. Mettez l’appli à jour.',
+  'errors.email_taken': 'Un compte existe déjà avec cet e-mail.',
+  'errors.already_signed_up': 'Vous êtes déjà connecté à un compte.',
+  'errors.not_an_account': 'Créez d’abord un compte gratuit.',
+  'errors.subscription_active': 'Votre abonnement Google Play est toujours actif.',
+  'errors.last_admin': 'Vous êtes le seul admin. Nommez d’abord un autre admin.',
+  'errors.cannot_target_self': 'Vous ne pouvez pas faire cela sur votre propre compte.',
+  'errors.confirm_mismatch': 'Cela ne correspond pas. Saisissez l’ID exactement comme indiqué.',
+  'errors.already_revoked': 'C’est déjà terminé.',
+  'errors.already_lifetime': 'Vous avez déjà Pro à vie, vous n’avez donc pas besoin de code.',
+  'errors.promo_invalid': 'Ce code nous est inconnu. Vérifiez l’orthographe.',
+  'errors.promo_expired': 'Ce code a expiré.',
+  'errors.promo_exhausted': 'Ce code a été entièrement utilisé.',
+  'errors.promo_already_redeemed': 'Vous avez déjà utilisé ce code.',
+  'errors.code_taken': 'Ce code existe déjà. Choisissez-en un autre.',
+  'errors.promo_in_use': 'Ce code a déjà été utilisé, il ne peut donc pas être modifié ainsi.',
+  'errors.invalid_reset_code': 'Ce code est incorrect ou a expiré.',
+  'errors.rate_limited': 'Trop de tentatives. Patientez quelques minutes, puis réessayez.',
+  'errors.mail_unavailable': 'Nous ne pouvons pas envoyer d’e-mails pour le moment. Écrivez à l’assistance pour obtenir un code.',
+  'errors.not_configured': 'Cette version fonctionne sans compte.',
+  'errors.unavailable': 'StopWake est très sollicité en ce moment. Réessayez dans une minute.',
+  'errors.internal': 'Un problème est survenu de notre côté. Réessayez plus tard.',
+
+  // ---- No answer ----
+  'errors.network': 'Impossible de joindre StopWake. Vérifiez votre connexion.',
+  'errors.timeout': 'StopWake met trop de temps à répondre. Réessayez.',
+  'errors.bad_response': 'StopWake a envoyé une réponse inattendue. Réessayez plus tard.',
+
+  // ---- With details ----
+  'errors.rate_limitedMinutes': 'Trop de tentatives. Réessayez dans {minutes} min.',
+  'errors.rate_limitedSeconds': 'Trop de tentatives. Réessayez dans {seconds} s.',
+  'errors.retry': 'Réessayer',
+
+  // ---- Field errors (validation_failed) ----
+  'errors.field.required': 'Remplissez ce champ.',
+  'errors.field.invalid': 'Cela ne semble pas correct.',
+  'errors.field.invalid_email': 'Saisissez une adresse e-mail du type name@example.com.',
+  'errors.field.too_short': 'C’est trop court.',
+  'errors.field.too_long': 'C’est trop long.',
+  'errors.field.too_common': 'Ce mot de passe est trop courant. Essayez-en un plus long.',
+  'errors.field.same_as_email': 'Votre mot de passe ne peut pas être votre e-mail.',
+  'errors.field.out_of_range': 'Ce nombre est hors limites.',
+  'errors.field.invalid_date': 'Saisissez une date valide.',
+  'errors.field.in_past': 'Choisissez une date dans le futur.',
+  'errors.field.unknown_key': 'Ce paramètre n’existe pas.',
+  'errors.field.not_allowed': 'Cela ne peut pas être modifié.',
+  'errors.password.too_short': 'Utilisez au moins 8 caractères.',
+  'errors.password.too_long': 'Utilisez 128 caractères au maximum.',
+  'errors.name.too_long': 'Utilisez 60 caractères au maximum.',
+};

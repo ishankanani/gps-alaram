@@ -20,7 +20,7 @@ export const map: Partial<Strings> = {
   'map.pack.title': 'Stoppesteder i {country} · {size}',
   'map.pack.body': 'Download dem for at finde stoppesteder her, også uden internet.',
   'map.pack.download': 'Download',
-  'map.pack.downloading': 'Downloader {percent}¤%',
+  'map.pack.downloading': 'Downloader {percent} %',
   'map.pack.installing': 'Installerer…',
   'map.pack.failed': 'Downloadet blev afbrudt. Prøv igen.',
   'map.pack.hint': 'Leder du efter {country}? Download stoppestederne ({size}).',
@@ -57,9 +57,9 @@ export const map: Partial<Strings> = {
   'map.pin.use': 'Brug dette sted',
 
   // Stop mode
-  'map.stop.minutes': '{minutes}¤min.',
-  'map.stop.trainWarning': '{distance} er kun få sekunder i et tog. Så hellere væk mig 2¤min. før?',
-  'map.stop.useTwoMinutes': 'Brug 2¤min.',
+  'map.stop.minutes': '{minutes} min.',
+  'map.stop.trainWarning': '{distance} er kun få sekunder i et tog. Så hellere væk mig 2 min. før?',
+  'map.stop.useTwoMinutes': 'Brug 2 min.',
   'map.stop.options': 'Alarmindstillinger',
   'map.stop.optionsArrive': 'Ankomst',
   'map.stop.optionsLeave': 'Afgang',
@@ -73,7 +73,7 @@ export const map: Partial<Strings> = {
   'map.stop.notFound': 'Det stop findes ikke blandt stoppestederne på denne telefon.',
 
   // The rule line (also on the Trip screen)
-  'map.rule.time': 'Ringer ca. {minutes}¤min. før du er fremme',
+  'map.rule.time': 'Ringer ca. {minutes} min. før du er fremme',
   'map.rule.distance': 'Ringer {distance} før stoppet',
   'map.rule.leave': 'Ringer når du er {distance} væk',
 };

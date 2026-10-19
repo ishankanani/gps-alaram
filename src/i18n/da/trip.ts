@@ -4,7 +4,7 @@ import type { Strings } from '../en';
 export const trip: Partial<Strings> = {
   // Trip screen
   'trip.overline.demo': 'Demotur til',
-  'trip.badge.good': 'God GPS · ±{meters}¤m',
+  'trip.badge.good': 'God GPS · ±{meters} m',
   'trip.badge.searching': 'Søger efter GPS…',
   'trip.badge.estimating': 'Ingen GPS · anslår',
   'trip.badge.demo': 'Demo',
@@ -24,7 +24,7 @@ export const trip: Partial<Strings> = {
   'trip.endConfirm.body': 'Alarmen ringer ikke.',
   'trip.recentre': 'Centrér kortet',
   'trip.awake': 'Jeg er vågen',
-  'trip.alarm.body': '{name} om ca. {minutes}¤min.',
+  'trip.alarm.body': '{name} om ca. {minutes} min.',
   'trip.snoozedFor': 'Udsat · ringer igen om {time}',
   'trip.snoozedSoon': 'Udsat · ringer igen om lidt',
 
