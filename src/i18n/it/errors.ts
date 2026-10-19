@@ -1,4 +1,67 @@
 import type { Strings } from '../en';
 
 /** Strings of user-facing API errors: errors.<code> from src/api/types.ts, plus errors.network and errors.timeout (English keys in ../en/errors.ts). */
-export const errors: Partial<Strings> = {};
+export const errors: Partial<Strings> = {
+  // ---- Server codes (backend-spec 2.3) ----
+  'errors.bad_request': 'Qualcosa nella richiesta non andava. Riprova.',
+  'errors.validation_failed': 'Alcuni dati vanno corretti. Controlla i campi qui sopra.',
+  'errors.unsupported_media_type': 'Questa versione di StopWake non può farlo. Aggiorna l’app.',
+  'errors.payload_too_large': 'Il testo è troppo lungo. Accorcialo e riprova.',
+  'errors.unauthorized': 'Questo telefono è stato disconnesso. Accedi di nuovo.',
+  'errors.invalid_credentials': 'Email o password non corretta.',
+  'errors.reauth_required': 'Conferma la tua identità: inserisci di nuovo la password.',
+  'errors.forbidden': 'Il tuo account non può farlo.',
+  'errors.account_disabled': 'Questo account è disattivato. Contatta l’assistenza.',
+  'errors.signup_disabled': 'La creazione di account è sospesa al momento. Riprova più tardi.',
+  'errors.redeem_disabled': 'Al momento non è possibile riscattare codici. Riprova più tardi.',
+  'errors.not_found': 'Non lo troviamo. Potrebbe essere stato rimosso.',
+  'errors.method_not_allowed': 'Questa versione di StopWake non può farlo. Aggiorna l’app.',
+  'errors.email_taken': 'Esiste già un account con questa email.',
+  'errors.already_signed_up': 'Hai già effettuato l’accesso a un account.',
+  'errors.not_an_account': 'Prima crea un account gratuito.',
+  'errors.subscription_active': 'Il tuo abbonamento Google Play è ancora attivo.',
+  'errors.last_admin': 'Sei l’unico admin. Nomina prima un altro admin.',
+  'errors.cannot_target_self': 'Non puoi farlo sul tuo stesso account.',
+  'errors.confirm_mismatch': 'Non corrisponde. Scrivi l’ID esattamente come mostrato.',
+  'errors.already_revoked': 'Questo è già terminato.',
+  'errors.already_lifetime': 'Hai già Pro a vita, quindi non ti serve un codice.',
+  'errors.promo_invalid': 'Non conosciamo questo codice. Controlla come è scritto.',
+  'errors.promo_expired': 'Questo codice è scaduto.',
+  'errors.promo_exhausted': 'Questo codice è esaurito.',
+  'errors.promo_already_redeemed': 'Hai già usato questo codice.',
+  'errors.code_taken': 'Questo codice esiste già. Scegline un altro.',
+  'errors.promo_in_use': 'Questo codice è già stato usato, quindi non si può modificare così.',
+  'errors.invalid_reset_code': 'Questo codice è errato o scaduto.',
+  'errors.rate_limited': 'Troppi tentativi. Aspetta qualche minuto e riprova.',
+  'errors.mail_unavailable': 'Al momento non possiamo inviare email. Scrivi all’assistenza per ricevere un codice.',
+  'errors.not_configured': 'Questa versione funziona senza account.',
+  'errors.unavailable': 'StopWake è molto richiesto in questo momento. Riprova tra un minuto.',
+  'errors.internal': 'Qualcosa è andato storto da parte nostra. Riprova più tardi.',
+
+  // ---- No answer ----
+  'errors.network': 'Impossibile raggiungere StopWake. Controlla la connessione.',
+  'errors.timeout': 'StopWake ci mette troppo a rispondere. Riprova.',
+  'errors.bad_response': 'StopWake ha inviato una risposta inattesa. Riprova più tardi.',
+
+  // ---- With details ----
+  'errors.rate_limitedMinutes': 'Troppi tentativi. Riprova tra {minutes} min.',
+  'errors.rate_limitedSeconds': 'Troppi tentativi. Riprova tra {seconds} s.',
+  'errors.retry': 'Riprova',
+
+  // ---- Field errors (validation_failed) ----
+  'errors.field.required': 'Compila questo campo.',
+  'errors.field.invalid': 'Non sembra corretto.',
+  'errors.field.invalid_email': 'Inserisci un indirizzo email come name@example.com.',
+  'errors.field.too_short': 'È troppo corto.',
+  'errors.field.too_long': 'È troppo lungo.',
+  'errors.field.too_common': 'Questa password è troppo comune. Provane una più lunga.',
+  'errors.field.same_as_email': 'La password non può coincidere con l’email.',
+  'errors.field.out_of_range': 'Questo numero è fuori intervallo.',
+  'errors.field.invalid_date': 'Inserisci una data valida.',
+  'errors.field.in_past': 'Scegli una data futura.',
+  'errors.field.unknown_key': 'Questa impostazione non esiste.',
+  'errors.field.not_allowed': 'Non si può modificare.',
+  'errors.password.too_short': 'Usa almeno 8 caratteri.',
+  'errors.password.too_long': 'Usa al massimo 128 caratteri.',
+  'errors.name.too_long': 'Usa al massimo 60 caratteri.',
+};
