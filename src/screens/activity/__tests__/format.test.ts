@@ -40,8 +40,8 @@ describe('activity formatting', () => {
     expect(pluralForm('ja', 1)).toBe('other');
     expect(plural(en, 'en', 'activity.stat.onTimeCaption', 11, { total: 12 })).toBe('11 of 12 trips');
     expect(plural(en, 'en', 'activity.stat.onTimeCaption', 1, { total: 1 })).toBe('1 of 1 trip');
-    // German has no translation yet: English text, German rules.
-    expect(plural(de, 'de', 'onboarding.setup.toFix', 2)).toBe('2 things to fix');
+    // German text with German plural rules.
+    expect(plural(de, 'de', 'onboarding.setup.toFix', 2)).toBe('2 Punkte zu beheben');
   });
 
   it('formats spans, percentages and units', () => {

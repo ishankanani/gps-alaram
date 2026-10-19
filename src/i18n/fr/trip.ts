@@ -23,7 +23,7 @@ export const trip: Partial<Strings> = {
   'trip.endConfirm.title': 'Arrêter ce trajet ?',
   'trip.endConfirm.body': 'L’alarme ne sonnera pas.',
   'trip.recentre': 'Recentrer la carte',
-  'trip.awake': 'Je suis réveillé',
+  'trip.awake': 'Je suis debout',
   'trip.alarm.body': '{name} dans environ {minutes} min',
   'trip.snoozedFor': 'Répétition · sonne à nouveau dans {time}',
   'trip.snoozedSoon': 'Répétition · sonne à nouveau dans un instant',

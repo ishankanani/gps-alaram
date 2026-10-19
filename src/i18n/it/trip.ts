@@ -23,7 +23,7 @@ export const trip: Partial<Strings> = {
   'trip.endConfirm.title': 'Terminare il viaggio?',
   'trip.endConfirm.body': 'La sveglia non suonerà.',
   'trip.recentre': 'Ricentra la mappa',
-  'trip.awake': 'Sono sveglio',
+  'trip.awake': 'Ci sono!',
   'trip.alarm.body': '{name} tra circa {minutes} min',
   'trip.snoozedFor': 'Posticipata · suona di nuovo tra {time}',
   'trip.snoozedSoon': 'Posticipata · suona di nuovo a momenti',
