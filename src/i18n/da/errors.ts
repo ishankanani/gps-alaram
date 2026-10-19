@@ -1,4 +1,67 @@
 import type { Strings } from '../en';
 
 /** Strings of user-facing API errors: errors.<code> from src/api/types.ts, plus errors.network and errors.timeout (English keys in ../en/errors.ts). */
-export const errors: Partial<Strings> = {};
+export const errors: Partial<Strings> = {
+  // ---- Server codes (backend-spec 2.3) ----
+  'errors.bad_request': 'Noget i den anmodning var forkert. Prøv igen.',
+  'errors.validation_failed': 'Nogle oplysninger skal rettes. Tjek felterne ovenfor.',
+  'errors.unsupported_media_type': 'Denne version af StopWake kan ikke det. Opdater appen.',
+  'errors.payload_too_large': 'Det er for meget tekst. Gør den kortere, og prøv igen.',
+  'errors.unauthorized': 'Du blev logget ud på denne telefon. Log ind igen.',
+  'errors.invalid_credentials': 'E-mail eller adgangskode er forkert.',
+  'errors.reauth_required': 'Bekræft, at det er dig: Indtast din adgangskode igen.',
+  'errors.forbidden': 'Din konto kan ikke gøre dette.',
+  'errors.account_disabled': 'Denne konto er deaktiveret. Kontakt support.',
+  'errors.signup_disabled': 'Oprettelse af konti er sat på pause lige nu. Prøv igen senere.',
+  'errors.redeem_disabled': 'Koder kan ikke indløses lige nu. Prøv igen senere.',
+  'errors.not_found': 'Vi kunne ikke finde det. Måske er det blevet fjernet.',
+  'errors.method_not_allowed': 'Denne version af StopWake kan ikke det. Opdater appen.',
+  'errors.email_taken': 'Der findes allerede en konto med denne e-mail.',
+  'errors.already_signed_up': 'Du er allerede logget ind på en konto.',
+  'errors.not_an_account': 'Opret først en gratis konto.',
+  'errors.subscription_active': 'Dit abonnement i Google Play kører stadig.',
+  'errors.last_admin': 'Du er den eneste admin. Gør først en anden til admin.',
+  'errors.cannot_target_self': 'Du kan ikke gøre dette ved din egen konto.',
+  'errors.confirm_mismatch': 'Det passer ikke. Skriv ID’et præcis som vist.',
+  'errors.already_revoked': 'Dette er allerede afsluttet.',
+  'errors.already_lifetime': 'Du har allerede Pro for livet, så du behøver ikke en kode.',
+  'errors.promo_invalid': 'Vi kender ikke denne kode. Tjek stavemåden.',
+  'errors.promo_expired': 'Denne kode er udløbet.',
+  'errors.promo_exhausted': 'Denne kode er brugt op.',
+  'errors.promo_already_redeemed': 'Du har allerede brugt denne kode.',
+  'errors.code_taken': 'Denne kode findes allerede. Vælg en anden.',
+  'errors.promo_in_use': 'Denne kode er blevet brugt, så den kan ikke ændres på den måde.',
+  'errors.invalid_reset_code': 'Denne kode er forkert eller udløbet.',
+  'errors.rate_limited': 'For mange forsøg. Vent et par minutter, og prøv igen.',
+  'errors.mail_unavailable': 'Vi kan ikke sende e-mails lige nu. Skriv til support for at få en kode.',
+  'errors.not_configured': 'Denne version virker uden konto.',
+  'errors.unavailable': 'StopWake har travlt lige nu. Prøv igen om et øjeblik.',
+  'errors.internal': 'Noget gik galt hos os. Prøv igen senere.',
+
+  // ---- No answer ----
+  'errors.network': 'Kunne ikke få forbindelse til StopWake. Tjek din internetforbindelse.',
+  'errors.timeout': 'StopWake var for længe om at svare. Prøv igen.',
+  'errors.bad_response': 'StopWake sendte et svar, vi ikke forventede. Prøv igen senere.',
+
+  // ---- With details ----
+  'errors.rate_limitedMinutes': 'For mange forsøg. Prøv igen om {minutes} min.',
+  'errors.rate_limitedSeconds': 'For mange forsøg. Prøv igen om {seconds} s.',
+  'errors.retry': 'Prøv igen',
+
+  // ---- Field errors (validation_failed) ----
+  'errors.field.required': 'Udfyld dette felt.',
+  'errors.field.invalid': 'Det ser ikke rigtigt ud.',
+  'errors.field.invalid_email': 'Indtast en e-mailadresse som name@example.com.',
+  'errors.field.too_short': 'Det er for kort.',
+  'errors.field.too_long': 'Det er for langt.',
+  'errors.field.too_common': 'Denne adgangskode er for almindelig. Prøv en længere.',
+  'errors.field.same_as_email': 'Din adgangskode må ikke være din e-mail.',
+  'errors.field.out_of_range': 'Tallet er uden for det tilladte område.',
+  'errors.field.invalid_date': 'Indtast en rigtig dato.',
+  'errors.field.in_past': 'Vælg en dato i fremtiden.',
+  'errors.field.unknown_key': 'Denne indstilling findes ikke.',
+  'errors.field.not_allowed': 'Det kan ikke ændres.',
+  'errors.password.too_short': 'Brug mindst 8 tegn.',
+  'errors.password.too_long': 'Brug højst 128 tegn.',
+  'errors.name.too_long': 'Brug højst 60 tegn.',
+};
