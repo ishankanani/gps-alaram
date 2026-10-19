@@ -9,7 +9,7 @@ export const settings: Partial<Strings> = {
   'settings.section.about': 'जानकारी',
   'settings.alarmDefaults': 'डिफ़ॉल्ट अलार्म',
   'settings.alarmDefaults.value': '{strength} · {minutes} / {distance}',
-  'settings.minutes': '{minutes}¤मिनट',
+  'settings.minutes': '{minutes} मिनट',
   'settings.appearance': 'दिखावट',
   'settings.appearance.system': 'सिस्टम',
   'settings.appearance.systemBody': 'आपके फ़ोन के अनुसार',

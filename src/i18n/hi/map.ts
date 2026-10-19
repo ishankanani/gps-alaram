@@ -17,7 +17,7 @@ export const map: Partial<Strings> = {
   'map.pack.title': '{country} के स्टॉप · {size}',
   'map.pack.body': 'यहाँ स्टॉप खोजने के लिए उन्हें डाउनलोड करें, बिना इंटरनेट के भी।',
   'map.pack.download': 'डाउनलोड',
-  'map.pack.downloading': 'डाउनलोड हो रहा है {percent}¤%',
+  'map.pack.downloading': 'डाउनलोड हो रहा है {percent} %',
   'map.pack.installing': 'इंस्टॉल हो रहा है…',
   'map.pack.failed': 'डाउनलोड रुक गया। फिर से कोशिश करें।',
   'map.pack.hint': '{country} खोज रहे हैं? उसके स्टॉप डाउनलोड करें ({size})।',
@@ -50,9 +50,9 @@ export const map: Partial<Strings> = {
   'map.pin.finding': 'पता ढूँढ रहे हैं…',
   'map.pin.use': 'यह जगह चुनें',
 
-  'map.stop.minutes': '{minutes}¤मिनट',
-  'map.stop.trainWarning': 'ट्रेन में {distance} बस कुछ सेकंड होते हैं। इसकी जगह 2¤मिनट पहले जगाएँ?',
-  'map.stop.useTwoMinutes': '2¤मिनट रखें',
+  'map.stop.minutes': '{minutes} मिनट',
+  'map.stop.trainWarning': 'ट्रेन में {distance} बस कुछ सेकंड होते हैं। इसकी जगह 2 मिनट पहले जगाएँ?',
+  'map.stop.useTwoMinutes': '2 मिनट रखें',
   'map.stop.options': 'अलार्म विकल्प',
   'map.stop.optionsArrive': 'पहुँचने पर',
   'map.stop.optionsLeave': 'निकलने पर',
@@ -65,7 +65,7 @@ export const map: Partial<Strings> = {
   'map.stop.removed': 'पसंदीदा से हटाया गया',
   'map.stop.notFound': 'यह स्टॉप इस फ़ोन में मौजूद स्टॉप में नहीं है।',
 
-  'map.rule.time': 'पहुँचने से लगभग {minutes}¤मिनट पहले बजेगा',
+  'map.rule.time': 'पहुँचने से लगभग {minutes} मिनट पहले बजेगा',
   'map.rule.distance': 'स्टॉप से {distance} पहले बजेगा',
   'map.rule.leave': '{distance} दूर होने पर बजेगा',
 };

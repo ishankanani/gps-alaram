@@ -1,4 +1,71 @@
 import type { Strings } from '../en';
 
 /** Strings of the map home: MapSheet browse, search and stop modes, banners and map controls (English keys in ../en/map.ts). */
-export const map: Partial<Strings> = {};
+export const map: Partial<Strings> = {
+  'map.control.locate': '現在地を表示',
+  'map.control.locateDenied': '位置情報がオフです。設定を開く',
+  'map.control.credits': '地図のクレジット',
+  'map.zoomHint': 'ズームインするとすべての駅・停留所が表示されます',
+  'map.offline': 'オフライン · 駅・停留所とアラームは使えます',
+  'map.firstOffline': '初回は地図の読み込みにインターネット接続が必要です。検索とアラームはオフラインでも使えます。',
+  'map.pinCrosshair': 'ピンの位置',
+
+  'map.update.body': 'StopWakeを更新してください。アラームは引き続き動作します。',
+  'map.update.action': '更新',
+  'map.announcement.open': '詳しく見る',
+
+  'map.pack.title': '{country}の駅・停留所 · {size}',
+  'map.pack.body': 'ダウンロードすると、この地域の駅・停留所をオフラインでも検索できます。',
+  'map.pack.download': 'ダウンロード',
+  'map.pack.downloading': 'ダウンロード中 {percent}%',
+  'map.pack.installing': 'インストール中…',
+  'map.pack.failed': 'ダウンロードが中断されました。もう一度お試しください。',
+  'map.pack.hint': '{country}をお探しですか？ 駅・停留所をダウンロードしてください（{size}）。',
+
+  'map.nearby.title': '近くの駅・停留所',
+  'map.nearby.within': '{distance}以内',
+  'map.nearby.showAll': '近くの駅・停留所をすべて表示',
+  'map.nearby.showFewer': '表示を減らす',
+  'map.nearby.emptyTitle': '近くに駅・停留所がありません',
+  'map.nearby.emptyBody': '目的地を検索してみてください。',
+  'map.location.title': '近くの駅・停留所を表示',
+  'map.location.body': '周辺の駅・停留所を一覧表示するため、位置情報を許可してください。',
+  'map.location.allow': '位置情報を許可',
+  'map.location.deniedBody': 'StopWakeの位置情報がオフです。周辺の駅・停留所を表示するには、オンにしてください。',
+  'map.location.openSetup': '設定を開く',
+  'map.longPressHint': '地図を長押しすると、好きな場所にピンを立てられます。',
+
+  'map.search.leaveHere': 'ここを離れたら鳴らす',
+  'map.search.leaveHereBody': '現在地から離れたときに起こします',
+  'map.search.dropPin': '地図にピンを立てる',
+  'map.search.tip': 'ヒント：座標やGoogle マップのリンクを貼り付けられます。',
+  'map.search.stops': '駅・停留所',
+  'map.search.addressesOffline': '住所の検索にはインターネット接続が必要です。駅・停留所はオフラインでも使えます。',
+  'map.search.noResultsTitle': '「{query}」に一致する結果はありません',
+  'map.search.noResultsBody': 'つづりを確認するか、「Bahnhofstraße Ulm」のように地名を加えてください。',
+  'map.search.recentsCleared': '最近の駅・停留所を消去しました',
+  'map.search.undo': '元に戻す',
+
+  'map.pin.title': '地図を動かしてピンの位置を決めます',
+  'map.pin.finding': '住所を検索中…',
+  'map.pin.use': 'この場所を使う',
+
+  'map.stop.minutes': '{minutes}分',
+  'map.stop.trainWarning': '電車では、{distance}はほんの数秒です。代わりに2分前に起こしますか？',
+  'map.stop.useTwoMinutes': '2分前にする',
+  'map.stop.options': 'アラームの設定',
+  'map.stop.optionsArrive': '到着時',
+  'map.stop.optionsLeave': '離れたとき',
+  'map.stop.whenLabel': 'アラームが鳴るタイミング',
+  'map.stop.strengthLabel': 'アラームの強さ',
+  'map.stop.demo': 'デモ乗車を試す',
+  'map.stop.demoBody': '1分間のシミュレーションで、アラームを見て聞いて確認できます。',
+  'map.stop.switch': 'アラームをこの駅・停留所に切り替える',
+  'map.stop.saved': 'お気に入りに追加しました',
+  'map.stop.removed': 'お気に入りから削除しました',
+  'map.stop.notFound': 'この駅・停留所は、このスマホのデータにありません。',
+
+  'map.rule.time': '到着の約{minutes}分前に鳴ります',
+  'map.rule.distance': '駅・停留所の{distance}手前で鳴ります',
+  'map.rule.leave': '{distance}離れると鳴ります',
+};

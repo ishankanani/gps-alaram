@@ -3,7 +3,7 @@ import type { Strings } from '../en';
 /** Strings of the live trip, the in-app alarm, Arrived and the TripBar (English keys in ../en/trip.ts). */
 export const trip: Partial<Strings> = {
   'trip.overline.demo': 'डेमो यात्रा:',
-  'trip.badge.good': 'GPS अच्छा · ±{meters}¤मी',
+  'trip.badge.good': 'GPS अच्छा · ±{meters} मी',
   'trip.badge.searching': 'GPS खोज रहे हैं…',
   'trip.badge.estimating': 'GPS नहीं · अनुमान',
   'trip.badge.demo': 'डेमो',
@@ -23,7 +23,7 @@ export const trip: Partial<Strings> = {
   'trip.endConfirm.body': 'अलार्म नहीं बजेगा।',
   'trip.recentre': 'मैप को बीच में लाएँ',
   'trip.awake': 'नींद खुल गई',
-  'trip.alarm.body': '{name} लगभग {minutes}¤मिनट में',
+  'trip.alarm.body': '{name} लगभग {minutes} मिनट में',
   'trip.snoozedFor': 'स्नूज़ · {time} बाद फिर बजेगा',
   'trip.snoozedSoon': 'स्नूज़ · बस अभी फिर बजेगा',
 
