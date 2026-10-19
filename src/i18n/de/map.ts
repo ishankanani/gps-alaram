@@ -23,7 +23,7 @@ export const map: Partial<Strings> = {
   'map.pack.downloading': 'Lädt {percent} %',
   'map.pack.installing': 'Wird installiert …',
   'map.pack.failed': 'Der Download wurde unterbrochen. Versuche es erneut.',
-  'map.pack.hint': 'Haltestellen in {country}? Lade sie herunter ({size}).',
+  'map.pack.hint': '{country}: Haltestellen herunterladen ({size}).',
 
   // Browse mode
   'map.nearby.title': 'Haltestellen in der Nähe',
