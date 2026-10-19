@@ -129,6 +129,7 @@ export const account: Partial<Strings> = {
   'account.toSignIn': 'アカウントをお持ちの方はログイン',
   'account.signInInstead': 'ログインする',
   'account.created': 'アカウントを作成しました',
+  'account.confirmEmailSent': 'メールを確認し、リンクをタップしてアカウントを確認してから、サインインしてください。',
 
   'account.resetTitle': 'パスワードの再設定',
   'account.resetBody': '8文字のコードをメールでお送りします。',

@@ -56,9 +56,10 @@ export const ERROR_CODES: readonly ErrorCode[] = [
   'promo_invalid', 'promo_expired', 'promo_exhausted', 'promo_already_redeemed',
   'code_taken', 'promo_in_use', 'invalid_reset_code',
   'rate_limited', 'mail_unavailable', 'not_configured', 'unavailable', 'internal',
+  'email_not_confirmed', 'confirmation_sent',
 ];
 
-const FIELD_ERRORS: readonly FieldError[] = [
+export const FIELD_ERRORS: readonly FieldError[] = [
   'required', 'invalid', 'invalid_email', 'too_short', 'too_long', 'too_common', 'same_as_email',
   'out_of_range', 'invalid_date', 'in_past', 'unknown_key', 'not_allowed',
 ];

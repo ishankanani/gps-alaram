@@ -4,8 +4,13 @@
  *
  * Start-up is synchronous (the install id, the SecureStore session and the snapshot file, which
  * counts only when it belongs to the stored session's user); the network runs in the background:
- * a guest is created when there is no session (retried 2 s, 10 s, 30 s, 2 min, then every 5 min),
- * otherwise /v1/me is read. Nothing waits for it, and nothing about the alarm depends on it.
+ * /v1/me is read when there is a session. Nothing waits for it, and nothing about the alarm
+ * depends on it.
+ *
+ * With Supabase there are no server-side guests: without an account everything stays on the
+ * phone (session null). Supabase Auth keeps its own tokens (src/api/supabase/client.ts); the
+ * StoredSession here mirrors who is signed in, with token `sb:<user id>`, so pro.ts and the
+ * stale-answer checks keep working. Signing in starts the sync (src/api/sync.ts).
  */
 import { File, Paths } from 'expo-file-system';
 import * as Network from 'expo-network';
@@ -17,7 +22,7 @@ import type { CachedPlan } from '../lib/entitlement';
 import { setSessionRole } from '../state/session';
 import type { AuthErrorEvent } from './client';
 import type { Reauthenticate } from './contract';
-import { ApiError, isApiError } from './errors';
+import { ApiError } from './errors';
 import {
   apiConfigured,
   endpoints,
@@ -26,7 +31,9 @@ import {
   setForbiddenHandler,
   setReachabilityHandler,
 } from './index';
-import { clearSession, getInstallId, getSession, setSession, type StoredSession } from './secure';
+import { clearSession, getSession, setSession, type StoredSession } from './secure';
+import { getSupabase } from './supabase/client';
+import { resetSync, startSync, syncNow } from './sync';
 import type {
   AuthResponse,
   DeleteMeRequest,
@@ -62,7 +69,6 @@ export type AccountState = {
 };
 
 const REFRESH_AFTER_MS = 15 * 60_000;
-const GUEST_BACKOFF_MS = [2_000, 10_000, 30_000, 120_000, 300_000];
 
 // ---- The snapshot file (Paths.document/stopwake-account.json) ----
 
@@ -209,13 +215,19 @@ function applyMe(me: MeResponse, tokenUsed: string): boolean {
   return true;
 }
 
+/** The mirrored session token of a Supabase user (the real JWTs stay with supabase-js). */
+const sessionToken = (userId: string) => `sb:${userId}`;
+
 function applyAuth(res: AuthResponse) {
-  const { token, ...rest } = res;
+  const { token: _jwt, ...rest } = res;
+  const token = sessionToken(res.user.id);
   const me: MeResponse = { user: rest.user, session: rest.session, plan: rest.plan, entitlements: rest.entitlements };
   setSession({ token, userId: res.user.id, publicId: res.user.publicId, kind: res.user.kind });
   applyMe(me, token);
   patch({ signedOutNotice: false });
   emitIdentity(res.user);
+  // Merges the phone's favourites, recents and trips into the account, and the account's into the phone.
+  void syncNow();
 }
 
 function applyPlan(p: PlanResponse, tokenUsed: string) {
@@ -227,6 +239,7 @@ function applyPlan(p: PlanResponse, tokenUsed: string) {
 /** Forgets the session and its snapshot (sign-out, deletion, a dead token). */
 function dropSession() {
   clearSession();
+  resetSync();
   deleteSnapshot();
   patch({ session: null, me: null, receivedAt: null, disabled: null });
   setSessionRole(null);
@@ -243,61 +256,10 @@ function setDisabled(details: Record<string, unknown> | undefined) {
   setSessionRole('user');
 }
 
-// ---- The guest ----
+// ---- No guests ----
 
-let guestInflight: Promise<boolean> | null = null;
-let guestTimer: ReturnType<typeof setTimeout> | null = null;
-let guestAttempt = 0;
-
-function scheduleGuestRetry() {
-  if (guestTimer) clearTimeout(guestTimer);
-  const delay = GUEST_BACKOFF_MS[Math.min(guestAttempt, GUEST_BACKOFF_MS.length - 1)];
-  guestAttempt += 1;
-  guestTimer = setTimeout(() => {
-    guestTimer = null;
-    if (!getSession()) void createGuest();
-  }, delay);
-}
-
-/** POST /v1/auth/guest for this installation. Resolves to whether a session exists afterwards. */
-function createGuest(): Promise<boolean> {
-  if (!apiConfigured) return Promise.resolve(false);
-  if (getSession()) return Promise.resolve(true);
-  if (guestInflight) return guestInflight;
-  guestInflight = (async () => {
-    patch({ syncing: true });
-    try {
-      const res = await endpoints.auth.guest({ installId: getInstallId() });
-      // Someone signed in meanwhile: that session wins.
-      if (getSession()) return true;
-      applyAuth(res);
-      guestAttempt = 0;
-      return true;
-    } catch (e) {
-      if (isApiError(e) && e.code === 'account_disabled') {
-        // This installation's guest is disabled: wait for the next foreground.
-        setDisabled(e.details);
-      } else {
-        scheduleGuestRetry();
-      }
-      return false;
-    } finally {
-      guestInflight = null;
-      patch({ syncing: false });
-    }
-  })();
-  return guestInflight;
-}
-
-/** Tries the guest again now (foreground, network back), restarting the backoff. */
 function retryGuestNow() {
-  if (getSession() || !apiConfigured) return;
-  guestAttempt = 0;
-  if (guestTimer) {
-    clearTimeout(guestTimer);
-    guestTimer = null;
-  }
-  void createGuest();
+  // Nothing to retry: guests are local.
 }
 
 // ---- Refresh ----
@@ -312,8 +274,7 @@ export function refreshAccount(): Promise<void> {
   if (!apiConfigured) return Promise.resolve();
   const s = getSession();
   if (!s) {
-    retryGuestNow();
-    return (guestInflight ?? Promise.resolve(false)).then(() => undefined);
+    return Promise.resolve();
   }
   if (meInflight) return meInflight;
   meInflight = (async () => {
@@ -341,7 +302,6 @@ function handleAuthError(event: AuthErrorEvent) {
     const wasAccount = s.kind === 'account';
     dropSession();
     patch({ signedOutNotice: wasAccount });
-    void createGuest();
   } else if (event.kind === 'disabled') {
     setDisabled(event.error.details);
   }
@@ -355,6 +315,37 @@ if (apiConfigured) {
     patch({ offline: !reached });
   });
   setForbiddenHandler(() => void refreshAccount());
+}
+
+// ---- Supabase Auth's own session ----
+
+/** True while this phone signs itself out (no "signed out on this phone" notice). */
+let signingOut = false;
+
+/**
+ * Follows Supabase Auth: a session restored at start or after a refresh becomes the mirrored
+ * StoredSession, and a session Supabase ended (refresh token revoked, user deleted) signs out here.
+ */
+function watchSupabaseSession() {
+  const sb = getSupabase();
+  if (!sb) return;
+  sb.auth.onAuthStateChange((event, session) => {
+    const s = getSession();
+    if (!session) {
+      if (s && !signingOut && event === 'SIGNED_OUT') {
+        const wasAccount = s.kind === 'account';
+        dropSession();
+        patch({ signedOutNotice: wasAccount });
+      }
+      return;
+    }
+    if (!s || s.userId !== session.user.id) {
+      setSession({ token: sessionToken(session.user.id), userId: session.user.id, publicId: s?.userId === session.user.id ? s.publicId : '', kind: 'account' });
+      patch({ session: getSession(), me: null, receivedAt: null });
+      // Outside the auth callback: supabase-js must not be re-entered from it.
+      setTimeout(() => void refreshAccount(), 0);
+    }
+  });
 }
 
 let started = false;
@@ -374,7 +365,9 @@ export function startAccount() {
   if (s.me && !s.disabled) setSessionRole(s.me.user.role);
   else if (s.disabled) setSessionRole('user');
 
+  watchSupabaseSession();
   void refreshAccount();
+  startSync();
 
   AppState.addEventListener('change', (next) => {
     if (next !== 'active') return;
@@ -400,10 +393,12 @@ function requireSession(): StoredSession {
   return s;
 }
 
-/** The guest becomes an account with the same ID (2.6). */
+/**
+ * Creates the account (Supabase Auth sign-up). Rejects with `confirmation_sent` when the project
+ * asks for email confirmation first; the favourites and trips on the phone go into the account at
+ * the first sign-in.
+ */
 export async function signUp(input: { email: string; password: string; displayName?: string | null }): Promise<void> {
-  if (!getSession()) await createGuest();
-  requireSession();
   const res = await endpoints.auth.signUp({ email: input.email, password: input.password, displayName: input.displayName || undefined });
   applyAuth(res);
 }
@@ -413,10 +408,7 @@ export async function signUp(input: { email: string; password: string; displayNa
  * purchases into the account (3.6). Resolves with what moved, or null.
  */
 export async function signIn(input: { email: string; password: string }): Promise<MergeSummary | null> {
-  // A guest being created right now would take this installation's sessions with it: let it land first.
-  if (guestInflight) await guestInflight;
-  const s = getSession();
-  const res = await endpoints.auth.signIn({ email: input.email, password: input.password, installId: getInstallId() }, s?.token ?? null);
+  const res = await endpoints.auth.signIn({ email: input.email, password: input.password, installId: '' });
   applyAuth(res);
   return res.merged;
 }
@@ -428,23 +420,22 @@ export const reauthenticate: Reauthenticate = async (password) => {
   if (!s || s.kind !== 'account' || !email) {
     throw new ApiError({ status: 401, code: 'unauthorized', message: 'Not signed in to an account' });
   }
-  const res = await endpoints.auth.signIn({ email, password, installId: getInstallId() }, s.token);
+  const res = await endpoints.auth.signIn({ email, password, installId: '' });
   applyAuth(res);
 };
 
-/** Signs out on this phone and continues as a new guest (3.8). Never fails: offline, the token is just forgotten. */
+/** Signs out on this phone; the data on the phone stays. Never fails: offline, the session is just forgotten. */
 export async function signOut(): Promise<void> {
-  const s = getSession();
-  if (s) {
-    try {
-      await endpoints.auth.signOut(s.token);
-    } catch {
-      // The token is forgotten either way; it expires on the server.
-    }
+  signingOut = true;
+  try {
+    await endpoints.auth.signOut();
+  } catch {
+    // Forgotten either way; the refresh token expires on the server.
+  } finally {
+    signingOut = false;
   }
   dropSession();
   patch({ signedOutNotice: false });
-  await createGuest();
 }
 
 /** Signs out every other phone; resolves with how many sessions ended. */
@@ -480,13 +471,11 @@ export async function forgotPassword(email: string): Promise<void> {
 
 /** Sets a new password with a code from the email or from support, and signs in. */
 export async function resetPassword(input: { email: string; code: string; newPassword: string }): Promise<void> {
-  if (guestInflight) await guestInflight;
-  const res = await endpoints.auth.resetPassword({ ...input, installId: getInstallId() });
+  const res = await endpoints.auth.resetPassword({ ...input, installId: '' });
   applyAuth(res);
 }
 
 export async function redeemCode(code: string): Promise<RedeemResponse> {
-  if (!getSession()) await createGuest();
   const s = requireSession();
   const res = await endpoints.promo.redeem({ code });
   applyPlan(res, s.token);
@@ -505,11 +494,14 @@ export async function exportData(): Promise<ExportResponse> {
  */
 export async function deleteAccount(body: DeleteMeRequest): Promise<void> {
   requireSession();
-  await endpoints.me.delete(body);
+  signingOut = true;
+  try {
+    await endpoints.me.delete(body);
+  } finally {
+    signingOut = false;
+  }
   dropSession();
   patch({ signedOutNotice: false });
-  guestAttempt = 0;
-  await createGuest();
 }
 
 /** After a purchase or restore: the server asks RevenueCat (POST /plan/sync), then /me (3.8). */

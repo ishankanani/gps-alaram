@@ -14,9 +14,10 @@ import { errorText, fieldErrorText, looksLikeEmail, mailSupport, maskEmail } fro
 const RESEND_AFTER_S = 60;
 
 /** Reset codes are 8 Crockford characters (backend-spec 1.1): capitals, a dash after 4, any separator pasted. */
+/** Supabase's email codes are 6 to 10 digits; shown in groups of four. */
 export function formatResetCode(text: string): string {
-  const raw = text.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8);
-  return raw.length > 4 ? `${raw.slice(0, 4)}-${raw.slice(4)}` : raw;
+  const raw = text.replace(/[^0-9]/g, '').slice(0, 10);
+  return raw.match(/.{1,4}/g)?.join('-') ?? '';
 }
 
 /**
@@ -102,7 +103,9 @@ export function ForgotPasswordScreen({ navigation, route }: RootScreenProps<'For
 
   async function submitReset() {
     if (busy) return;
-    const badCode = code.replace(/-/g, '').length !== 8 ? tr('errors.invalid_reset_code') : null;
+    // Supabase's email one-time codes have 6 to 10 digits (supabase/README.md recommends 8).
+    const digits = code.replace(/[\s-]/g, '').length;
+    const badCode = digits < 6 || digits > 10 ? tr('errors.invalid_reset_code') : null;
     const length = [...password.normalize('NFKC')].length;
     const badPassword = !password ? tr('errors.field.required') : length < 8 ? tr('errors.password.too_short') : length > 128 ? tr('errors.password.too_long') : null;
     setCodeError(badCode);
@@ -219,7 +222,7 @@ export function ForgotPasswordScreen({ navigation, route }: RootScreenProps<'For
           kind="oneTimeCode"
           variant="code"
           value={code}
-          placeholder="K3P9-7XQ2"
+          placeholder="1234-5678"
           onChangeText={(text) => {
             setCode(formatResetCode(text));
             setCodeError(null);

@@ -37,6 +37,8 @@ export const errors: Partial<Strings> = {
   'errors.not_configured': 'Denne versjonen fungerer uten konto.',
   'errors.unavailable': 'StopWake har litt mye å gjøre akkurat nå. Prøv igjen om et minutt.',
   'errors.internal': 'Noe gikk galt hos oss. Prøv igjen senere.',
+  'errors.email_not_confirmed': 'Bekreft e-postadressen først: trykk på lenken vi sendte deg.',
+  'errors.confirmation_sent': 'Sjekk e-posten din for å bekrefte kontoen.',
 
   // ---- No answer ----
   'errors.network': 'Fikk ikke kontakt med StopWake. Sjekk internettforbindelsen.',

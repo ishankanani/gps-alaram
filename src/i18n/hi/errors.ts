@@ -36,6 +36,8 @@ export const errors: Partial<Strings> = {
   'errors.not_configured': 'यह बिल्ड बिना खाते के चलता है।',
   'errors.unavailable': 'StopWake पर अभी भीड़ है। एक मिनट बाद फिर कोशिश करें।',
   'errors.internal': 'हमारी तरफ़ कुछ गड़बड़ हो गई। बाद में फिर कोशिश करें।',
+  'errors.email_not_confirmed': 'पहले अपने ईमेल की पुष्टि करें: हमारे भेजे लिंक पर टैप करें।',
+  'errors.confirmation_sent': 'अपने खाते की पुष्टि के लिए अपना ईमेल देखें।',
 
   'errors.network': 'StopWake से संपर्क नहीं हो सका। अपना कनेक्शन जाँचें।',
   'errors.timeout': 'StopWake ने जवाब देने में बहुत देर लगा दी। फिर कोशिश करें।',

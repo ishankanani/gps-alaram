@@ -3,6 +3,7 @@
 import type { Entitlement, RemoteConfig } from '../../api/types';
 import type { Lang, T } from '../../i18n';
 import { hasBillingProblem } from '../../lib/entitlement';
+import { featureUnlocked } from '../../lib/monetization';
 import { formatPrice } from '../../lib/pricing';
 import type { ProState } from '../../lib/pro';
 import { formatDate, planName } from './shared';
@@ -56,10 +57,10 @@ export function accountPlanStatus(input: {
   if (pro.origin === 'build') return { ...pro0, badge: 'pro', line: tr('account.plan.testBuild'), action: null };
 
   if (!pro.isPro) {
-    const favourites = config.proFeatures.unlimitedFavourites
+    const favourites = !featureUnlocked('unlimitedFavourites', false, config.proFeatures)
       ? tr('account.plan.freeFavourites', { count: config.limits.freeFavourites })
       : tr('account.plan.freeFavouritesAll');
-    const alarms = config.proFeatures.heavyAlarm ? tr('account.plan.freeAlarms') : tr('account.plan.freeAlarmsAll');
+    const alarms = !featureUnlocked('heavyAlarm', false, config.proFeatures) ? tr('account.plan.freeAlarms') : tr('account.plan.freeAlarmsAll');
     const trial = trialOffer(pro, config);
     return {
       title: tr('account.plan.free'),

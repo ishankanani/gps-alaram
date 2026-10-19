@@ -95,6 +95,7 @@ $$;
 /** Recomputes profiles.plan_* (call in the transaction that changed grants, subscriptions or status). */
 create or replace function public.recompute_plan(p_user uuid) returns void
 language plpgsql volatile security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare
   st text;
   b_ref text; b_source text; b_plan text; b_end timestamptz; b_renew boolean; b_trial boolean;
@@ -126,6 +127,7 @@ $$;
 /** Entitlement[]: the counting ones (p_all = false; empty unless the user is active) or every one. */
 create or replace function public.entitlements_json(p_user uuid, p_all boolean default false) returns jsonb
 language plpgsql stable security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare out jsonb := '[]'::jsonb; c public.plan_candidate; st text;
 begin
   select status into st from public.profiles where id = p_user;
@@ -140,6 +142,7 @@ $$;
 /** The wire EffectivePlan (3.2, 3.7). */
 create or replace function public.plan_json(p_user uuid) returns jsonb
 language plpgsql volatile security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare
   p public.profiles;
   c public.plan_candidate;
@@ -202,6 +205,7 @@ $$;
 /** The caller's active profile; raises unauthorized (no profile) or account_disabled. */
 create or replace function public.current_profile() returns public.profiles
 language plpgsql stable security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare p public.profiles;
 begin
   if auth.uid() is null then perform public.api_error('unauthorized', 401, 'Not signed in'); end if;
@@ -221,6 +225,7 @@ $$;
  */
 create or replace function public.me(p_device jsonb default null) returns jsonb
 language plpgsql volatile security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare
   p public.profiles := public.current_profile();
   install uuid;
@@ -255,6 +260,7 @@ $$;
 /** PATCH /v1/me for displayName, language and country (email and password go through Supabase Auth). */
 create or replace function public.update_me(p_body jsonb) returns jsonb
 language plpgsql volatile security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare
   p public.profiles := public.current_profile();
   fields jsonb := '{}'::jsonb;
@@ -292,6 +298,7 @@ $$;
 /** GET /v1/plan. */
 create or replace function public.my_plan() returns jsonb
 language plpgsql volatile security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare p public.profiles := public.current_profile();
 begin
   return public.plan_response_json(p.id);
@@ -308,6 +315,7 @@ $$;
 /** POST /v1/promo/redeem (3.4): promo days stack after the user's active gifts. */
 create or replace function public.redeem_promo(p_code text) returns jsonb
 language plpgsql volatile security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare
   p public.profiles := public.current_profile();
   v_code text := public.normalize_promo_code(p_code);
@@ -355,6 +363,7 @@ $$;
 /** GET /v1/me/export: everything stored about the caller, including the synced data. */
 create or replace function public.export_my_data() returns jsonb
 language plpgsql volatile security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare p public.profiles;
 begin
   if auth.uid() is null then perform public.api_error('unauthorized', 401, 'Not signed in'); end if;
@@ -383,6 +392,7 @@ $$;
 /** Signs out the caller's other phones (POST /v1/auth/sign-out-all with keepCurrent). */
 create or replace function public.sign_out_other_sessions() returns jsonb
 language plpgsql volatile security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare
   uid uuid := auth.uid();
   current_session uuid;
@@ -406,6 +416,7 @@ $$;
  */
 create or replace function public.delete_my_account(p_acknowledge_subscription boolean default false) returns void
 language plpgsql volatile security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare p public.profiles;
 begin
   if auth.uid() is null then perform public.api_error('unauthorized', 401, 'Not signed in'); end if;
@@ -437,6 +448,7 @@ $$;
  */
 create or replace function public.sync_push(p_table text, p_items jsonb) returns jsonb
 language plpgsql volatile security invoker set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare n integer;
 begin
   if auth.uid() is null then perform public.api_error('unauthorized', 401, 'Not signed in'); end if;

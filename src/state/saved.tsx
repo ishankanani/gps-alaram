@@ -1,4 +1,6 @@
-import { createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+
+import { notifySavedChanged, registerSavedData } from '../api/sync';
 
 import type { Place } from '../lib/geocode';
 import { canAddFavourite } from '../lib/plans';
@@ -37,8 +39,19 @@ export function SavedDataProvider({ children }: { children: ReactNode }) {
     latest.current = value;
     setData(value);
     saveData(value);
+    notifySavedChanged();
     return value;
   }, []);
+
+  // The account sync reads and merges favourites and recents (src/api/sync.ts).
+  useEffect(
+    () =>
+      registerSavedData({
+        get: () => ({ favourites: latest.current.favourites, recents: latest.current.recents }),
+        set: (next) => update((current) => ({ ...current, ...next })),
+      }),
+    [update],
+  );
 
   const setPreferences = useCallback<SavedDataApi['setPreferences']>(
     (next) => {

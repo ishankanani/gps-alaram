@@ -1,10 +1,12 @@
 /**
- * The StopWake Cloud singletons (backend-spec 7.1 and 7.2): the base URL from EXPO_PUBLIC_API_URL,
- * the client info (X-Client, Accept-Language) and the token from SecureStore.
+ * The StopWake Cloud singletons, now answered by Supabase (supabase/README.md): the project from
+ * EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY, the client info and the app language.
  *
- * `api` is the seam of src/api/contract.ts: the admin package calls `api.request(...)`. In a build
- * without EXPO_PUBLIC_API_URL `apiConfigured` is false and every request rejects at once, without
- * touching the network; the app works as before, without accounts.
+ * `api` is the seam of src/api/contract.ts: the account store, the config store and the admin
+ * package call `api.request('GET', '/v1/...')`, and src/api/supabase/router.ts answers each route
+ * with Supabase Auth and RPCs, in the same wire types. In a build without Supabase `apiConfigured`
+ * is false and every request rejects at once; the app works as before, without accounts.
+ * (The HTTP client for the Node server, client.ts, stays for when server/ is used again.)
  */
 import * as Application from 'expo-application';
 import { getLocales } from 'expo-localization';
@@ -12,17 +14,19 @@ import { Platform } from 'react-native';
 
 import { deviceLanguage, type Lang } from '../i18n';
 import { loadData } from '../lib/storage';
-import { createApiClient, type AuthErrorEvent, type ClientInfo, type ClientRequestOptions } from './client';
+import type { AuthErrorEvent, ClientInfo, ClientRequestOptions } from './client';
 import type { ApiAvailability, ApiRequester, HttpMethod } from './contract';
 import { createEndpoints } from './endpoints';
 import { ApiError } from './errors';
-import { getToken } from './secure';
+import { getInstallId, getToken } from './secure';
+import { createSupabaseBackend, SUPABASE_URL, supabaseConfigured } from './supabase/client';
+import { createSupabaseRouter } from './supabase/router';
 
-/** No trailing slash; empty in a local build. Inlined at build time. */
-export const API_URL = (process.env.EXPO_PUBLIC_API_URL ?? '').trim().replace(/\/+$/, '');
+/** The Supabase project URL (no trailing slash); empty in a local build. Inlined at build time. */
+export const API_URL = supabaseConfigured ? SUPABASE_URL : '';
 
-/** False in a build without EXPO_PUBLIC_API_URL: no account features at all. */
-export const apiConfigured = API_URL.length > 0;
+/** False in a build without Supabase: no account features at all. */
+export const apiConfigured = supabaseConfigured;
 
 export const availability: ApiAvailability = { apiConfigured };
 
@@ -114,24 +118,47 @@ export function setForbiddenHandler(handler: () => void) {
   forbiddenHandler = handler;
 }
 
-const client = createApiClient({
-  baseUrl: API_URL,
-  fetch: (input, init) => fetch(input, init),
-  getToken,
-  clientInfo,
-  onAuthError: (event) => authErrorHandler?.(event),
-  onReachability: (reached) => reachabilityHandler?.(reached),
-});
+const router = supabaseConfigured
+  ? createSupabaseRouter(
+      createSupabaseBackend({
+        device: () => {
+          const info = clientInfo();
+          return {
+            installId: getInstallId(),
+            platform: info.platform,
+            appVersion: info.appVersion,
+            build: info.build === null ? null : String(info.build),
+            osVersion: info.osVersion === null ? null : String(info.osVersion),
+            country: info.region,
+            language: info.language,
+          };
+        },
+        language: () => language,
+        region: deviceRegion,
+      }),
+    )
+  : null;
 
 const notConfigured = () =>
-  new ApiError({ status: 0, code: 'not_configured', message: 'This build has no server (EXPO_PUBLIC_API_URL is not set)' });
+  new ApiError({ status: 0, code: 'not_configured', message: 'This build has no Supabase project (EXPO_PUBLIC_SUPABASE_URL is not set)' });
+
+/** The account routes whose 401 means "this session is gone" (sign-in itself answers invalid_credentials). */
+const SESSION_PATHS = /^\/v1\/(me|plan|promo|admin)/;
 
 async function request<T>(method: HttpMethod, path: string, options?: ClientRequestOptions): Promise<T> {
-  if (!apiConfigured) throw notConfigured();
+  if (!router) throw notConfigured();
   try {
-    return await client.request<T>(method, path, options);
+    const result = await router.request<T>(method, path, options);
+    reachabilityHandler?.(true);
+    return result;
   } catch (e) {
-    if (e instanceof ApiError && e.status === 403 && e.code === 'forbidden' && path.startsWith('/v1/admin/')) forbiddenHandler?.();
+    if (e instanceof ApiError) {
+      reachabilityHandler?.(!e.offline);
+      const token = getToken();
+      if (e.code === 'unauthorized' && SESSION_PATHS.test(path)) authErrorHandler?.({ kind: 'unauthorized', error: e, token, path });
+      else if (e.code === 'account_disabled') authErrorHandler?.({ kind: 'disabled', error: e, token, path });
+      if (e.code === 'forbidden' && path.startsWith('/v1/admin/')) forbiddenHandler?.();
+    }
     throw e;
   }
 }

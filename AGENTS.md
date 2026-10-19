@@ -34,7 +34,8 @@ Run lint and typecheck before declaring any task done.
   data, the trip lifecycle with the native module, language, setup, session role) lives in the
   providers of `src/state`; `App.tsx` only wires providers and navigation. The design system
   (tokens, theme, components) is `src/ui` (import from `src/ui/index.ts`); `src/ui/legacy` holds
-  the old components until every screen is rebuilt. The server is `server/` (see its README).
+  the old components until every screen is rebuilt. Accounts, sync and admin run on Supabase
+  (`supabase/README.md`, client in `src/api/supabase/`); `server/` is kept but unused.
 - The offline stops database `assets/stations/germany-stops.db` is generated, not committed:
   run `npm run build:stations` after `npm install`. Metro bundles it as an asset.
 - Every user-facing text goes through `useI18n()`. Strings live in `src/i18n/<lang>/`, one file

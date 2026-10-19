@@ -136,6 +136,7 @@ export const account: Partial<Strings> = {
   'account.toSignIn': 'Heb je al een account? Log in',
   'account.signInInstead': 'Liever inloggen',
   'account.created': 'Account gemaakt',
+  'account.confirmEmailSent': 'Check je e-mail en tik op de link om je account te bevestigen. Log daarna in.',
 
   // ---- Forgot password ----
   'account.resetTitle': 'Wachtwoord resetten',

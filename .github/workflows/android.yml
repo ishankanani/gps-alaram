@@ -66,6 +66,10 @@ jobs:
     env:
       # The StopWake Cloud address (repository variable). Empty means a build without accounts.
       EXPO_PUBLIC_API_URL: ${{ vars.STOPWAKE_API_URL }}
+      # Accounts and admin run on Supabase (supabase/README.md). Both empty: a build without accounts.
+      # Only the anon (publishable) key goes into the app, never the service_role key.
+      EXPO_PUBLIC_SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+      EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ vars.SUPABASE_ANON_KEY }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

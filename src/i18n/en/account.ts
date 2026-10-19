@@ -138,6 +138,7 @@ export const account = {
   'account.toSignIn': 'Already have an account? Sign in',
   'account.signInInstead': 'Sign in instead',
   'account.created': 'Account created',
+  'account.confirmEmailSent': 'Check your email and tap the link to confirm your account, then sign in.',
 
   // ---- Forgot password ----
   'account.resetTitle': 'Reset password',

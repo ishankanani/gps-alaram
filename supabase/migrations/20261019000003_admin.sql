@@ -21,6 +21,7 @@ $$;
 /** A timestamp from an ISO 8601 string, or null when it isn't one. */
 create or replace function public.json_time(v jsonb) returns timestamptz
 language plpgsql immutable set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 begin
   if v is null or jsonb_typeof(v) <> 'string' or (v #>> '{}') !~ '^\d{4}-\d{2}-\d{2}T' then return null; end if;
   return (v #>> '{}')::timestamptz;
@@ -32,6 +33,7 @@ $$;
 /** The reason every admin mutation needs: 1–500 characters after trimming. Raises validation_failed. */
 create or replace function public.require_reason(p text) returns text
 language plpgsql immutable set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare r text := btrim(coalesce(p, ''));
 begin
   if r = '' then perform public.validation_failed('{"reason":"required"}'); end if;
@@ -63,6 +65,7 @@ $$;
 
 create or replace function public.admin_list_item_json(p public.profiles, notes_count bigint) returns jsonb
 language plpgsql stable set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare pro boolean := p.status = 'active' and p.plan <> 'free' and p.plan_until is not null and p.plan_until > now();
 begin
   return jsonb_build_object(
@@ -150,6 +153,7 @@ $$;
 /** Raises last_admin when p would leave the project without an active admin. */
 create or replace function public.guard_last_admin(p public.profiles) returns void
 language plpgsql stable security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 begin
   if p.role = 'admin' and p.status = 'active'
      and not exists (select 1 from public.profiles o where o.role = 'admin' and o.status = 'active' and o.id <> p.id) then
@@ -164,6 +168,7 @@ $$;
 
 create or replace function public.admin_dashboard(p_days integer default 30) returns jsonb
 language plpgsql stable security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare
   t timestamptz := now();
   days integer := case when p_days in (7, 30, 90) then p_days else 30 end;
@@ -235,6 +240,7 @@ $$;
  */
 create or replace function public.admin_users(p_query jsonb default '{}'::jsonb) returns jsonb
 language plpgsql stable security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare
   q jsonb := coalesce(p_query, '{}'::jsonb);
   v_q text := nullif(btrim(q ->> 'q'), '');
@@ -323,6 +329,7 @@ $$;
 /** GET /v1/admin/users/:id: the AdminUserDetail. */
 create or replace function public.admin_user(p_ref text) returns jsonb
 language plpgsql volatile security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare p public.profiles;
 begin
   perform public.require_admin();
@@ -372,6 +379,7 @@ $$;
 /** PATCH /v1/admin/users/:id: displayName, country, language. Email changes happen in Supabase Auth. */
 create or replace function public.admin_update_user(p_ref text, p_body jsonb) returns jsonb
 language plpgsql volatile security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare
   p public.profiles;
   b jsonb := coalesce(p_body, '{}'::jsonb);
@@ -415,6 +423,7 @@ $$;
 /** DELETE /v1/admin/users/:id: confirm = the user's public id. Deletes the auth user (everything cascades). */
 create or replace function public.admin_delete_user(p_ref text, p_confirm text, p_reason text) returns void
 language plpgsql volatile security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare
   me uuid := public.require_admin();
   p public.profiles := public.find_profile(p_ref);
@@ -435,6 +444,7 @@ $$;
 /** Ends of a monthly or yearly grant: durationDays (1–3650) or endsAt (now + 1 h … + 10 y); lifetime takes neither. */
 create or replace function public.resolve_grant_end(p_plan text, p_body jsonb) returns timestamptz
 language plpgsql stable set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare
   has_days boolean := p_body ? 'durationDays' and jsonb_typeof(p_body -> 'durationDays') <> 'null';
   has_end boolean := p_body ? 'endsAt' and jsonb_typeof(p_body -> 'endsAt') <> 'null';
@@ -466,6 +476,7 @@ $$;
 
 create or replace function public.require_paid_plan(p jsonb, p_allow_free boolean default false) returns text
 language plpgsql immutable set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 begin
   if p is null or jsonb_typeof(p) = 'null' then perform public.validation_failed('{"plan":"required"}'); end if;
   if (p #>> '{}') in ('monthly', 'yearly', 'lifetime') or (p_allow_free and (p #>> '{}') = 'free') then return p #>> '{}'; end if;
@@ -477,6 +488,7 @@ $$;
 /** POST /v1/admin/users/:id/grants: { plan, durationDays?, endsAt?, reason }. */
 create or replace function public.admin_grant(p_ref text, p_body jsonb) returns jsonb
 language plpgsql volatile security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare
   me uuid := public.require_admin();
   p public.profiles := public.find_profile(p_ref);
@@ -498,6 +510,7 @@ $$;
 /** POST /v1/admin/users/:id/grants/:grantId/revoke: { reason }. */
 create or replace function public.admin_revoke_grant(p_ref text, p_grant_id bigint, p_reason text) returns jsonb
 language plpgsql volatile security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare
   me uuid := public.require_admin();
   p public.profiles := public.find_profile(p_ref);
@@ -522,6 +535,7 @@ $$;
  */
 create or replace function public.admin_extend(p_ref text, p_body jsonb) returns jsonb
 language plpgsql volatile security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare
   me uuid := public.require_admin();
   p public.profiles := public.find_profile(p_ref);
@@ -580,6 +594,7 @@ $$;
 /** POST /v1/admin/users/:id/plan: revokes every active grant, then (unless free) adds one new grant. */
 create or replace function public.admin_change_plan(p_ref text, p_body jsonb) returns jsonb
 language plpgsql volatile security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare
   me uuid := public.require_admin();
   p public.profiles := public.find_profile(p_ref);
@@ -616,6 +631,7 @@ $$;
 /** POST /v1/admin/users/:id/role: { role }. The last active admin can't lose the role. */
 create or replace function public.admin_set_role(p_ref text, p_role text) returns jsonb
 language plpgsql volatile security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare
   p public.profiles;
   before text;
@@ -636,6 +652,7 @@ $$;
 /** POST /v1/admin/users/:id/disable: { reason }. Signs the user out everywhere; their plan becomes free. */
 create or replace function public.admin_disable(p_ref text, p_reason text) returns jsonb
 language plpgsql volatile security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare
   me uuid := public.require_admin();
   p public.profiles := public.find_profile(p_ref);
@@ -658,6 +675,7 @@ $$;
 
 create or replace function public.admin_enable(p_ref text) returns jsonb
 language plpgsql volatile security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare p public.profiles;
 begin
   perform public.require_admin();
@@ -675,6 +693,7 @@ $$;
 /** POST /v1/admin/users/:id/sign-out-all: ends every Supabase session (refresh tokens go with them). */
 create or replace function public.admin_sign_out_all(p_ref text) returns jsonb
 language plpgsql volatile security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare
   p public.profiles;
   n integer;
@@ -694,6 +713,7 @@ $$;
  */
 create or replace function public.admin_reset_email(p_ref text) returns jsonb
 language plpgsql volatile security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare p public.profiles;
 begin
   perform public.require_admin();
@@ -716,6 +736,7 @@ $$;
 
 create or replace function public.require_note_body(p text) returns text
 language plpgsql immutable set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare b text := btrim(coalesce(p, ''));
 begin
   if b = '' then perform public.validation_failed('{"body":"required"}'); end if;
@@ -726,6 +747,7 @@ $$;
 
 create or replace function public.admin_add_note(p_ref text, p_body text) returns jsonb
 language plpgsql volatile security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare
   me uuid := public.require_admin();
   p public.profiles := public.find_profile(p_ref);
@@ -740,6 +762,7 @@ $$;
 
 create or replace function public.admin_update_note(p_id bigint, p_body text) returns jsonb
 language plpgsql volatile security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare
   b text;
   n public.admin_notes;
@@ -756,6 +779,7 @@ $$;
 
 create or replace function public.admin_delete_note(p_id bigint) returns void
 language plpgsql volatile security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare n public.admin_notes;
 begin
   perform public.require_admin();
@@ -772,6 +796,7 @@ $$;
 create or replace function public.admin_promo_codes(p_status text default 'all', p_q text default null, p_limit integer default 50, p_offset integer default 0)
 returns jsonb
 language plpgsql stable security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare
   v_limit integer := least(greatest(coalesce(p_limit, 50), 1), 100);
   v_offset integer := greatest(coalesce(p_offset, 0), 0);
@@ -795,6 +820,7 @@ $$;
 
 create or replace function public.admin_promo_code(p_id bigint) returns jsonb
 language plpgsql stable security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare pc public.promo_codes;
 begin
   perform public.require_admin();
@@ -818,6 +844,7 @@ $$;
  */
 create or replace function public.promo_from_body(b jsonb, existing public.promo_codes) returns public.promo_codes
 language plpgsql stable set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare
   r public.promo_codes := existing;
   fields jsonb := '{}'::jsonb;
@@ -909,6 +936,7 @@ $$;
 
 create or replace function public.admin_create_promo(p_body jsonb) returns jsonb
 language plpgsql volatile security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare
   me uuid := public.require_admin();
   r public.promo_codes := public.promo_from_body(p_body, null::public.promo_codes);
@@ -939,6 +967,7 @@ $$;
 
 create or replace function public.admin_update_promo(p_id bigint, p_body jsonb) returns jsonb
 language plpgsql volatile security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare
   before public.promo_codes;
   r public.promo_codes;
@@ -961,6 +990,7 @@ $$;
 
 create or replace function public.admin_delete_promo(p_id bigint) returns void
 language plpgsql volatile security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare pc public.promo_codes;
 begin
   perform public.require_admin();
@@ -980,6 +1010,7 @@ $$;
 
 create or replace function public.admin_prices() returns jsonb
 language plpgsql stable security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 begin
   perform public.require_admin();
   return jsonb_build_object(
@@ -997,7 +1028,7 @@ language sql immutable set search_path = public, pg_temp as $$
      and (f ->> 'position') in ('before', 'after')
      and jsonb_typeof(f -> 'space') = 'boolean' and jsonb_typeof(f -> 'trimWhole') = 'boolean' and jsonb_typeof(f -> 'wordSymbol') = 'boolean'
      and (f ->> 'decimal') in ('.', ',')
-     and (f ->> 'group') in ('.', ',', ' ', U&'\00A0', U&'\2019') and (f ->> 'group') <> (f ->> 'decimal')
+     and (f ->> 'group') in ('.', ',', ' ', U&'\00A0', U&'\202F', U&'\2019') and (f ->> 'group') <> (f ->> 'decimal')
      and (f -> 'decimals') in ('0'::jsonb, '2'::jsonb)
      and (f ->> 'grouping') in ('standard', 'indian')
 $$;
@@ -1009,6 +1040,7 @@ $$;
  */
 create or replace function public.admin_put_price(p_country text, p_body jsonb, p_explicit_format boolean default false) returns jsonb
 language plpgsql volatile security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare
   me uuid := public.require_admin();
   b jsonb := coalesce(p_body, '{}'::jsonb);
@@ -1066,6 +1098,7 @@ $$;
 
 create or replace function public.admin_delete_price(p_country text) returns void
 language plpgsql volatile security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare c public.country_prices;
 begin
   perform public.require_admin();
@@ -1078,6 +1111,7 @@ $$;
 
 create or replace function public.admin_reset_prices() returns jsonb
 language plpgsql volatile security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare n integer;
 begin
   perform public.require_admin();
@@ -1095,6 +1129,7 @@ $$;
 /** null when v is a valid value for the key, else the FieldError. */
 create or replace function public.setting_error(p_key text, v jsonb) returns text
 language plpgsql immutable set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare
   n bigint;
   e record;
@@ -1174,6 +1209,7 @@ $$;
 
 create or replace function public.admin_settings() returns jsonb
 language plpgsql stable security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 begin
   perform public.require_admin();
   return jsonb_build_object('items', coalesce((select jsonb_agg(jsonb_build_object('key', s.key, 'value', s.value,
@@ -1185,6 +1221,7 @@ $$;
 /** PATCH /v1/admin/settings: { key: value | null } (null = back to the default). All or nothing. */
 create or replace function public.admin_patch_settings(p_values jsonb) returns jsonb
 language plpgsql volatile security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare
   me uuid := public.require_admin();
   e record;
@@ -1234,6 +1271,7 @@ $$;
 create or replace function public.admin_audit(p_action text default null, p_actor text default null, p_user text default null,
                                               p_before bigint default null, p_limit integer default 50) returns jsonb
 language plpgsql stable security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare
   v_limit integer := least(greatest(coalesce(p_limit, 50), 1), 100);
   v_actor text := coalesce(public.normalize_public_id(p_actor), nullif(btrim(p_actor), ''));
@@ -1274,6 +1312,7 @@ $$;
 create or replace function public.admin_store_events(p_status text default null, p_user text default null,
                                                      p_before text default null, p_limit integer default 50) returns jsonb
 language plpgsql stable security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare
   v_limit integer := least(greatest(coalesce(p_limit, 50), 1), 100);
   target uuid;
@@ -1292,13 +1331,14 @@ begin
   more := coalesce(array_length(evs, 1), 0) > v_limit;
   if more then evs := evs[1:v_limit]; end if;
   return jsonb_build_object(
-    'items', coalesce((select jsonb_agg(public.store_event_json(r) order by ord) from unnest(evs) with ordinality as u(r, ord)), '[]'::jsonb),
+    'items', coalesce((select jsonb_agg(public.store_event_json(x) order by x.received_at desc, x.id desc) from unnest(evs) x), '[]'::jsonb),
     'nextBefore', case when more then evs[v_limit].id end);
 end
 $$;
 
 create or replace function public.admin_store_event(p_id text) returns jsonb
 language plpgsql stable security definer set search_path = public, pg_temp as $$
+#variable_conflict use_variable
 declare e public.store_events;
 begin
   perform public.require_admin();
@@ -1319,7 +1359,7 @@ $$;
 revoke execute on all functions in schema public from public, anon, authenticated;
 
 -- RLS policies call is_admin() with the caller's privileges.
-grant execute on function public.is_admin() to authenticated;
+grant execute on function public.is_admin(), public.iso(timestamptz), public.api_error(text, integer, text, jsonb) to authenticated;
 
 -- The public config (signed out too).
 grant execute on function public.public_config() to anon, authenticated;

@@ -93,6 +93,13 @@ export function SignUpScreen({ navigation }: RootScreenProps<'SignUp'>) {
     } catch (e) {
       setBusy(false);
       haptics.warning();
+      if (isApiError(e) && e.code === 'confirmation_sent') {
+        // Supabase asks to confirm the address first: sign in after tapping the link in the email.
+        haptics.success();
+        navigation.replace('SignIn', {});
+        toast.show({ id: 'confirm-email', message: tr('account.confirmEmailSent'), icon: 'email-check-outline' });
+        return;
+      }
       if (isApiError(e) && e.code === 'email_taken') {
         setEmailError(tr('errors.email_taken'));
         setEmailTaken(true);

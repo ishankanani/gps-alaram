@@ -136,6 +136,7 @@ export const account: Partial<Strings> = {
   'account.toSignIn': 'Onko sinulla jo tili? Kirjaudu sisään',
   'account.signInInstead': 'Kirjaudu sen sijaan sisään',
   'account.created': 'Tili luotu',
+  'account.confirmEmailSent': 'Tarkista sähköpostisi ja vahvista tilisi napauttamalla linkkiä. Kirjaudu sitten sisään.',
 
   // ---- Forgot password ----
   'account.resetTitle': 'Nollaa salasana',

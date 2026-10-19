@@ -146,7 +146,7 @@ const requester: ApiRequester = {
 /** Every admin route, typed (backend-spec 2.10). */
 export const adminApi = createAdminEndpoints(requester);
 
-/** False in a build without EXPO_PUBLIC_API_URL: there is no admin area to reach. */
+/** False in a build without Supabase (EXPO_PUBLIC_SUPABASE_URL): there is no admin area to reach. */
 export const adminAvailable: boolean = apiConfigured;
 
 /** The server the admin is changing (shown in the dashboard footer and the Staging badge). */

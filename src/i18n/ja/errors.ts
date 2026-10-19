@@ -36,6 +36,8 @@ export const errors: Partial<Strings> = {
   'errors.not_configured': 'このビルドはアカウントなしで動作します。',
   'errors.unavailable': 'StopWakeは現在混み合っています。1分ほど待ってからもう一度お試しください。',
   'errors.internal': 'サーバー側で問題が発生しました。しばらくしてからもう一度お試しください。',
+  'errors.email_not_confirmed': '先にメールアドレスを確認してください。お送りしたリンクをタップしてください。',
+  'errors.confirmation_sent': 'メールを確認してアカウントを確認してください。',
 
   'errors.network': 'StopWakeに接続できませんでした。通信状態を確認してください。',
   'errors.timeout': 'StopWakeの応答に時間がかかっています。もう一度お試しください。',

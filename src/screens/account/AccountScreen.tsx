@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useState, useSyncExternalStore, type ReactNode } from 'react';
 import { RefreshControl, Share, StyleSheet, View } from 'react-native';
 
 import { apiConfigured, appBuild, appVersion } from '../../api';
@@ -15,6 +15,7 @@ import {
 } from '../../api/account';
 import { refreshConfig, useRemoteConfig } from '../../api/config';
 import { useI18n } from '../../i18n';
+import { monetizationMode, onMonetizationChange, premiumEnabled } from '../../lib/monetization';
 import { restore, usePro } from '../../lib/pro';
 import type { TabScreenProps } from '../../navigation/types';
 import { setupReady, useDialogs, useIsAdmin, useSetupStatus, useToast } from '../../state';
@@ -61,7 +62,10 @@ export function AccountScreen({ navigation }: TabScreenProps<'AccountTab'>) {
   const session = account.session;
   const guest = !session || session.kind === 'guest';
   const publicId = user?.publicId ?? session?.publicId ?? null;
-  const firstLoad = apiConfigured && !user && (account.syncing || !session) && !account.offline;
+  // Signed out, the profile card offers sign-up and sign-in at once (guests live on the phone).
+  const firstLoad = apiConfigured && !!session && !user && account.syncing && !account.offline;
+  // In the free-with-ads mode nothing can be bought: no plan card, Get Pro, Restore or codes.
+  const premium = premiumEnabled(useSyncExternalStore(onMonetizationChange, monetizationMode));
   const showSkeleton = useSkeletonDelay(firstLoad);
 
   // The "checked 2 h ago" line ages while the tab is open.
@@ -219,9 +223,10 @@ export function AccountScreen({ navigation }: TabScreenProps<'AccountTab'>) {
           />
         )}
 
-        {showSkeleton ? <PlanStatusSkeleton /> : <PlanStatusCard status={status} onAction={onPlanAction} />}
+        {!premium ? null : showSkeleton ? <PlanStatusSkeleton /> : <PlanStatusCard status={status} onAction={onPlanAction} />}
       </View>
 
+      {premium ? (
       <Section title={tr('account.section.plan')}>
         {apiConfigured && config.features.redeemCodes ? (
           <ListItem icon="ticket-percent-outline" title={tr('account.redeem')} chevron onPress={() => navigation.navigate('Redeem', {})} testID="account-redeem" />
@@ -233,6 +238,7 @@ export function AccountScreen({ navigation }: TabScreenProps<'AccountTab'>) {
           <ListItem icon="crown-outline" title={tr('account.plan.pro')} chevron onPress={() => navigation.navigate('Paywall', {})} />
         ) : null}
       </Section>
+      ) : null}
 
       <Section title={tr('account.section.app')}>
         <ListItem icon="cog-outline" title={tr('account.settings')} chevron onPress={() => navigation.navigate('Settings')} testID="account-settings" />

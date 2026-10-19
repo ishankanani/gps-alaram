@@ -402,6 +402,16 @@ function file() {
   return new File(Paths.document, 'stopwake-history.json');
 }
 
+/** Called after every local change (the account sync pushes it). */
+const changeListeners = new Set<() => void>();
+
+export function onHistoryChange(listener: () => void): () => void {
+  changeListeners.add(listener);
+  return () => {
+    changeListeners.delete(listener);
+  };
+}
+
 function setState(next: HistoryState) {
   state = next;
   listeners.forEach((l) => l());
@@ -445,6 +455,14 @@ function change(fn: (trips: TripRecord[]) => TripRecord[]) {
   const next = fn(state.trips);
   if (next === state.trips) return;
   setState({ ...state, trips: next });
+  persist(next);
+  changeListeners.forEach((l) => l());
+}
+
+/** Replaces the list with what the account sync merged (newest first, at most MAX_TRIPS). */
+export function replaceTrips(trips: TripRecord[]) {
+  const next = [...trips].sort((a, b) => b.startedAt - a.startedAt).slice(0, MAX_TRIPS);
+  setState({ loaded: true, trips: next });
   persist(next);
 }
 

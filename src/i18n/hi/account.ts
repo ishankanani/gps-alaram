@@ -129,6 +129,7 @@ export const account: Partial<Strings> = {
   'account.toSignIn': 'पहले से खाता है? साइन इन करें',
   'account.signInInstead': 'इसके बजाय साइन इन करें',
   'account.created': 'खाता बन गया',
+  'account.confirmEmailSent': 'अपना ईमेल देखें और खाते की पुष्टि के लिए लिंक पर टैप करें, फिर साइन इन करें।',
 
   'account.resetTitle': 'पासवर्ड रीसेट करें',
   'account.resetBody': 'हम आपको ईमेल से 8 अक्षरों का कोड भेजेंगे।',

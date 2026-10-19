@@ -43,6 +43,8 @@ export const errors = {
   'errors.not_configured': 'This build works without an account.',
   'errors.unavailable': 'StopWake is busy right now. Try again in a minute.',
   'errors.internal': 'Something went wrong on our side. Try again later.',
+  'errors.email_not_confirmed': 'Confirm your email first: tap the link we sent you.',
+  'errors.confirmation_sent': 'Check your email to confirm your account.',
 
   // ---- No answer ----
   'errors.network': 'Couldn’t reach StopWake. Check your connection.',

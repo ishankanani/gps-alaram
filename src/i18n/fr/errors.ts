@@ -37,6 +37,8 @@ export const errors: Partial<Strings> = {
   'errors.not_configured': 'Cette version fonctionne sans compte.',
   'errors.unavailable': 'StopWake est très sollicité en ce moment. Réessayez dans une minute.',
   'errors.internal': 'Un problème est survenu de notre côté. Réessayez plus tard.',
+  'errors.email_not_confirmed': 'Confirmez d’abord votre e-mail : touchez le lien que nous vous avons envoyé.',
+  'errors.confirmation_sent': 'Consultez vos e-mails pour confirmer votre compte.',
 
   // ---- No answer ----
   'errors.network': 'Impossible de joindre StopWake. Vérifiez votre connexion.',

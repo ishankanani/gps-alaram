@@ -37,6 +37,8 @@ export const errors: Partial<Strings> = {
   'errors.not_configured': 'Tämä versio toimii ilman tiliä.',
   'errors.unavailable': 'StopWake on juuri nyt kuormittunut. Yritä minuutin päästä uudelleen.',
   'errors.internal': 'Meillä tapahtui virhe. Yritä myöhemmin uudelleen.',
+  'errors.email_not_confirmed': 'Vahvista ensin sähköpostiosoitteesi: napauta lähettämäämme linkkiä.',
+  'errors.confirmation_sent': 'Vahvista tilisi sähköpostiisi lähetetyllä linkillä.',
 
   // ---- No answer ----
   'errors.network': 'StopWakeen ei saatu yhteyttä. Tarkista verkkoyhteys.',

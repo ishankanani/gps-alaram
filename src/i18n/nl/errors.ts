@@ -37,6 +37,8 @@ export const errors: Partial<Strings> = {
   'errors.not_configured': 'Deze versie werkt zonder account.',
   'errors.unavailable': 'StopWake is nu druk bezig. Probeer het over een minuut opnieuw.',
   'errors.internal': 'Er ging iets mis aan onze kant. Probeer het later opnieuw.',
+  'errors.email_not_confirmed': 'Bevestig eerst je e-mailadres: tik op de link die we je stuurden.',
+  'errors.confirmation_sent': 'Check je e-mail om je account te bevestigen.',
 
   // ---- No answer ----
   'errors.network': 'Kan StopWake niet bereiken. Controleer je verbinding.',

@@ -123,7 +123,9 @@ export type ErrorCode =
   | 'cannot_target_self' | 'confirm_mismatch' | 'already_revoked' | 'already_lifetime'
   | 'promo_invalid' | 'promo_expired' | 'promo_exhausted' | 'promo_already_redeemed'
   | 'code_taken' | 'promo_in_use' | 'invalid_reset_code'
-  | 'rate_limited' | 'mail_unavailable' | 'not_configured' | 'unavailable' | 'internal';
+  | 'rate_limited' | 'mail_unavailable' | 'not_configured' | 'unavailable' | 'internal'
+  // Supabase Auth: sign-in before the email is confirmed, and a sign-up that waits for the confirmation mail.
+  | 'email_not_confirmed' | 'confirmation_sent';
 export type ApiErrorBody = {
   error: {
     code: ErrorCode;

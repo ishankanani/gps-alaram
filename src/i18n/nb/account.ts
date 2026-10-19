@@ -137,6 +137,7 @@ export const account: Partial<Strings> = {
   'account.toSignIn': 'Har du allerede en konto? Logg inn',
   'account.signInInstead': 'Logg inn i stedet',
   'account.created': 'Kontoen er opprettet',
+  'account.confirmEmailSent': 'Sjekk e-posten din og trykk på lenken for å bekrefte kontoen, og logg deretter inn.',
 
   // ---- Forgot password ----
   'account.resetTitle': 'Tilbakestill passord',
