@@ -1,7 +1,9 @@
 import { useFocusEffect } from '@react-navigation/native';
+import { getCalendars } from 'expo-localization';
 import { useCallback, useState } from 'react';
 import { StyleSheet } from 'react-native';
 
+import { showPrivacyOptions, showRewarded, useAdsOn, useAdsState, useBannerFooter, useReward } from '../../ads';
 import { LANGUAGES, useI18n, type Key } from '../../i18n';
 import { formatBytes, formatRadius } from '../../lib/format';
 import { useRemoteConfig } from '../../api/config';
@@ -12,9 +14,11 @@ import { usePacks } from '../../lib/stations/packs';
 import { listAreas } from '../../map/offline';
 import { openSheet } from '../../navigation/sheet';
 import type { RootScreenProps } from '../../navigation/types';
+import { useToast } from '../../state';
 import { useSavedData } from '../../state/saved';
 import { AppText, Icon, ListItem, Screen, Section } from '../../ui';
 import { nbsp, plural } from '../activity/format';
+import { formatClock } from '../trip/tripView';
 import { openPage, openStoreListing, useAppLinks, versionInfo } from './appLinks';
 
 const APPEARANCE: Record<AppearanceChoice, Key> = {
@@ -37,6 +41,12 @@ export function SettingsScreen({ navigation }: RootScreenProps<'Settings'>) {
   const links = useAppLinks();
   const prefs = saved.data.preferences;
   const [areas, setAreas] = useState<{ count: number; bytes: number } | null>(null);
+  const toast = useToast();
+  const adsOn = useAdsOn();
+  const adsState = useAdsState();
+  const reward = useReward();
+  const adFooter = useBannerFooter('settings');
+  const [watching, setWatching] = useState(false);
 
   // Saved map areas, again whenever Settings comes back into view (after OfflineMaps).
   useFocusEffect(
@@ -95,6 +105,22 @@ export function SettingsScreen({ navigation }: RootScreenProps<'Settings'>) {
     if (choice === 'system' || choice === 'light' || choice === 'dark') saved.setPreferences((p) => ({ ...p, appearance: choice }));
   }
 
+  const clock = (at: number) => formatClock(at, getCalendars()[0]?.uses24hourClock ?? true);
+
+  // The rewarded ad (docs/ads.md): the user chooses to support the app; 24 h without other ads.
+  async function watchReward() {
+    if (watching) return;
+    setWatching(true);
+    const result = await showRewarded();
+    setWatching(false);
+    if (result === 'rewarded') {
+      const until = Date.now() + 24 * 3600_000;
+      toast.show({ id: 'ads-reward', message: tr('ads.reward.done', { time: clock(until) }), icon: 'heart-outline' });
+    } else if (result === 'unavailable') {
+      toast.show({ id: 'ads-reward', message: tr('ads.reward.unavailable') });
+    }
+  }
+
   const legal = (doc: 'privacy' | 'terms') => {
     const url = doc === 'privacy' ? links.privacyUrl : links.termsUrl;
     if (url) void openPage(url);
@@ -102,7 +128,7 @@ export function SettingsScreen({ navigation }: RootScreenProps<'Settings'>) {
   };
 
   return (
-    <Screen topBar={{ title: tr('settings.title') }} testID="screen-Settings">
+    <Screen topBar={{ title: tr('settings.title') }} footer={adFooter} testID="screen-Settings">
       <Section title={tr('settings.section.alarm')} first>
         <ListItem
           icon="alarm"
@@ -160,6 +186,38 @@ export function SettingsScreen({ navigation }: RootScreenProps<'Settings'>) {
           testID="settings-offline-maps"
         />
       </Section>
+
+      {adsOn && (reward.offer || adsState.privacyOptionsRequired) ? (
+        <Section title={tr('ads.section')}>
+          {reward.offer ? (
+            <ListItem
+              icon="heart-outline"
+              title={tr('ads.reward.title')}
+              subtitle={
+                reward.adFreeUntil != null
+                  ? tr('ads.reward.active', { time: clock(reward.adFreeUntil) })
+                  : reward.ready
+                    ? tr('ads.reward.body')
+                    : tr('ads.reward.loading')
+              }
+              subtitleLines={2}
+              loading={watching}
+              disabled={!reward.ready || reward.adFreeUntil != null}
+              onPress={() => void watchReward()}
+              testID="settings-ads-reward"
+            />
+          ) : null}
+          {adsState.privacyOptionsRequired ? (
+            <ListItem
+              icon="cookie-outline"
+              title={tr('ads.privacy')}
+              chevron
+              onPress={() => void showPrivacyOptions()}
+              testID="settings-ads-privacy"
+            />
+          ) : null}
+        </Section>
+      ) : null}
 
       <Section title={tr('settings.section.legal')}>
         <ListItem

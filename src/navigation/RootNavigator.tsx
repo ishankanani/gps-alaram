@@ -49,10 +49,15 @@ import { useIsAdmin } from '../state/session';
 import { ToastHost } from '../ui/components/Toast';
 import { useTheme } from '../ui/theme';
 import { ModalSheetScreen, SHEET_SCROLL_AFTER } from './ModalSheetScreen';
+import { premiumOnly } from './premiumOnly';
 import { TabNavigator } from './TabNavigator';
 import type { RootStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
+
+/** Pro screens: closed again while the app is free for everyone (src/lib/monetization.ts). */
+const Paywall = premiumOnly(PaywallScreen);
+const Redeem = premiumOnly(RedeemScreen);
 
 /** Modals: full screen sliding up on Android (they hold forms; sheets never do). */
 const MODAL: NativeStackNavigationOptions = {
@@ -103,8 +108,8 @@ export function RootNavigator({ initialRouteName }: { initialRouteName: 'Onboard
       <Stack.Screen name="TripDetail" component={TripDetailScreen} />
 
       <Stack.Group screenOptions={MODAL} screenLayout={modalLayout}>
-        <Stack.Screen name="Paywall" component={PaywallScreen} />
-        <Stack.Screen name="Redeem" component={RedeemScreen} />
+        <Stack.Screen name="Paywall" component={Paywall} />
+        <Stack.Screen name="Redeem" component={Redeem} />
         <Stack.Screen name="SignIn" component={SignInScreen} />
         <Stack.Screen name="SignUp" component={SignUpScreen} />
         <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />

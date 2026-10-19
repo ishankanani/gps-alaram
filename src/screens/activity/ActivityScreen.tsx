@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { useBannerFooter } from '../../ads';
 import { useI18n } from '../../i18n';
 import { formatCount, formatDistance } from '../../lib/format';
 import {
@@ -87,10 +88,11 @@ export function ActivityScreen({ navigation }: TabScreenProps<'ActivityTab'>) {
   const stats = monthStats(trips, month);
 
   const planTrip = () => navigation.navigate('MapTab');
+  const adFooter = useBannerFooter('activity');
 
   if (history.loaded && trips.length === 0) {
     return (
-      <Screen largeTitle={tr('nav.tab.activity')} testID="screen-ActivityTab">
+      <Screen largeTitle={tr('nav.tab.activity')} footer={adFooter} testID="screen-ActivityTab">
         <EmptyState
           icon="timeline-clock-outline"
           title={tr('activity.empty.title')}
@@ -130,7 +132,7 @@ export function ActivityScreen({ navigation }: TabScreenProps<'ActivityTab'>) {
   };
 
   return (
-    <Screen largeTitle={tr('nav.tab.activity')} testID="screen-ActivityTab">
+    <Screen largeTitle={tr('nav.tab.activity')} footer={adFooter} testID="screen-ActivityTab">
       <View style={styles.monthRow}>
         <IconButton
           icon="chevron-left"

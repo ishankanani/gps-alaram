@@ -1,5 +1,6 @@
 import { account } from './account';
 import { activity } from './activity';
+import { ads } from './ads';
 import { admin } from './admin';
 import { core } from './core';
 import { errors } from './errors';
@@ -29,6 +30,7 @@ export const en = {
   ...activity,
   ...settings,
   ...onboarding,
+  ...ads,
 };
 
 export type Strings = Record<keyof typeof en, string>;

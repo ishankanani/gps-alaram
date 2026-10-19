@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 
 import type { RemoteConfig } from '../../api/types';
 import { canAddFavourite, effectiveStrength, offlineMapAllowed, planRules, setPlanRules, strengthAllowed, DEFAULT_PLAN_RULES } from '../plans';
@@ -13,6 +13,10 @@ import {
   updateRequired,
   validPriceRow,
 } from '../remoteConfig';
+import { setRemoteMonetizationMode } from '../monetization';
+
+// These gates are the premium mode's; free_ads unlocks everything (monetization.test.ts).
+beforeAll(() => setRemoteMonetizationMode('premium'));
 
 // The example answer of backend-spec 2.5.
 const SERVER: RemoteConfig = {

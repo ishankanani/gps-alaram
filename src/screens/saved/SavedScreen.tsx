@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { useBannerFooter } from '../../ads';
 import { useRemoteConfig } from '../../api/config';
 import { useI18n } from '../../i18n';
 import type { Place } from '../../lib/geocode';
 import { lastTripTo, useHistory } from '../../lib/history';
+import { featureUnlocked } from '../../lib/monetization';
 import { canAddFavourite } from '../../lib/plans';
 import { usePro } from '../../lib/pro';
 import { samePlace } from '../../lib/storage';
@@ -57,7 +59,8 @@ export function SavedScreen({ navigation }: TabScreenProps<'SavedTab'>) {
   const editing = editMode && favourites.length > 0;
   const limit = config.limits.freeFavourites;
   // A limit applies only to Free, and only while the config makes unlimited favourites a Pro feature.
-  const limited = !isPro && config.proFeatures.unlimitedFavourites;
+  const limited = !featureUnlocked('unlimitedFavourites', isPro, config.proFeatures);
+  const adFooter = useBannerFooter('saved');
   const atLimit = limited && !canAddFavourite(favourites.length, isPro, config.limits, config.proFeatures);
 
   const showOnMap = (place: Place) => navigation.navigate('MapTab', { stopId: place.id });
@@ -138,7 +141,7 @@ export function SavedScreen({ navigation }: TabScreenProps<'SavedTab'>) {
 
   if (favourites.length === 0 && recents.length === 0) {
     return (
-      <Screen largeTitle={tr('nav.tab.saved')} testID="screen-SavedTab">
+      <Screen largeTitle={tr('nav.tab.saved')} footer={adFooter} testID="screen-SavedTab">
         <EmptyState
           icon="star-outline"
           title={tr('saved.emptyAll.title')}
@@ -272,6 +275,7 @@ export function SavedScreen({ navigation }: TabScreenProps<'SavedTab'>) {
           />
         ) : null
       }
+      footer={adFooter}
       testID="screen-SavedTab">
       {atLimit ? (
         <Banner

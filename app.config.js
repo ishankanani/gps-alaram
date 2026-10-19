@@ -25,5 +25,17 @@ module.exports = ({ config }) => {
   plugins.push(['expo-secure-store', { configureAndroidBackup: true }]);
   if (LOCAL_HTTP.test(url)) plugins.push('./plugins/with-local-cleartext');
 
-  return { ...config, plugins };
+  // AdMob (docs/ads.md): the real app ids when the build sets them, else Google's test ids from app.json.
+  const admobAndroid = (process.env.EXPO_PUBLIC_ADMOB_ANDROID_APP_ID ?? '').trim();
+  const admobIos = (process.env.EXPO_PUBLIC_ADMOB_IOS_APP_ID ?? '').trim();
+  const withAdmob = plugins.map((plugin) =>
+    Array.isArray(plugin) && plugin[0] === 'react-native-google-mobile-ads'
+      ? [
+          plugin[0],
+          { ...plugin[1], ...(admobAndroid ? { androidAppId: admobAndroid } : {}), ...(admobIos ? { iosAppId: admobIos } : {}) },
+        ]
+      : plugin,
+  );
+
+  return { ...config, plugins: withAdmob };
 };

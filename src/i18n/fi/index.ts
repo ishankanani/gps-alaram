@@ -1,6 +1,7 @@
 import type { Strings } from '../en';
 import { account } from './account';
 import { activity } from './activity';
+import { ads } from './ads';
 import { core } from './core';
 import { errors } from './errors';
 import { map } from './map';
@@ -27,4 +28,5 @@ export const fi: Partial<Strings> = {
   ...activity,
   ...settings,
   ...onboarding,
+  ...ads,
 };

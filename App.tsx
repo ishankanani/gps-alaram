@@ -3,6 +3,7 @@ import { useFonts } from 'expo-font';
 import { useEffect, useState } from 'react';
 import { View } from 'react-native';
 
+import { AdsController } from './src/ads';
 import { startPro } from './src/lib/pro';
 import { AppNavigation } from './src/navigation/AppNavigation';
 import { AppProviders } from './src/state';
@@ -24,7 +25,12 @@ export default function App() {
     return () => clearTimeout(timer);
   }, []);
   const ready = iconsLoaded || !!iconsError || waited;
-  return <AppProviders>{ready ? <AppNavigation /> : <Blank />}</AppProviders>;
+  return (
+    <AppProviders>
+      <AdsController />
+      {ready ? <AppNavigation /> : <Blank />}
+    </AppProviders>
+  );
 }
 
 function Blank() {

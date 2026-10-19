@@ -16,6 +16,7 @@ import {
 } from 'react-native';
 import { useSafeAreaFrame, useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { AdBanner, useBannersOn } from '../../ads';
 import { useRemoteConfig, useAnnouncement, dismissAnnouncement } from '../../api/config';
 import { appVersion } from '../../api/index';
 import { useI18n } from '../../i18n';
@@ -192,7 +193,11 @@ export function MapHomeScreen({ navigation, route }: TabScreenProps<'MapTab'>) {
   useEffect(() => startTripRecorder(), []);
 
   // ---- Geometry: the sheet reaches the screen bottom behind the tab bar ----
-  const bottomOffset = tabBarHidden || mode.type !== 'browse' ? insets.bottom : tabBarHeight;
+  // Browse mode only: the anchored banner sits on the tab bar and the sheet rests on the banner.
+  const bannersOn = useBannersOn();
+  const [adHeight, setAdHeight] = useState(0);
+  const browseAd = bannersOn && mode.type === 'browse' && !tabBarHidden ? adHeight : 0;
+  const bottomOffset = tabBarHidden || mode.type !== 'browse' ? insets.bottom : tabBarHeight + browseAd;
   const geometry = useSheetGeometry(bottomOffset);
   const snapMode = mode.type === 'browse' || mode.type === 'search';
   const visibleSheet = snapMode ? geometry.heights[snap] + bottomOffset : fitHeight;
@@ -738,6 +743,12 @@ export function MapHomeScreen({ navigation, route }: TabScreenProps<'MapTab'>) {
           <PinSheetContent address={pinAddress} />
         </MapSheet>
       )}
+
+      {bannersOn ? (
+        <View pointerEvents="box-none" style={[styles.ad, mode.type === 'browse' && !tabBarHidden ? null : styles.adHidden]}>
+          <AdBanner placement="map" onHeight={setAdHeight} />
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -755,6 +766,8 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     justifyContent: 'space-between',
   },
+  ad: { position: 'absolute', left: 0, right: 0, bottom: 0 },
+  adHidden: { display: 'none' },
   firstOffline: { position: 'absolute', left: 32, right: 32, justifyContent: 'center' },
   searchRow: { paddingHorizontal: 16, paddingBottom: 8 },
 });

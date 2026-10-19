@@ -1,5 +1,6 @@
 import type { AlarmStrength } from '../../modules/trip-alarm/src';
 import type { ProFeature } from '../api/types';
+import { featureUnlocked } from './monetization';
 
 // What the free version includes, in one place. Plain values, no native imports, so tests can use them.
 // The limits come from remote config (backend-spec 7.4); these are the built-in defaults.
@@ -42,7 +43,7 @@ export function planRules(): PlanRules {
 
 /** Heavy sleeper needs Pro only while the config says so. */
 export function strengthAllowed(strength: AlarmStrength, isPro: boolean, proFeatures: ProFeatures = rules.proFeatures): boolean {
-  return isPro || strength !== 'heavy' || !proFeatures.heavyAlarm;
+  return strength !== 'heavy' || featureUnlocked('heavyAlarm', isPro, proFeatures);
 }
 
 /** The alarm a trip really gets: without Pro, Heavy sleeper falls back to Normal. */
@@ -57,10 +58,10 @@ export function canAddFavourite(
   limits: PlanLimits = rules.limits,
   proFeatures: ProFeatures = rules.proFeatures,
 ): boolean {
-  return isPro || !proFeatures.unlimitedFavourites || count < limits.freeFavourites;
+  return featureUnlocked('unlimitedFavourites', isPro, proFeatures) || count < limits.freeFavourites;
 }
 
 /** Offline maps need Pro only while the config says so. */
 export function offlineMapAllowed(isPro: boolean, proFeatures: ProFeatures = rules.proFeatures): boolean {
-  return isPro || !proFeatures.offlineMap;
+  return featureUnlocked('offlineMap', isPro, proFeatures);
 }

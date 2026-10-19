@@ -1,14 +1,16 @@
 import { useFocusEffect } from '@react-navigation/native';
 import { getCalendars } from 'expo-localization';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { BackHandler, StyleSheet, View } from 'react-native';
 
 import { TripAlarm, type ActiveTrip } from '../../../modules/trip-alarm/src';
+import { maybeShowInterstitial } from '../../ads';
 import { useRemoteConfig } from '../../api/config';
 import { useI18n, type Key } from '../../i18n';
 import { formatDistance, formatDuration } from '../../lib/format';
 import type { Place } from '../../lib/geocode';
 import { setTripFeedback, useHistory, type TripFeedback, type TripRecord } from '../../lib/history';
+import { premiumEnabled } from '../../lib/monetization';
 import { usePro } from '../../lib/pro';
 import { goToMap } from '../../navigation/ref';
 import type { RootScreenProps } from '../../navigation/types';
@@ -89,14 +91,26 @@ export function ArrivedScreen({ navigation, route }: RootScreenProps<'Arrived'>)
   const [feedback, setFeedback] = useState<TripFeedback | null>(record?.feedback ?? null);
 
   useEffect(() => startTripRecorder(), []);
+  const variantRef = useRef<ArrivedVariant | null>(null);
+
+  /**
+   * Done or back: to the map first, then (caps allowing, never in Arrived's first seconds) the
+   * interstitial over the map, after a trip that went normally (never after a failed alarm).
+   * Nothing waits for the ad.
+   */
+  function leave() {
+    goToMap();
+    if (variantRef.current === 'arrived' || variantRef.current === 'ended') maybeShowInterstitial(Date.now() - openedAt);
+  }
 
   useFocusEffect(
     useCallback(() => {
       const sub = BackHandler.addEventListener('hardwareBackPress', () => {
-        goToMap();
+        leave();
         return true;
       });
       return () => sub.remove();
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- leave() only reads openedAt, fixed for the screen
     }, []),
   );
 
@@ -125,6 +139,9 @@ export function ArrivedScreen({ navigation, route }: RootScreenProps<'Arrived'>)
   const rang = facts?.rang ?? record?.rang ?? null;
   const variant = arrivedVariant(event ?? (record?.outcome === 'error' ? { reason: 'error' } : null), stoppedByPhone, rang != null);
   const demo = !!choices?.demo;
+  useEffect(() => {
+    variantRef.current = variant;
+  }, [variant]);
   const known = !!event || !!facts || !!record;
 
   // The history gets the destination as it was picked (also known after a restart).
@@ -146,6 +163,7 @@ export function ArrivedScreen({ navigation, route }: RootScreenProps<'Arrived'>)
   const trialOffered = pro.storeConnected ? !!pro.plans?.some((p) => (p.trialDays ?? 0) > 0) : config.trialDays > 0;
   const upsell =
     variant === 'arrived' &&
+    premiumEnabled() &&
     shouldUpsell({ isPro: pro.isPro, demo, feedback, snoozes: facts?.snoozes ?? 0, lastShownAt: lastUpsell, now: openedAt });
   useEffect(() => {
     if (upsell) markUpsellShown(openedAt);
@@ -208,7 +226,7 @@ export function ArrivedScreen({ navigation, route }: RootScreenProps<'Arrived'>)
         {place && choices ? (
           <Button label={tr('trip.ended.again')} variant="secondary" onPress={startAgain} style={styles.flex} testID="arrived-again" />
         ) : null}
-        <Button label={tr('common.done')} onPress={goToMap} style={styles.flex} testID="arrived-done" />
+        <Button label={tr('common.done')} onPress={leave} style={styles.flex} testID="arrived-done" />
       </View>
     );
   } else if (variant === 'error') {
@@ -235,11 +253,11 @@ export function ArrivedScreen({ navigation, route }: RootScreenProps<'Arrived'>)
           }}
           testID="arrived-fix-battery"
         />
-        <Button label={tr('common.done')} variant="ghost" size="M" block onPress={goToMap} testID="arrived-done" />
+        <Button label={tr('common.done')} variant="ghost" size="M" block onPress={leave} testID="arrived-done" />
       </>
     );
   } else {
-    footer = <Button label={tr('common.done')} block onPress={goToMap} testID="arrived-done" />;
+    footer = <Button label={tr('common.done')} block onPress={leave} testID="arrived-done" />;
   }
 
   return (

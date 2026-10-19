@@ -23,6 +23,7 @@ import {
   type ProView,
   type StoreEntitlement,
 } from './entitlement';
+import { onMonetizationChange, premiumEnabled } from './monetization';
 import type { PlanType } from './plans';
 
 // Pro on this phone (backend-spec 3.8 and 7.4): RevenueCat for purchases, united with the plan the
@@ -225,6 +226,7 @@ export function identify(userId: string, publicId: string): Promise<void> {
 
 let started = false;
 let wired = false;
+let premiumWatched = false;
 
 /**
  * Starts everything about the plan once per app run: the account (guest or session, then /me),
@@ -240,7 +242,12 @@ export function startPro() {
       if (s === 'active') recompute();
     });
   }
-  if (started || !API_KEY) return;
+  // free_ads (src/lib/monetization.ts): nothing is sold, so the store is never started.
+  if (!premiumWatched) {
+    premiumWatched = true;
+    onMonetizationChange(() => startPro());
+  }
+  if (started || !API_KEY || !premiumEnabled()) return;
   started = true;
   try {
     const session = buildMode === 'server' ? getSession() : null;
@@ -291,7 +298,7 @@ function toPlan(pkg: PurchasesPackage): Plan | null {
 
 /** Loads the plans and prices from the store. */
 export async function loadPlans(): Promise<void> {
-  if (!API_KEY) return;
+  if (!API_KEY || !premiumEnabled()) return;
   startPro();
   setStore({ plansLoading: true, plansError: false });
   try {
@@ -327,7 +334,7 @@ export async function buy(plan: Plan): Promise<PurchaseResult> {
  * (a restore moves the purchase to this user, 3.8). Resolves to whether Pro is active now.
  */
 export async function restore(): Promise<boolean> {
-  if (API_KEY) {
+  if (API_KEY && started) {
     try {
       fromCustomer(await Purchases.restorePurchases());
     } catch {

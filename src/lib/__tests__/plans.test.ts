@@ -1,6 +1,10 @@
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 
 import { canAddFavourite, effectiveStrength, FREE_FAVOURITES, strengthAllowed } from '../plans';
+import { setRemoteMonetizationMode } from '../monetization';
+
+// These gates are the premium mode's; free_ads unlocks everything (monetization.test.ts).
+beforeAll(() => setRemoteMonetizationMode('premium'));
 
 describe('free and Pro', () => {
   it('keeps Heavy sleeper for Pro', () => {
