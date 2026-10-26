@@ -1,0 +1,9 @@
+# Arrived after the demo trip, in German; then back to English for the next run.
+appId: com.ishankanani.gpsalarm
+---
+- extendedWaitUntil:
+    visible:
+      id: arrived-screen
+    timeout: 30000
+- waitForAnimationToEnd
+- takeScreenshot: de-06-arrived

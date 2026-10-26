@@ -62,7 +62,14 @@ export function featureUnlocked(
   return proFeatures ? proFeatures[feature] === false : false;
 }
 
+/**
+ * EXPO_PUBLIC_ADS_OFF=1 builds without any ad (the store screenshot build in
+ * .github/workflows/screenshots.yml). Never set it for a Play build.
+ */
+const ADS_OFF = process.env.EXPO_PUBLIC_ADS_OFF === '1';
+
 /** Ads may be shown at all: always in free_ads; in premium only to users without Pro. */
-export function adsEnabled(isPro: boolean, mode: MonetizationMode = monetizationMode()): boolean {
+export function adsEnabled(isPro: boolean, mode: MonetizationMode = monetizationMode(), adsOff: boolean = ADS_OFF): boolean {
+  if (adsOff) return false;
   return premiumEnabled(mode) ? !isPro : true;
 }

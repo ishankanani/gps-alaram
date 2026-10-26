@@ -1,48 +1,65 @@
 <!doctype html>
-<!-- Template: review and adapt this page (and have it checked) before you publish the app. -->
+<!-- Copy of the page in site/ (GitHub Pages is the published version); keep both in sync. -->
 <html lang="en">
 <head>
+<title>Delete your account · StopWake</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Delete your account · StopWake</title>
+
 <style>
-  :root { color-scheme: light dark; --fg: #14181f; --muted: #5b6472; --bg: #ffffff; --accent: #1f6feb; }
-  @media (prefers-color-scheme: dark) { :root { --fg: #e8ecf2; --muted: #9aa4b2; --bg: #0f1216; --accent: #6ea8ff; } }
+  :root { color-scheme: light dark; --fg: #0E1726; --muted: #5B6472; --bg: #F4F6F9; --card: #FFFFFF; --accent: #4146D8; --amber: #8A5300; }
+  @media (prefers-color-scheme: dark) { :root { --fg: #EDF1F7; --muted: #9AA4B2; --bg: #0B0F16; --card: #131924; --accent: #8E94FF; --amber: #FFC56B; } }
   body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
-  main { max-width: 680px; margin: 0 auto; padding: 40px 16px 64px; }
-  h1 { font-size: 28px; line-height: 1.2; margin: 0 0 4px; }
+  main { max-width: 720px; margin: 0 auto; padding: 32px 16px 64px; }
+  header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+  header img { width: 44px; height: 44px; border-radius: 12px; }
+  header a { color: var(--fg); text-decoration: none; font-weight: 700; font-size: 20px; }
+  h1 { font-size: 30px; line-height: 1.2; margin: 0 0 4px; }
   h2 { font-size: 19px; margin: 32px 0 8px; }
   p.meta { color: var(--muted); margin: 0 0 24px; }
   a { color: var(--accent); }
   li { margin: 4px 0; }
+  table { border-collapse: collapse; width: 100%; background: var(--card); border-radius: 12px; overflow: hidden; font-size: 15px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid rgba(127,127,127,.2); vertical-align: top; }
+  .card { background: var(--card); border-radius: 16px; padding: 4px 20px 12px; margin: 16px 0; }
+  footer { margin-top: 48px; color: var(--muted); font-size: 14px; }
 </style>
 </head>
 <body>
 <main>
+<header><a href="/privacy">StopWake</a></header>
 <h1>Delete your StopWake account</h1>
-<p class="meta">You can delete your account and its data at any time.</p>
+<p class="meta">StopWake by Ishan Kanani · You can delete your account and its data at any time, in the app or by email.</p>
 
+<div class="card">
 <h2>In the app (fastest)</h2>
 <ol>
-  <li>Open StopWake and go to <strong>Account</strong>.</li>
-  <li>Tap <strong>Delete account</strong> (or <strong>Delete data</strong> if you never created an account).</li>
-  <li>Confirm. Your data is deleted immediately.</li>
+  <li>Open StopWake and go to the <strong>Account</strong> tab.</li>
+  <li>Tap <strong>Delete account</strong> and enter your password to confirm.</li>
+  <li>Your account and its data are deleted immediately.</li>
 </ol>
+<p>Without an account, <strong>Account → Delete my data</strong> removes everything StopWake stored on your phone.</p>
+</div>
 
+<div class="card">
 <h2>By email</h2>
-<p>If you no longer have the app, write to <a href="mailto:{{SUPPORT_EMAIL}}?subject=Delete%20my%20StopWake%20account">{{SUPPORT_EMAIL}}</a> from the email address of your account, or include your <strong>StopWake ID</strong> (for example SW-7K3P-92QX, shown under Account). We delete it within 30 days and confirm by email.</p>
+<p>If you no longer have the app, write to <a href="mailto:{{SUPPORT_EMAIL}}?subject=Delete%20my%20StopWake%20account">{{SUPPORT_EMAIL}}</a> from the email address of your account, or include your <strong>StopWake ID</strong> (for example SW-7K3P-92QX, shown in the Account tab). We delete the account within 30 days and confirm by email.</p>
+</div>
 
 <h2>What is deleted</h2>
 <ul>
-  <li>Your StopWake ID, email address, name and password.</li>
-  <li>Your plan history, gifted plans and redeemed codes.</li>
-  <li>Your devices and sign-in sessions.</li>
+  <li>Your account: email address, password, display name, StopWake ID, language and country.</li>
+  <li>Synced data: favourites, recent stops and trip history.</li>
+  <li>Your devices and sign-in sessions, plans, gifts and redeemed codes.</li>
 </ul>
-<p>Saved stops and trip history live only on your phone; uninstalling the app removes them. Backups that still contain your data expire within 30 days. Records we must keep by law (such as payment records held by Google) are kept by those providers.</p>
+<h2>What is kept</h2>
+<ul>
+  <li>Nothing in our database. Backups that still contain your data expire within 30 days.</li>
+  <li>Data on your phone stays until you uninstall the app or use “Delete my data”.</li>
+  <li>Ad data held by Google is governed by Google’s policies; you can reset your advertising ID in Android Settings → Privacy → Ads.</li>
+</ul>
 
-<h2>Subscriptions</h2>
-<p>Deleting your account does <strong>not</strong> cancel a Google Play subscription. Cancel it first in Google Play → Payments &amp; subscriptions.</p>
-<p class="meta" style="margin-top:40px">Questions? Write to <a href="mailto:{{SUPPORT_EMAIL}}">{{SUPPORT_EMAIL}}</a>.</p>
+<footer><a href="/privacy">Privacy policy</a> · <a href="/terms">Terms of use</a> · <a href="/account-deletion">Delete your account</a> · Contact: <a href="mailto:{{SUPPORT_EMAIL}}">{{SUPPORT_EMAIL}}</a></footer>
 </main>
 </body>
 </html>

@@ -1,0 +1,177 @@
+name: Release
+
+# Builds the Google Play bundle (AAB) and an installable APK, signed with the upload key from the
+# repository secrets, and publishes them as a GitHub pre-release. See store/PLAY_CONSOLE_GUIDE.md.
+#
+# Secrets (Settings > Secrets and variables > Actions > Secrets):
+#   ANDROID_UPLOAD_KEYSTORE_BASE64    the upload keystore, base64 encoded
+#   ANDROID_UPLOAD_KEYSTORE_PASSWORD  its password
+#   ANDROID_UPLOAD_KEY_ALIAS          the key alias (e.g. upload)
+#   ANDROID_UPLOAD_KEY_PASSWORD       the key password
+# Without them the build is signed with the debug key: installable, but Google Play refuses it.
+#
+# versionName comes from app.json ("version"), versionCode from the run number (always increasing).
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Signed AAB and APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      # Accounts on Supabase (supabase/README.md); empty = a build without accounts.
+      EXPO_PUBLIC_SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+      EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ vars.SUPABASE_ANON_KEY }}
+      # AdMob (docs/ads.md). Empty = Google's test ads: never ship those to production.
+      EXPO_PUBLIC_ADMOB_ANDROID_APP_ID: ${{ vars.ADMOB_ANDROID_APP_ID }}
+      EXPO_PUBLIC_ADMOB_ANDROID_BANNER: ${{ vars.ADMOB_ANDROID_BANNER }}
+      EXPO_PUBLIC_ADMOB_ANDROID_INTERSTITIAL: ${{ vars.ADMOB_ANDROID_INTERSTITIAL }}
+      EXPO_PUBLIC_ADMOB_ANDROID_REWARDED: ${{ vars.ADMOB_ANDROID_REWARDED }}
+      EXPO_PUBLIC_ADMOB_ANDROID_APP_OPEN: ${{ vars.ADMOB_ANDROID_APP_OPEN }}
+      # Read by app.config.js: the Play versionCode (must grow with every upload to Play).
+      ANDROID_VERSION_CODE: ${{ github.run_number }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v4
+      - run: npm ci
+      - name: Build the offline stops database
+        run: npm run build:stations
+      - name: Checks
+        run: |
+          npm run typecheck
+          npm run lint
+          npm test
+
+      - name: Version
+        id: version
+        run: |
+          name=$(node -p 'require("./app.json").expo.version')
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+          echo "code=$ANDROID_VERSION_CODE" >> "$GITHUB_OUTPUT"
+          if [ "${GITHUB_REF_TYPE}" = tag ]; then tag="$GITHUB_REF_NAME"; else tag="v$name-build.$ANDROID_VERSION_CODE"; fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "StopWake $name ($ANDROID_VERSION_CODE), release $tag"
+          if [ -z "$EXPO_PUBLIC_ADMOB_ANDROID_APP_ID" ]; then
+            echo "::warning title=Test ads::ADMOB_ANDROID_APP_ID is not set: this build shows Google's test ads. Set the AdMob repository variables before uploading to production."
+          fi
+
+      - name: Use the real AdMob app id when it is set
+        # The ad library's Gradle build reads its app id from the top level of app.json.
+        run: |
+          if [ -n "$EXPO_PUBLIC_ADMOB_ANDROID_APP_ID" ]; then
+            node -e 'const f="app.json",j=require("./"+f);j["react-native-google-mobile-ads"].android_app_id=process.env.EXPO_PUBLIC_ADMOB_ANDROID_APP_ID;require("fs").writeFileSync(f,JSON.stringify(j,null,2)+"\n")'
+          fi
+
+      - name: Upload key
+        id: key
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_UPLOAD_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_UPLOAD_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_UPLOAD_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_UPLOAD_KEY_PASSWORD }}
+        # The keystore goes to the runner's temp folder (deleted with the runner), never into the repo.
+        # Gradle reads ORG_GRADLE_PROJECT_* variables as project properties (plugins/with-release-signing.js).
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ] && [ -n "$KEYSTORE_PASSWORD" ] && [ -n "$KEY_ALIAS" ] && [ -n "$KEY_PASSWORD" ]; then
+            file="$RUNNER_TEMP/upload.keystore"
+            echo "$KEYSTORE_BASE64" | base64 --decode > "$file"
+            {
+              echo "ORG_GRADLE_PROJECT_STOPWAKE_UPLOAD_STORE_FILE=$file"
+              echo "ORG_GRADLE_PROJECT_STOPWAKE_UPLOAD_STORE_PASSWORD=$KEYSTORE_PASSWORD"
+              echo "ORG_GRADLE_PROJECT_STOPWAKE_UPLOAD_KEY_ALIAS=$KEY_ALIAS"
+              echo "ORG_GRADLE_PROJECT_STOPWAKE_UPLOAD_KEY_PASSWORD=$KEY_PASSWORD"
+            } >> "$GITHUB_ENV"
+            echo "signed=upload" >> "$GITHUB_OUTPUT"
+            echo "Signing with the upload key."
+          else
+            echo "signed=debug" >> "$GITHUB_OUTPUT"
+            echo "::warning title=Debug key::The ANDROID_UPLOAD_* secrets are missing: the AAB and APK are signed with the DEBUG key. Google Play will refuse this AAB. See store/PLAY_CONSOLE_GUIDE.md, step 3."
+          fi
+
+      - name: Generate the Android project
+        run: npx expo prebuild --platform android --no-install
+      - name: Fetch the SDK parts the build needs
+        working-directory: android
+        run: |
+          for attempt in 1 2 3; do
+            ./gradlew help --no-daemon -q && exit 0
+            echo "SDK setup attempt $attempt failed, retrying"
+            sleep 20
+          done
+          exit 1
+      - name: Build the AAB and the APK
+        working-directory: android
+        # The AAB carries all ABIs (Play splits it per phone); the APK is for direct installs.
+        run: ./gradlew bundleRelease assembleRelease --no-daemon -PreactNativeArchitectures=arm64-v8a,armeabi-v7a,x86_64
+
+      - name: Check the result
+        id: out
+        run: |
+          name="StopWake-${{ steps.version.outputs.name }}-${{ steps.version.outputs.code }}"
+          cp android/app/build/outputs/bundle/release/app-release.aab "$name.aab"
+          cp android/app/build/outputs/apk/release/app-release.apk "$name.apk"
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+          tools=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
+          {
+            echo "## StopWake ${{ steps.version.outputs.name }} (versionCode ${{ steps.version.outputs.code }})"
+            echo
+            echo "Signed with the **${{ steps.key.outputs.signed }}** key."
+            echo
+            echo '```'
+            "$tools/apksigner" verify --print-certs "$name.apk" | grep -E "Signer #1 certificate (DN|SHA-256)" || true
+            "$tools/aapt2" dump badging "$name.apk" | grep -E "^(package|sdkVersion|targetSdkVersion)" || true
+            echo
+            echo "Permissions:"
+            "$tools/aapt2" dump permissions "$name.apk" | grep -oE "name='[^']+'" | sort -u || true
+            echo '```'
+          } | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.out.outputs.name }}
+          path: |
+            ${{ steps.out.outputs.name }}.aab
+            ${{ steps.out.outputs.name }}.apk
+          retention-days: 90
+
+      - name: Publish the GitHub pre-release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+          NAME: ${{ steps.out.outputs.name }}
+          SIGNED: ${{ steps.key.outputs.signed }}
+        # The APK keeps a stable name in the "latest-apk" release too, so this link always works:
+        # https://github.com/<owner>/<repo>/releases/download/latest-apk/StopWake.apk
+        run: |
+          notes="StopWake ${{ steps.version.outputs.name }} (versionCode ${{ steps.version.outputs.code }}), commit ${GITHUB_SHA::7}, signed with the $SIGNED key.
+
+          Install: download $NAME.apk on an Android phone and open it. Google Play gets the .aab (workflow artifact)."
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" "$NAME.apk" --clobber
+          else
+            gh release create "$TAG" "$NAME.apk" --prerelease --title "StopWake ${{ steps.version.outputs.name }} (${{ steps.version.outputs.code }})" --notes "$notes" --target "$GITHUB_SHA"
+          fi
+          cp "$NAME.apk" StopWake.apk
+          if ! gh release view latest-apk >/dev/null 2>&1; then
+            gh release create latest-apk --prerelease --title "Latest APK" --notes "The newest build of the Release workflow. Direct download: StopWake.apk" --target "$GITHUB_SHA"
+          fi
+          gh release upload latest-apk StopWake.apk --clobber
+          gh release edit latest-apk --notes "The newest build of the Release workflow: $NAME (commit ${GITHUB_SHA::7}, $SIGNED key). Direct download: StopWake.apk"

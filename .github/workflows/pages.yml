@@ -1,0 +1,52 @@
+name: Pages
+
+# Publishes site/ (privacy policy, terms, account deletion, app-ads.txt) with GitHub Pages:
+#   https://<owner>.github.io/<repo>/privacy/   …/terms/   …/account-deletion/
+# One-time setup: Settings > Pages > Build and deployment > Source: "GitHub Actions".
+# Repository variables (Settings > Secrets and variables > Actions > Variables):
+#   SUPPORT_EMAIL       the contact address shown on the pages (required for Play)
+#   ADMOB_PUBLISHER_ID  pub-XXXXXXXXXXXXXXXX, writes app-ads.txt (optional)
+on:
+  push:
+    branches: [main]
+    paths: ['site/**', '.github/workflows/pages.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fill in the contact address and app-ads.txt
+        env:
+          SUPPORT_EMAIL: ${{ vars.SUPPORT_EMAIL }}
+          ADMOB_PUBLISHER_ID: ${{ vars.ADMOB_PUBLISHER_ID }}
+        run: |
+          mkdir -p _site && cp -R site/. _site/
+          if [ -z "$SUPPORT_EMAIL" ]; then
+            echo "::warning title=SUPPORT_EMAIL::The repository variable SUPPORT_EMAIL is not set; the pages show support@example.com."
+            SUPPORT_EMAIL=support@example.com
+          fi
+          find _site -name '*.html' -exec sed -i "s|{{SUPPORT_EMAIL}}|$SUPPORT_EMAIL|g" {} +
+          if [ -n "$ADMOB_PUBLISHER_ID" ]; then
+            echo "google.com, $ADMOB_PUBLISHER_ID, DIRECT, f08c47fec0942fa0" > _site/app-ads.txt
+          fi
+          ! grep -rl '{{' _site
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4

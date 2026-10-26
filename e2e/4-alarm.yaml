@@ -1,7 +1,7 @@
-# The phone has just arrived at München Hbf: the native alarm screen comes up.
+# Arriving at München Hbf: the native full-screen alarm (texts from L10n.kt).
 appId: com.ishankanani.gpsalarm
 ---
 - extendedWaitUntil:
     visible: "Slide to dismiss.*"
-    timeout: 120000
-- takeScreenshot: 09-alarm
+    timeout: 180000
+- takeScreenshot: en-05-alarm

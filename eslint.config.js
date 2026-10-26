@@ -8,6 +8,13 @@ module.exports = defineConfig([
     ignores: ["dist/*", "android/*", "ios/*", "modules/trip-alarm/engine-tests/*", "server/data/*"],
   },
   {
+    // Store asset scripts run on Node.
+    files: ["store/tools/**/*.mjs"],
+    languageOptions: {
+      globals: { ...require("globals").node },
+    },
+  },
+  {
     // StopWake Cloud (server/) runs on Node 22, not React Native.
     files: ["server/**/*.ts"],
     languageOptions: {

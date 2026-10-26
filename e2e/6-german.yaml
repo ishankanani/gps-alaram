@@ -1,0 +1,76 @@
+# The app in German: switch the language in Settings, then the same screens, and a demo trip to
+# München Marienplatz that rings within about a minute (e2e/screenshots.sh catches the alarm).
+appId: com.ishankanani.gpsalarm
+---
+- tapOn:
+    id: settings-language
+- extendedWaitUntil:
+    visible:
+      id: language-de
+    timeout: 10000
+- tapOn:
+    id: language-de
+- back
+- waitForAnimationToEnd
+- takeScreenshot: de-10-settings
+- back
+
+- tapOn:
+    id: tab-AccountTab
+- waitForAnimationToEnd
+- takeScreenshot: de-09-account
+- tapOn:
+    id: tab-ActivityTab
+- waitForAnimationToEnd
+- takeScreenshot: de-08-activity
+- tapOn:
+    id: tab-SavedTab
+- waitForAnimationToEnd
+- takeScreenshot: de-07-saved
+
+- tapOn:
+    id: tab-MapTab
+- extendedWaitUntil:
+    visible:
+      id: map-home
+    timeout: 15000
+- waitForAnimationToEnd:
+    timeout: 20000
+- takeScreenshot: de-01-map
+- tapOn:
+    id: sheet-search
+- inputText: "Marienplatz"
+- extendedWaitUntil:
+    visible:
+      id: search-stop-0
+    timeout: 20000
+- hideKeyboard
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: de-02-search
+- tapOn:
+    id: search-stop-0
+- extendedWaitUntil:
+    visible:
+      id: stop-start
+    timeout: 15000
+- waitForAnimationToEnd:
+    timeout: 20000
+- takeScreenshot: de-03-stop
+
+# Demo trip: a simulated ride, the real alarm at the end.
+- tapOn:
+    id: stop-options
+- scrollUntilVisible:
+    element:
+      id: stop-demo
+    direction: DOWN
+- tapOn:
+    id: stop-demo
+- extendedWaitUntil:
+    visible:
+      id: trip-screen
+    timeout: 30000
+- waitForAnimationToEnd:
+    timeout: 8000
+- takeScreenshot: de-04-trip

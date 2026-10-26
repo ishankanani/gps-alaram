@@ -1,7 +1,9 @@
 name: Screenshots
 
-# Runs the app on an Android emulator through a whole trip (see e2e/), and commits screenshots of
-# the main screens to docs/screenshots on the branch it ran on. Start it from the Actions tab.
+# Runs the app on an Android emulator through a whole trip in English and a demo trip in German
+# (see e2e/), commits the raw screenshots to docs/screenshots and the framed Google Play
+# screenshots (store/tools/compose-screenshots.mjs) to store/screenshots on the branch it ran on.
+# Start it from the Actions tab.
 on:
   workflow_dispatch:
 
@@ -18,11 +20,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 90
     env:
-      # The emulator reaches the runner's StopWake Cloud at 10.0.2.2 (the host's loopback). Read by
-      # app.config.js at prebuild and compiled into the JS bundle.
-      EXPO_PUBLIC_API_URL: http://10.0.2.2:8787
-      ADMIN_EMAIL: admin@example.com
-      ADMIN_PASSWORD: StopWake-admin-2026
+      # No accounts (Supabase unset): the screenshots show the app as a guest. No ads either
+      # (src/lib/monetization.ts), so no test banners end up in the store screenshots.
+      EXPO_PUBLIC_SUPABASE_URL: ''
+      EXPO_PUBLIC_ADS_OFF: '1'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -36,17 +37,6 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
       - run: npm ci
       - run: npm run build:stations
-      - name: Start StopWake Cloud with demo data
-        env:
-          PORT: '8787'
-          DATA_DIR: ${{ runner.temp }}/cloud
-          MAIL_MODE: log
-          REVENUECAT_WEBHOOK_SECRET: ci-only-secret
-        run: |
-          node --disable-warning=ExperimentalWarning server/cli.ts seed --demo --reset --extra-guests=160
-          nohup node --disable-warning=ExperimentalWarning server/main.ts > "$RUNNER_TEMP/cloud.log" 2>&1 &
-          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:8787/v1/health && exit 0; sleep 1; done
-          cat "$RUNNER_TEMP/cloud.log"; exit 1
       - name: Generate the Android project
         run: npx expo prebuild --platform android --no-install
       - name: Fetch the SDK parts the build needs
@@ -94,13 +84,18 @@ jobs:
           name: screenshots
           path: screenshots/
           if-no-files-found: ignore
+      - name: Frame the screenshots for Google Play
+        if: always()
+        run: |
+          ls screenshots/*.png >/dev/null 2>&1 || exit 0
+          npm i --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+          node store/tools/compose-screenshots.mjs screenshots store/screenshots
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: cloud-log
-          path: |
-            ${{ runner.temp }}/cloud.log
-            ${{ runner.temp }}/cloud/outbox/
+          name: store-screenshots
+          path: store/screenshots/
           if-no-files-found: ignore
       - name: Commit the screenshots
         if: always()
@@ -110,9 +105,10 @@ jobs:
           if [ "${{ steps.drive.outcome }}" = success ]; then rm -rf docs/screenshots; fi
           mkdir -p docs/screenshots
           cp screenshots/*.png docs/screenshots/
+          git restore package.json package-lock.json 2>/dev/null || true
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A docs/screenshots
+          git add -A docs/screenshots store/screenshots
           git diff --cached --quiet && exit 0
           git commit -m "Update app screenshots [skip ci]"
           git pull --rebase origin "$GITHUB_REF_NAME"

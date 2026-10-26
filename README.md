@@ -36,38 +36,35 @@ before launch is still **20 real trips with zero missed stops**.
 ## Screenshots
 
 From the release APK on an Android 14 emulator, taken by the **Screenshots** workflow while it
-rides a simulated trip through Munich, then shows Pro, the Countries screen, Austria downloaded
-and searched, and a demo ride into Wien Hauptbahnhof (see `e2e/`).
+rides a simulated trip through Munich in English and a demo trip in German (see `e2e/`). The same
+run frames them for Google Play in `store/screenshots/<lang>/` (`store/tools/compose-screenshots.mjs`).
+Until the workflow has run on the current UI, `docs/screenshots` may still hold older pictures.
 
 <p>
-  <img src="docs/screenshots/01-welcome.png" width="180" alt="Welcome and language">
-  <img src="docs/screenshots/04-map.png" width="180" alt="Map with every stop">
-  <img src="docs/screenshots/05-search.png" width="180" alt="Offline stop search">
-  <img src="docs/screenshots/06-stop.png" width="180" alt="A stop, two taps to the alarm">
+  <img src="docs/screenshots/en-01-map.png" width="180" alt="Map with nearby stops">
+  <img src="docs/screenshots/en-03-stop.png" width="180" alt="A stop, two taps to the alarm">
+  <img src="docs/screenshots/en-04-trip.png" width="180" alt="Trip on the way">
+  <img src="docs/screenshots/en-05-alarm.png" width="180" alt="The alarm">
 </p>
 <p>
-  <img src="docs/screenshots/07-train-warning.png" width="180" alt="200 m before a train station">
-  <img src="docs/screenshots/08-trip.png" width="180" alt="Trip on the way">
-  <img src="docs/screenshots/09-alarm.png" width="180" alt="The alarm">
-  <img src="docs/screenshots/10-done.png" width="180" alt="Arrived">
+  <img src="docs/screenshots/en-06-arrived.png" width="180" alt="Arrived">
+  <img src="docs/screenshots/en-07-saved.png" width="180" alt="Saved stops">
+  <img src="docs/screenshots/en-08-activity.png" width="180" alt="Activity">
+  <img src="docs/screenshots/de-03-stop.png" width="180" alt="Deutsch">
 </p>
-<p>
-  <img src="docs/screenshots/03-setup.png" width="180" alt="Setup check">
-  <img src="docs/screenshots/11-settings.png" width="180" alt="Settings">
-  <img src="docs/screenshots/12-stop-german.png" width="180" alt="Deutsch">
-  <img src="docs/screenshots/13-stop-hindi.png" width="180" alt="Hindi">
-</p>
-<p>
-  <img src="docs/screenshots/14-pro.png" width="180" alt="StopWake Pro">
-  <img src="docs/screenshots/15-countries.png" width="180" alt="Countries">
-  <img src="docs/screenshots/16-search-austria.png" width="180" alt="Searching Austria">
-  <img src="docs/screenshots/18-demo-ride.png" width="180" alt="Demo ride in Vienna">
-</p>
+
+## Google Play
+
+Release builds (signed AAB + APK, GitHub pre-release) come from `.github/workflows/release.yml`; the
+store graphics, listing texts in 11 languages, Play Console answers and a step-by-step guide are in
+[`store/`](store/PLAY_CONSOLE_GUIDE.md). The privacy policy, terms and account deletion pages in `site/`
+are published by `.github/workflows/pages.yml` to https://ishankanani.github.io/gps-alaram/.
 
 ## Try it on a phone
 
-1. Open the latest **Android** run under the repo's **Actions** tab and download the **StopWake-apk** artifact.
-2. Unzip it and install the APK (allow installs from unknown sources when asked).
+1. Download https://github.com/ishankanani/gps-alaram/releases/download/latest-apk/StopWake.apk (the newest
+   **Release** build), or the **StopWake-apk** artifact of the latest **Android** run under the **Actions** tab.
+2. Install the APK (allow installs from unknown sources when asked).
 3. On first launch, pick your language, then fix everything the setup checklist marks red and play the test alarm.
 4. Tap a stop on the map (or search for it) and press **Start alarm**.
 5. After each real trip, use **Share trip log** on the last screen. The logs are what we tune on.

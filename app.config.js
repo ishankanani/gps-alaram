@@ -24,6 +24,8 @@ module.exports = ({ config }) => {
   // starts as a new guest instead of sharing a session with the old one.
   plugins.push(['expo-secure-store', { configureAndroidBackup: true }]);
   if (LOCAL_HTTP.test(url)) plugins.push('./plugins/with-local-cleartext');
+  // Upload-key signing and R8 for Play builds (no effect without the key's Gradle properties).
+  plugins.push('./plugins/with-release-signing');
 
   // AdMob (docs/ads.md): the real app ids when the build sets them, else Google's test ids from app.json.
   const admobAndroid = (process.env.EXPO_PUBLIC_ADMOB_ANDROID_APP_ID ?? '').trim();
@@ -37,5 +39,10 @@ module.exports = ({ config }) => {
       : plugin,
   );
 
-  return { ...config, plugins: withAdmob };
+  // The Play versionCode: the release workflow passes its run number (store/PLAY_CONSOLE_GUIDE.md).
+  const versionCode = Number.parseInt((process.env.ANDROID_VERSION_CODE ?? '').trim(), 10);
+  const android =
+    Number.isInteger(versionCode) && versionCode > 0 ? { ...config.android, versionCode } : config.android;
+
+  return { ...config, android, plugins: withAdmob };
 };

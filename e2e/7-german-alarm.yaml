@@ -1,0 +1,7 @@
+# The demo trip's alarm in German.
+appId: com.ishankanani.gpsalarm
+---
+- extendedWaitUntil:
+    visible: "Zum Beenden wischen.*"
+    timeout: 180000
+- takeScreenshot: de-05-alarm

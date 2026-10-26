@@ -1,0 +1,66 @@
+# After the alarm: Arrived, then the tabs (Saved, Activity, Account) and Settings.
+appId: com.ishankanani.gpsalarm
+---
+- extendedWaitUntil:
+    visible:
+      id: arrived-screen
+    timeout: 30000
+- waitForAnimationToEnd
+- takeScreenshot: en-06-arrived
+# Keep the stop as a favourite so Saved has something to show.
+- tapOn:
+    id: arrived-save
+    optional: true
+- scrollUntilVisible:
+    element:
+      id: arrived-done
+    direction: DOWN
+- tapOn:
+    id: arrived-done
+# Leaving Arrived may show a (test) interstitial ad; close it with back.
+- runFlow:
+    when:
+      notVisible:
+        id: map-home
+    commands:
+      - back
+- extendedWaitUntil:
+    visible:
+      id: map-home
+    timeout: 20000
+
+- tapOn:
+    id: tab-SavedTab
+- extendedWaitUntil:
+    visible:
+      id: screen-SavedTab
+    timeout: 10000
+- waitForAnimationToEnd
+- takeScreenshot: en-07-saved
+
+- tapOn:
+    id: tab-ActivityTab
+- extendedWaitUntil:
+    visible:
+      id: screen-ActivityTab
+    timeout: 10000
+- waitForAnimationToEnd
+- takeScreenshot: en-08-activity
+
+- tapOn:
+    id: tab-AccountTab
+- extendedWaitUntil:
+    visible:
+      id: screen-AccountTab
+    timeout: 10000
+- waitForAnimationToEnd
+- takeScreenshot: en-09-account
+
+- tapOn:
+    id: account-settings
+- extendedWaitUntil:
+    visible:
+      id: screen-Settings
+    timeout: 10000
+- waitForAnimationToEnd
+- takeScreenshot: en-10-settings

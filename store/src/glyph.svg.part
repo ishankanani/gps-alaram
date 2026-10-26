@@ -1,0 +1,9 @@
+<g id="glyph" transform="translate(0,-20)">
+  <path d="M512 892 C 438 780 262 640 262 452 A250 250 0 1 1 762 452 C 762 640 586 780 512 892 Z" fill="#FFFFFF"/>
+  <circle cx="512" cy="452" r="118" fill="#FFB020"/>
+  <circle cx="512" cy="452" r="46" fill="#3539C2"/>
+  <g fill="none" stroke="#FFB020" stroke-width="46" stroke-linecap="round">
+    <path d="M 838 260 A 380 380 0 0 1 838 644"/>
+    <path d="M 186 260 A 380 380 0 0 0 186 644"/>
+  </g>
+</g>

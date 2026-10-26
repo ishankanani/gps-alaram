@@ -1,9 +1,10 @@
-# The trip is running and the phone is moving towards München Hbf.
+# The live trip while the phone moves towards München Hbf.
 appId: com.ishankanani.gpsalarm
 ---
 - extendedWaitUntil:
-    visible: "On the way to"
+    visible:
+      id: trip-screen
     timeout: 10000
 - waitForAnimationToEnd:
     timeout: 10000
-- takeScreenshot: 08-trip
+- takeScreenshot: en-04-trip

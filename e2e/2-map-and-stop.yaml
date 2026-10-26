@@ -1,38 +1,51 @@
-# The map around Odeonsplatz, then search and a stop, up to a running trip to München Hbf.
+# The map around Odeonsplatz (browse sheet with nearby stops), search, and the stop sheet for
+# München Hbf, up to a running trip.
 appId: com.ishankanani.gpsalarm
 ---
+- extendedWaitUntil:
+    visible:
+      id: map-home
+    timeout: 30000
+- tapOn:
+    id: map-locate
+    optional: true
 - waitForAnimationToEnd:
     timeout: 20000
-- takeScreenshot: 04-map
+- takeScreenshot: en-01-map
 
-- tapOn: "Where are you going\\?"
+- tapOn:
+    id: sheet-search
 - inputText: "Muenchen Hbf"
 - extendedWaitUntil:
-    visible: "München Hbf"
+    visible:
+      id: search-stop-0
     timeout: 20000
+- hideKeyboard
 - waitForAnimationToEnd:
     timeout: 5000
-- takeScreenshot: 05-search
+- takeScreenshot: en-02-search
 
-- tapOn: "München Hbf"
+- tapOn:
+    id: search-stop-0
 - extendedWaitUntil:
-    visible: "Start alarm"
+    visible:
+      id: stop-start
     timeout: 15000
 - waitForAnimationToEnd:
     timeout: 20000
-- takeScreenshot: 06-stop
+- takeScreenshot: en-03-stop
 
-# 100 or 200 m before a train station is only seconds of warning: the sheet says so.
-- tapOn: "Distance"
-# 200 m, or 0.1 mi where the phone uses miles.
-- tapOn: "200 m|0\\.1 mi"
+- tapOn:
+    id: stop-start
+# If a permission is still missing, the checklist comes first and starts the trip itself.
+- runFlow:
+    when:
+      visible:
+        id: screen-Setup
+    commands:
+      - tapOn:
+          id: setup-continue
 - extendedWaitUntil:
-    visible: "Use 2 min instead"
-    timeout: 5000
-- takeScreenshot: 07-train-warning
-- tapOn: "Use 2 min instead"
-
-- tapOn: "Start alarm"
-- extendedWaitUntil:
-    visible: "On the way to"
+    visible:
+      id: trip-screen
     timeout: 30000

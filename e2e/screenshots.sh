@@ -11,19 +11,15 @@ RUNS=$(mktemp -d)
 FEEDER=
 mkdir -p "$OUT"
 
-# Maestro saves screenshots in its own folder for each run; gather the named ones.
+# Maestro saves screenshots in its own folder for each run; gather the named ones (en-01-map.png, …).
 collect() {
-  find "$RUNS" "$HOME/.maestro/tests" -name '[0-9][0-9]-*.png' -exec cp {} "$OUT/" \; 2>/dev/null || true
+  find "$RUNS" "$HOME/.maestro/tests" -name '[a-z][a-z]-[0-9][0-9]-*.png' -exec cp {} "$OUT/" \; 2>/dev/null || true
 }
 
 run_flow() {
   local dir="$RUNS/${1%.yaml}"
   mkdir -p "$dir"
-  # Accounts the flows sign in with (the seeded StopWake Cloud in CI, see screenshots.yml).
-  (cd "$dir" && maestro test \
-    -e ADMIN_EMAIL="${ADMIN_EMAIL:-admin@example.com}" -e ADMIN_PASSWORD="${ADMIN_PASSWORD:-}" \
-    -e DEMO_EMAIL=lena.weber@example.com -e DEMO_PASSWORD=demo-password-2026 -e DEMO_PROMO=STOPWAKE-DEMO \
-    "$FLOWS/$1")
+  (cd "$dir" && maestro test "$FLOWS/$1")
   collect
 }
 
@@ -68,7 +64,7 @@ on_exit() {
     adb logcat -d | grep -E "ReactNativeJS|AndroidRuntime|TripService|TripAlarm|MapLibre|FATAL" | tail -200 || true
     echo "::endgroup::"
     # Maestro also keeps a picture of the screen a flow failed on.
-    find "$HOME/.maestro/tests" -name '*.png' ! -name '[0-9][0-9]-*.png' -print0 2>/dev/null |
+    find "$HOME/.maestro/tests" -name '*.png' ! -name '[a-z][a-z]-[0-9][0-9]-*.png' -print0 2>/dev/null |
       while IFS= read -r -d '' f; do cp "$f" "$OUT/debug-$(basename "$f" | tr -cd 'A-Za-z0-9._-')"; done
   fi
 }
@@ -87,9 +83,9 @@ adb shell dumpsys deviceidle whitelist "+$PKG" || true
 # living in Germany: English texts, kilometres.
 adb shell cmd locale set-app-locales "$PKG" --locales en-DE || true
 
-# The layout of a 1080 x 2400 phone (411 dp wide) with smaller files, and a tidy status bar.
-adb shell wm size 720x1600
-adb shell wm density 280
+# 1080 x 1920 (9:16, what Google Play wants; 411 dp wide like most phones) and a tidy status bar.
+adb shell wm size 1080x1920
+adb shell wm density 420
 adb shell settings put global sysui_demo_allowed 1
 demo() { adb shell am broadcast -a com.android.systemui.demo -e command "$@" >/dev/null || true; }
 demo enter
@@ -99,11 +95,34 @@ demo network -e wifi show -e level 4
 demo network -e mobile show -e datatype lte -e level 4
 demo notifications -e visible false
 
+# The ringing alarm is dismissed by dragging the native slider from its left end to the right;
+# the in-app alarm (when the app is in front) has an "I'm awake" button instead.
+dismiss_alarm() {
+  local xml bounds x1 y1 x2 y2 y inset
+  adb shell uiautomator dump /sdcard/ui.xml >/dev/null
+  xml=$(adb exec-out cat /sdcard/ui.xml | tr '>' '\n')
+  bounds=$(grep 'class="android.widget.SeekBar"' <<< "$xml" | head -1 |
+    sed -E 's/.*bounds="\[([0-9]+),([0-9]+)\]\[([0-9]+),([0-9]+)\]".*/\1 \2 \3 \4/' || true)
+  if [ -n "$bounds" ]; then
+    read -r x1 y1 x2 y2 <<< "$bounds"
+    y=$(((y1 + y2) / 2))
+    inset=$(((y2 - y1) / 2))
+    adb shell input swipe $((x1 + inset)) "$y" $((x2 - inset)) "$y" 900
+    return
+  fi
+  bounds=$(grep 'resource-id="trip-awake"' <<< "$xml" | head -1 |
+    sed -E 's/.*bounds="\[([0-9]+),([0-9]+)\]\[([0-9]+),([0-9]+)\]".*/\1 \2 \3 \4/' || true)
+  if [ -n "$bounds" ]; then
+    read -r x1 y1 x2 y2 <<< "$bounds"
+    adb shell input tap $(((x1 + x2) / 2)) $(((y1 + y2) / 2))
+  fi
+}
+
 # Odeonsplatz in Munich, about 1.3 km from München Hbf.
 route 48.1426 11.5775 48.1426 11.5775 0
 feed &
 FEEDER=$!
-run_flow 1-start-trip.yaml
+run_flow 1-onboarding.yaml
 # The locate button waits for a GPS fix before the map moves there.
 sleep 8
 run_flow 2-map-and-stop.yaml
@@ -117,17 +136,14 @@ run_flow 3-trip.yaml
 # shellcheck disable=SC2046 # here prints two arguments
 route $(here) 48.1402 11.5600 75
 run_flow 4-alarm.yaml
+dismiss_alarm
 
-# The alarm is dismissed by dragging the slider from its left end to the right.
-adb shell uiautomator dump /sdcard/ui.xml >/dev/null
-read -r x1 y1 x2 y2 < <(
-  adb exec-out cat /sdcard/ui.xml | tr '>' '\n' | grep 'class="android.widget.SeekBar"' |
-    sed -E 's/.*bounds="\[([0-9]+),([0-9]+)\]\[([0-9]+),([0-9]+)\]".*/\1 \2 \3 \4/'
-)
-y=$(((y1 + y2) / 2))
-inset=$(((y2 - y1) / 2))
-adb shell input swipe $((x1 + inset)) "$y" $((x2 - inset)) "$y" 900
+run_flow 5-arrived-and-tabs.yaml
 
-run_flow 5-after-trip.yaml
-run_flow 6-countries-pro.yaml
+# German. The demo trip simulates its own movement; keep the phone still at Hbf.
+route 48.1402 11.5600 48.1402 11.5600 0
+run_flow 6-german.yaml
+run_flow 7-german-alarm.yaml
+dismiss_alarm
+run_flow 8-german-arrived.yaml
 ls -la "$OUT"

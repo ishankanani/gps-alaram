@@ -1,0 +1,38 @@
+# First start: onboarding and the Get ready checklist, up to the map.
+# Run by e2e/screenshots.sh, which puts the phone at Odeonsplatz in Munich first.
+# Screenshots are named <lang>-<nn>-<screen>; store/tools/compose-screenshots.mjs frames them.
+appId: com.ishankanani.gpsalarm
+---
+- launchApp:
+    clearState: true
+    permissions:
+      all: allow
+- extendedWaitUntil:
+    visible:
+      id: screen-Onboarding
+    timeout: 120000
+- waitForAnimationToEnd
+- takeScreenshot: en-00-onboarding
+# Page through onboarding ("Continue", then "Set up StopWake" on the last page).
+- repeat:
+    times: 5
+    while:
+      notVisible:
+        id: screen-Setup
+    commands:
+      - tapOn:
+          id: onboarding-continue
+      - waitForAnimationToEnd
+- extendedWaitUntil:
+    visible:
+      id: screen-Setup
+    timeout: 15000
+- waitForAnimationToEnd
+- takeScreenshot: en-00-setup
+# The permissions were granted by launchApp and e2e/screenshots.sh; "Not now" is always there.
+- tapOn:
+    id: setup-not-now
+- extendedWaitUntil:
+    visible:
+      id: map-home
+    timeout: 30000

@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<title>StopWake</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="icon-512.png">
+<style>
+  :root { color-scheme: light dark; --fg: #0E1726; --muted: #5B6472; --bg: #F4F6F9; --card: #FFFFFF; --accent: #4146D8; --amber: #8A5300; }
+  @media (prefers-color-scheme: dark) { :root { --fg: #EDF1F7; --muted: #9AA4B2; --bg: #0B0F16; --card: #131924; --accent: #8E94FF; --amber: #FFC56B; } }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 720px; margin: 0 auto; padding: 32px 16px 64px; }
+  header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+  header img { width: 44px; height: 44px; border-radius: 12px; }
+  header a { color: var(--fg); text-decoration: none; font-weight: 700; font-size: 20px; }
+  h1 { font-size: 30px; line-height: 1.2; margin: 0 0 4px; }
+  h2 { font-size: 19px; margin: 32px 0 8px; }
+  p.meta { color: var(--muted); margin: 0 0 24px; }
+  a { color: var(--accent); }
+  li { margin: 4px 0; }
+  table { border-collapse: collapse; width: 100%; background: var(--card); border-radius: 12px; overflow: hidden; font-size: 15px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid rgba(127,127,127,.2); vertical-align: top; }
+  .card { background: var(--card); border-radius: 16px; padding: 4px 20px 12px; margin: 16px 0; }
+  footer { margin-top: 48px; color: var(--muted); font-size: 14px; }
+</style>
+</head>
+<body>
+<main>
+<header><img src="icon-512.png" alt=""><a href="./">StopWake</a></header>
+<h1>StopWake</h1>
+<p class="meta">The GPS alarm that wakes you before your stop. Bus, tram, metro and train, offline, in 17 countries.</p>
+<p>Pick your stop, choose “2 minutes” or “300 metres before”, lock your phone and relax. StopWake rings even in silent mode.</p>
+<ul>
+  <li><a href="privacy/">Privacy policy</a></li>
+  <li><a href="terms/">Terms of use</a></li>
+  <li><a href="account-deletion/">Delete your account</a></li>
+</ul>
+
+<footer><a href="privacy/">Privacy policy</a> · <a href="terms/">Terms of use</a> · <a href="account-deletion/">Delete your account</a> · Contact: <a href="mailto:{{SUPPORT_EMAIL}}">{{SUPPORT_EMAIL}}</a></footer>
+</main>
+</body>
+</html>

@@ -1,0 +1,2 @@
+# AdMob app-ads.txt. The Pages workflow replaces this file with your publisher line when the
+# repository variable ADMOB_PUBLISHER_ID (pub-…) is set. See store/PLAY_CONSOLE_GUIDE.md, step 14.

@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<title>Privacy policy · StopWake</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="../icon-512.png">
+<style>
+  :root { color-scheme: light dark; --fg: #0E1726; --muted: #5B6472; --bg: #F4F6F9; --card: #FFFFFF; --accent: #4146D8; --amber: #8A5300; }
+  @media (prefers-color-scheme: dark) { :root { --fg: #EDF1F7; --muted: #9AA4B2; --bg: #0B0F16; --card: #131924; --accent: #8E94FF; --amber: #FFC56B; } }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 720px; margin: 0 auto; padding: 32px 16px 64px; }
+  header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+  header img { width: 44px; height: 44px; border-radius: 12px; }
+  header a { color: var(--fg); text-decoration: none; font-weight: 700; font-size: 20px; }
+  h1 { font-size: 30px; line-height: 1.2; margin: 0 0 4px; }
+  h2 { font-size: 19px; margin: 32px 0 8px; }
+  p.meta { color: var(--muted); margin: 0 0 24px; }
+  a { color: var(--accent); }
+  li { margin: 4px 0; }
+  table { border-collapse: collapse; width: 100%; background: var(--card); border-radius: 12px; overflow: hidden; font-size: 15px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid rgba(127,127,127,.2); vertical-align: top; }
+  .card { background: var(--card); border-radius: 16px; padding: 4px 20px 12px; margin: 16px 0; }
+  footer { margin-top: 48px; color: var(--muted); font-size: 14px; }
+</style>
+</head>
+<body>
+<main>
+<header><img src="../icon-512.png" alt=""><a href="../">StopWake</a></header>
+<h1>Privacy policy</h1>
+<p class="meta">Last updated: 26 October 2026 · Applies to the StopWake app for Android (com.ishankanani.gpsalarm).</p>
+
+<p>StopWake is a GPS alarm that wakes you before your public-transport stop. It is built to need as little of your data as possible. You can use every feature without an account. This policy explains what data the app uses, where it goes, and the choices you have.</p>
+
+<p><strong>Who is responsible:</strong> Ishan Kanani, the developer of StopWake (“we”). Contact: <a href="mailto:{{SUPPORT_EMAIL}}">{{SUPPORT_EMAIL}}</a>.</p>
+
+<h2>1. Your location</h2>
+<ul>
+  <li>StopWake uses your phone’s <strong>precise location only while a trip is running</strong> (shown by a permanent notification) and while the map is open, to know how far you are from your stop and when to ring. The app does not ask for “background location” and never tracks you outside a trip.</li>
+  <li>The decision when to ring is made <strong>on your phone</strong>. Without an account, your location and your trip history <strong>never leave your phone</strong>.</li>
+  <li><strong>Address search:</strong> when you search for an address, drop a pin on the map, or the map looks up which country you are viewing (to offer that country’s stops), the search text or the coordinates of that point are sent to <a href="https://photon.komoot.io">Photon by komoot</a>, a public OpenStreetMap search service, to get the answer. We don’t store these requests. Searching stops works offline and sends nothing.</li>
+  <li><strong>Map tiles</strong> are loaded from <a href="https://openfreemap.org">OpenFreeMap</a>. Like any website, it sees your IP address and which map area is loaded.</li>
+</ul>
+
+<h2>2. If you create an account (optional)</h2>
+<p>Accounts are run on <a href="https://supabase.com">Supabase</a> (our hosting provider). With an account we store:</p>
+<ul>
+  <li>your <strong>email address</strong>, a password (stored hashed by Supabase Auth), an optional display name, your language and country setting, and your <strong>StopWake ID</strong> (for example SW-7K3P-92QX);</li>
+  <li>the <strong>stops you saved and used recently</strong>, and your <strong>trip history</strong> (destination, start and end time, how far before the stop it rang, and a simplified route of the trip), so they are synced to your other phones;</li>
+  <li>the phones you signed in on (a random install ID, app version, Android version), and any plan, promo code or gift on your account.</li>
+</ul>
+<p>We use this data only to run your account and sync. We don’t sell it and don’t use it for advertising. You can download it (Account → Download my data) and delete it at any time (see <a href="../account-deletion/">Delete your account</a>).</p>
+
+<h2>3. Ads (Google AdMob)</h2>
+<p>StopWake is free and shows ads from <strong>Google AdMob</strong>. To show and measure ads and prevent fraud, Google’s ad SDK collects data on your phone, such as the <strong>advertising ID</strong>, IP address, device and app information, and how you interact with ads. Google processes this as described in <a href="https://policies.google.com/technologies/partner-sites">How Google uses information from sites or apps that use its services</a>. Your location from trips is <strong>not</strong> given to the ad SDK.</p>
+<ul>
+  <li>In the EU/EEA, the UK and Switzerland, StopWake asks for your consent with Google’s consent form before ads load. Without consent to personalised ads you get non-personalised ads only. You can change your choice any time in Settings → Ads → Privacy choices for ads.</li>
+  <li>You can reset or delete your advertising ID in Android Settings → Privacy → Ads.</li>
+  <li>Ads never appear on the trip screen, the alarm or the arrival screen.</li>
+</ul>
+
+<h2>4. Data on your phone</h2>
+<p>Your settings, saved stops, recent stops, trip history, downloaded stops and offline maps are stored in the app’s private storage. Uninstalling the app deletes them. Sign-in tokens are stored in the Android Keystore and are excluded from Android backups.</p>
+
+<h2>5. Sharing</h2>
+<p>We share data only with the providers named above (Supabase for accounts, Google AdMob for ads, Photon by komoot for address search, OpenFreeMap for map tiles), or when the law requires it. When you tap “Share trip log”, Android’s share sheet sends the log to the app you choose.</p>
+
+<h2>6. How long we keep data</h2>
+<p>Account data is kept until you delete your account; it is then deleted at once, and backups expire within 30 days. Data on your phone stays until you delete it or uninstall the app.</p>
+
+<h2>7. Your rights</h2>
+<p>You can access, correct, export and delete your data in the app, or by writing to us. If you live in the EU/EEA or the UK you also have the rights of the GDPR (including objection and restriction) and may complain to your data protection authority. Legal bases: running the service you asked for (account, sync), our legitimate interest in a secure, working app, and your consent for personalised ads.</p>
+
+<h2>8. Children</h2>
+<p>StopWake is not directed at children under 13 and we don’t knowingly collect their data.</p>
+
+<h2>9. Security</h2>
+<p>All connections use HTTPS. Account data is protected by row-level security so each user can read only their own data.</p>
+
+<h2>10. Changes</h2>
+<p>If we change this policy, we update the date above; important changes are announced in the app.</p>
+
+<footer><a href="../privacy/">Privacy policy</a> · <a href="../terms/">Terms of use</a> · <a href="../account-deletion/">Delete your account</a> · Contact: <a href="mailto:{{SUPPORT_EMAIL}}">{{SUPPORT_EMAIL}}</a></footer>
+</main>
+</body>
+</html>

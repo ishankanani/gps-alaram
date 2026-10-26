@@ -77,4 +77,9 @@ describe('adsEnabled', () => {
     expect(adsEnabled(false, 'premium')).toBe(true);
     expect(adsEnabled(true, 'premium')).toBe(false);
   });
+
+  it('shows no ads at all in a build with EXPO_PUBLIC_ADS_OFF', () => {
+    expect(adsEnabled(false, 'free_ads', true)).toBe(false);
+    expect(adsEnabled(false, 'premium', true)).toBe(false);
+  });
 });

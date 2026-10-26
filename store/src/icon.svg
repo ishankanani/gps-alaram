@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- StopWake app icon: full-bleed square (Play and the launcher apply their own mask). -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#5459EA"/>
+      <stop offset="1" stop-color="#3539C2"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+  <g transform="translate(512 512) scale(0.84) translate(-512 -512)">
+    @GLYPH@
+  </g>
+</svg>

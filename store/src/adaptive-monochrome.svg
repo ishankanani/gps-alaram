@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- Themed (monochrome) icon: one colour; the launcher tints it. The core is cut out. -->
+  <defs>
+    <mask id="cut" maskUnits="userSpaceOnUse" x="0" y="-100" width="1024" height="1224">
+      <rect width="1024" height="1024" fill="#fff"/>
+      <circle cx="512" cy="452" r="118" fill="#000"/>
+    </mask>
+  </defs>
+  <g transform="translate(512 512) scale(0.6) translate(-512 -512)">
+    <g transform="translate(0,-20)">
+      <path mask="url(#cut)" d="M512 892 C 438 780 262 640 262 452 A250 250 0 1 1 762 452 C 762 640 586 780 512 892 Z" fill="#FFFFFF"/>
+      <circle cx="512" cy="452" r="46" fill="#FFFFFF"/>
+      <g fill="none" stroke="#FFFFFF" stroke-width="46" stroke-linecap="round">
+        <path d="M 838 260 A 380 380 0 0 1 838 644"/>
+        <path d="M 186 260 A 380 380 0 0 0 186 644"/>
+      </g>
+    </g>
+  </g>
+</svg>
