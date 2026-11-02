@@ -31,6 +31,8 @@ appId: com.ishankanani.gpsalarm
 
 - tapOn:
     id: sheet-search
+# Search keeps the last query: clear the field before typing.
+- eraseText: 40
 - inputText: "Muenchen Hbf"
 - extendedWaitUntil:
     visible:

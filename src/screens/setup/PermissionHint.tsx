@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 
 import { useI18n, type Key } from '../../i18n';
 import { AppText, Icon, useTheme, type IconName } from '../../ui';
@@ -11,14 +11,33 @@ const SENTENCE: Record<HintKind, Key> = {
   notifications: 'onboarding.setup.hint.notifications',
 };
 
+/** iOS words its choices differently ("Allow While Using App", "Precise Location"). */
+const SENTENCE_IOS: Record<HintKind, Key> = {
+  location: 'onboarding.setup.hint.locationIos',
+  precise: 'onboarding.setup.hint.preciseIos',
+  notifications: 'onboarding.setup.hint.notifications',
+};
+
 /**
  * Which choices to tap in the system's permission window (ui-critiques: "Get ready" shows them):
- * a small drawing of Android's dialog with the right options marked. Read as one sentence.
+ * a small drawing of Android's dialog with the right options marked (iPhone: the sentence only).
+ * Read as one sentence.
  */
 export function PermissionHint({ kind }: { kind: HintKind }) {
   const t = useTheme();
   const { t: tr } = useI18n();
-  const sentence = tr(SENTENCE[kind]);
+  const ios = Platform.OS === 'ios';
+  const sentence = tr((ios ? SENTENCE_IOS : SENTENCE)[kind]);
+  if (ios) {
+    // The drawing is of Android's window; on iPhone the sentence names the choices.
+    return (
+      <View style={styles.wrap}>
+        <AppText variant="bodyS" color="textSecondary">
+          {sentence}
+        </AppText>
+      </View>
+    );
+  }
   return (
     <View style={styles.wrap}>
       <AppText variant="bodyS" color="textSecondary">

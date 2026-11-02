@@ -80,7 +80,7 @@ final class AlarmPlayer {
       let p = try AVAudioPlayer(contentsOf: url)
       p.numberOfLoops = -1
       p.volume = strength.startVolume
-      p.prepareToPlay()
+      _ = p.prepareToPlay()
       guard p.play() else { return }
       player = p
       rampTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] timer in

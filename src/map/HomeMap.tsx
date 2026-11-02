@@ -277,7 +277,7 @@ export function HomeMap({
               </GeoJSONSource>
             ) : null}
 
-            {/* Under everything else; empty from COVERAGE_MAX_ZOOM on, where the real stops show. */}
+            {/* Under the stops; empty from COVERAGE_MAX_ZOOM on, where the real stops show. */}
             <GeoJSONSource id="coverage" data={coverage.collection} onPress={onCoveragePress} hitbox={HITBOX}>
               <Layer
                 id="coverage-dot"

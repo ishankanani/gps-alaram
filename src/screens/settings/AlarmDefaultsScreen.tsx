@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { TripAlarm, type AlarmStrength } from '../../../modules/trip-alarm/src';
+import { TripAlarm, type AlarmStrength, type WakeStyle } from '../../../modules/trip-alarm/src';
 import { useI18n, type Key } from '../../i18n';
 import { formatRadius } from '../../lib/format';
 import { useRemoteConfig } from '../../api/config';
 import { effectiveStrength, strengthAllowed } from '../../lib/plans';
 import { usePro } from '../../lib/pro';
-import { DISTANCE_CHOICES, MINUTE_CHOICES } from '../../lib/wake';
+import { DISTANCE_CHOICES, MINUTE_CHOICES, WAKE_STYLES, wakeStyleOf } from '../../lib/wake';
 import { openSheet } from '../../navigation/sheet';
 import type { RootScreenProps } from '../../navigation/types';
 import { useSavedData } from '../../state/saved';
@@ -31,13 +31,14 @@ export function AlarmDefaultsScreen({ navigation }: RootScreenProps<'AlarmDefaul
   const [testing, setTesting] = useState(false);
   const prefs = saved.data.preferences;
   const effective = effectiveStrength(prefs.strength, isPro, proFeatures);
+  const wakeStyle = wakeStyleOf(prefs.wakeStyle);
   const distance = (m: number) => nbsp(formatRadius(m, prefs.useMiles, lang));
 
   async function test() {
     if (!TripAlarm || testing) return;
     setTesting(true);
     try {
-      await TripAlarm.testAlarm(effective);
+      await TripAlarm.testAlarm(effective, wakeStyle);
     } catch {
       toast.show({ message: tr('ui.failed') });
     } finally {
@@ -85,6 +86,21 @@ export function AlarmDefaultsScreen({ navigation }: RootScreenProps<'AlarmDefaul
           />
           <AppText variant="bodyM" color="textSecondary">
             {tr(`strength.${effective}.body` as Key)}
+          </AppText>
+        </View>
+        <View style={[styles.strength, { borderBottomColor: theme.color.border }]}>
+          <AppText variant="labelM" color="textSecondary">
+            {tr('wakeStyle.title')}
+          </AppText>
+          <SegmentedControl<WakeStyle>
+            value={wakeStyle}
+            onChange={(next) => saved.setPreferences((p) => ({ ...p, wakeStyle: next }))}
+            accessibilityLabel={tr('wakeStyle.title')}
+            options={WAKE_STYLES.map((s) => ({ value: s, label: tr(`wakeStyle.${s}`) }))}
+            testID="alarm-defaults-wake-style"
+          />
+          <AppText variant="bodyM" color="textSecondary">
+            {tr(`wakeStyle.${wakeStyle}.body`)}
           </AppText>
         </View>
         <ListItem

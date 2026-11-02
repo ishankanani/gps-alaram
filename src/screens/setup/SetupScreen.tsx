@@ -26,7 +26,8 @@ import {
   type IconName,
 } from '../../ui';
 import { plural } from '../activity/format';
-import { batteryHint, itemDone, newlyDone, REQUIRED_ITEMS, RECOMMENDED_ITEMS, summarize, type SetupItemKey } from './checklist';
+import { wakeStyleOf } from '../../lib/wake';
+import { batteryHint, isIos, itemDone, newlyDone, recommendedItems, REQUIRED_ITEMS, summarize, type SetupItemKey } from './checklist';
 import { PermissionHint, type HintKind } from './PermissionHint';
 
 function read(): SetupStatus | null {
@@ -52,6 +53,9 @@ const ITEM: Record<SetupItemKey, { icon: IconName; title: Key; why: Key; done: K
   fullscreen: { icon: 'cellphone-lock', title: 'setup.fullscreen.title', why: 'setup.fullscreen.why', done: 'onboarding.setup.allowed', ok: 'onboarding.setup.ok.fullscreen' },
   exact: { icon: 'alarm-check', title: 'setup.exact.title', why: 'setup.exact.why', done: 'onboarding.setup.allowed', ok: 'onboarding.setup.ok.exact' },
   battery: { icon: 'battery-heart-variant', title: 'setup.battery.title', why: 'setup.battery.why', done: 'onboarding.setup.on', ok: 'onboarding.setup.ok.battery' },
+  // iPhone
+  timeSensitive: { icon: 'bell-badge-outline', title: 'setup.timeSensitive.title', why: 'setup.timeSensitive.why', done: 'onboarding.setup.allowed', ok: 'onboarding.setup.ok.timeSensitive' },
+  sound: { icon: 'volume-high', title: 'setup.sound.title', why: 'setup.sound.why', done: 'onboarding.setup.on', ok: 'onboarding.setup.ok.sound' },
 };
 
 /** The verb button of an item that isn't done, and which choices to show for it. */
@@ -69,6 +73,8 @@ function fixFor(key: SetupItemKey, status: SetupStatus): { label: Key; hint?: Hi
     case 'exact':
       return { label: 'setup.allow' };
     case 'battery':
+    case 'timeSensitive':
+    case 'sound':
       return { label: 'setup.openSettings' };
   }
 }
@@ -144,8 +150,10 @@ function Checklist({ initial, entry, focus, onLeave }: ChecklistProps) {
 
   async function askLocation() {
     const current = await Location.getForegroundPermissionsAsync();
-    if ((current.granted && current.android?.accuracy === 'coarse') || (!current.granted && !current.canAskAgain)) {
-      // Only the app's settings page can switch approximate to precise, or undo "don't ask again".
+    const approximate = current.granted && (current.android?.accuracy === 'coarse' || latest.current.location === 'approximate');
+    if (approximate || (!current.granted && !current.canAskAgain)) {
+      // Only the app's settings page can switch approximate to precise, or undo "don't ask again"
+      // (on iPhone also a "Don't Allow" answered before).
       native?.openSettings('app');
       return;
     }
@@ -163,7 +171,8 @@ function Checklist({ initial, entry, focus, onLeave }: ChecklistProps) {
   async function test() {
     setTesting(true);
     try {
-      await native!.testAlarm(pending?.wake.strength ?? saved.data.preferences.strength);
+      const prefs = saved.data.preferences;
+      await native!.testAlarm(pending?.wake.strength ?? prefs.strength, pending?.wake.wakeStyle ?? wakeStyleOf(prefs.wakeStyle));
     } catch {
       toast.show({ message: tr('ui.failed') });
     } finally {
@@ -188,6 +197,9 @@ function Checklist({ initial, entry, focus, onLeave }: ChecklistProps) {
         return open('exactAlarms')();
       case 'battery':
         return open('battery')();
+      case 'timeSensitive':
+      case 'sound':
+        return open('notifications')();
     }
   }
 
@@ -300,7 +312,9 @@ function Checklist({ initial, entry, focus, onLeave }: ChecklistProps) {
           const y = e.nativeEvent.layout.y;
           setTimeout(() => scroll.current?.scrollTo({ y: Math.max(0, y - 8), animated: !t.reduceMotion }), 50);
         }}>
-        <Section title={tr('setup.recommended')}>{items(RECOMMENDED_ITEMS, false)}</Section>
+        <Section title={tr('setup.recommended')} footer={isIos(status) ? tr('setup.ios.silent') : undefined}>
+          {items(recommendedItems(status), false)}
+        </Section>
       </View>
 
       <Section title={tr('onboarding.setup.check')}>

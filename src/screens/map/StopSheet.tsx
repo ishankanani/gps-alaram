@@ -2,12 +2,12 @@ import { useState, type Ref } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import type { AlarmMode, AlarmStrength } from '../../../modules/trip-alarm/src';
+import type { AlarmMode, AlarmStrength, WakeStyle } from '../../../modules/trip-alarm/src';
 import { useI18n, type Key } from '../../i18n';
 import { formatRadius } from '../../lib/format';
 import type { Place } from '../../lib/geocode';
 import { effectiveStrength, strengthAllowed } from '../../lib/plans';
-import { DISTANCE_CHOICES, MINUTE_CHOICES, tooShortForTrain, type WakeOptions } from '../../lib/wake';
+import { DEFAULT_WAKE_STYLE, DISTANCE_CHOICES, MINUTE_CHOICES, tooShortForTrain, WAKE_STYLES, type WakeOptions } from '../../lib/wake';
 import {
   AppText,
   Banner,
@@ -120,7 +120,9 @@ export function StopContent({ place, wake, onChange, useMiles, isPro, onNeedPro,
   const rule = ruleLine(wake, formatRadius(wake.radiusM, useMiles, lang));
   const strength = effectiveStrength(wake.strength, isPro);
   const heavyLocked = !strengthAllowed('heavy', isPro);
-  const summary = `${tr(leave ? 'map.stop.optionsLeave' : 'map.stop.optionsArrive')} · ${tr(`strength.${strength}`)}`;
+  // The wake style shows in the summary only when it is not the usual sound + vibration.
+  const styleNote = wake.wakeStyle === DEFAULT_WAKE_STYLE ? '' : ` · ${tr(`wakeStyle.${wake.wakeStyle}`)}`;
+  const summary = `${tr(leave ? 'map.stop.optionsLeave' : 'map.stop.optionsArrive')} · ${tr(`strength.${strength}`)}${styleNote}`;
 
   return (
     <View style={styles.content}>
@@ -228,6 +230,21 @@ export function StopContent({ place, wake, onChange, useMiles, isPro, onNeedPro,
             />
             <AppText variant="bodyS" color="textSecondary">
               {tr(`strength.${strength}.body`)}
+            </AppText>
+          </View>
+          <View style={[styles.group, styles.gutter]}>
+            <AppText variant="labelM" color="textSecondary">
+              {tr('wakeStyle.title')}
+            </AppText>
+            <SegmentedControl<WakeStyle>
+              testID="stop-wake-style"
+              accessibilityLabel={tr('wakeStyle.title')}
+              value={wake.wakeStyle}
+              onChange={(wakeStyle) => onChange({ ...wake, wakeStyle })}
+              options={WAKE_STYLES.map((s) => ({ value: s, label: tr(`wakeStyle.${s}`) }))}
+            />
+            <AppText variant="bodyS" color="textSecondary">
+              {tr(`wakeStyle.${wake.wakeStyle}.body`)}
             </AppText>
           </View>
           {!leave ? (

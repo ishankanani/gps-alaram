@@ -5,12 +5,34 @@ import type { Key } from '../../i18n';
 // which items exist, which are required, which are done, and the battery-saver path for the
 // phone's brand. Pure, no React Native, so it is tested.
 
-export type SetupItemKey = 'location' | 'services' | 'notifications' | 'fullscreen' | 'exact' | 'battery';
+export type SetupItemKey =
+  | 'location'
+  | 'services'
+  | 'notifications'
+  | 'fullscreen'
+  | 'exact'
+  | 'battery'
+  | 'timeSensitive'
+  | 'sound';
 
 /** Without these a trip can't run (setupReady in src/state/setup.ts says the same). */
 export const REQUIRED_ITEMS: readonly SetupItemKey[] = ['location', 'services', 'notifications'];
-/** These make the alarm more reliable. */
+/** These make the alarm more reliable (Android). */
 export const RECOMMENDED_ITEMS: readonly SetupItemKey[] = ['fullscreen', 'exact', 'battery'];
+/**
+ * iPhone: no full-screen, exact-alarm or battery settings exist. The alarm rings through Time
+ * Sensitive notifications with a sound, so those two are what to check.
+ */
+export const IOS_RECOMMENDED_ITEMS: readonly SetupItemKey[] = ['timeSensitive', 'sound'];
+
+export function isIos(status: SetupStatus | null | undefined): boolean {
+  return status?.platform === 'ios';
+}
+
+/** The recommended items for the phone the status came from. */
+export function recommendedItems(status: SetupStatus): readonly SetupItemKey[] {
+  return isIos(status) ? IOS_RECOMMENDED_ITEMS : RECOMMENDED_ITEMS;
+}
 
 export function itemDone(status: SetupStatus, key: SetupItemKey): boolean {
   switch (key) {
@@ -26,6 +48,10 @@ export function itemDone(status: SetupStatus, key: SetupItemKey): boolean {
       return status.exactAlarms;
     case 'battery':
       return status.batteryUnrestricted;
+    case 'timeSensitive':
+      return status.timeSensitive ?? true;
+    case 'sound':
+      return status.notificationSound ?? true;
   }
 }
 
@@ -38,16 +64,17 @@ export type SetupSummary = {
 };
 
 export function summarize(status: SetupStatus): SetupSummary {
+  const recommended = recommendedItems(status);
   const requiredMissing = REQUIRED_ITEMS.filter((k) => !itemDone(status, k)).length;
-  const recommendedMissing = RECOMMENDED_ITEMS.filter((k) => !itemDone(status, k)).length;
-  const total = REQUIRED_ITEMS.length + RECOMMENDED_ITEMS.length;
+  const recommendedMissing = recommended.filter((k) => !itemDone(status, k)).length;
+  const total = REQUIRED_ITEMS.length + recommended.length;
   return { requiredMissing, recommendedMissing, done: total - requiredMissing - recommendedMissing, total, ready: requiredMissing === 0 };
 }
 
 /** Items that were missing in `before` and are done in `after` (for the "Notifications allowed" toast). */
 export function newlyDone(before: SetupStatus | null, after: SetupStatus | null): SetupItemKey[] {
   if (!before || !after) return [];
-  return [...REQUIRED_ITEMS, ...RECOMMENDED_ITEMS].filter((k) => !itemDone(before, k) && itemDone(after, k));
+  return [...REQUIRED_ITEMS, ...recommendedItems(after)].filter((k) => !itemDone(before, k) && itemDone(after, k));
 }
 
 /** Battery savers known to close background apps (see dontkillmyapp.com), by brand. */

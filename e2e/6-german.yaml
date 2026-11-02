@@ -79,6 +79,8 @@ appId: com.ishankanani.gpsalarm
 - takeScreenshot: de-01-overview
 - tapOn:
     id: sheet-search
+# Search keeps the last query (here the English run's): clear it before typing.
+- eraseText: 40
 - inputText: "Marienplatz"
 - extendedWaitUntil:
     visible:

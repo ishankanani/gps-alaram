@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import type { SetupStatus } from '../../../../modules/trip-alarm/src/TripAlarm.types';
-import { batteryHelpUrl, batteryHint, itemDone, newlyDone, summarize } from '../checklist';
+import { batteryHelpUrl, batteryHint, itemDone, newlyDone, recommendedItems, summarize } from '../checklist';
 
 const all: SetupStatus = {
   location: 'precise',
@@ -28,6 +28,26 @@ describe('setup checklist', () => {
     expect(newlyDone(before, { ...before, notifications: true })).toEqual(['notifications']);
     expect(newlyDone(before, all)).toEqual(['notifications', 'exact']);
     expect(newlyDone(null, all)).toEqual([]);
+  });
+
+  it('checks Time Sensitive notifications and sounds instead of Android settings on an iPhone', () => {
+    const iphone: SetupStatus = {
+      ...all,
+      platform: 'ios',
+      exactAlarms: true,
+      batteryUnrestricted: false,
+      timeSensitive: false,
+      notificationSound: true,
+      manufacturer: 'Apple',
+      sdkInt: 18,
+    };
+    expect(recommendedItems(iphone)).toEqual(['timeSensitive', 'sound']);
+    expect(recommendedItems(all)).toEqual(['fullscreen', 'exact', 'battery']);
+    // Low Power Mode (batteryUnrestricted false) is not an item on iOS.
+    expect(summarize(iphone)).toEqual({ requiredMissing: 0, recommendedMissing: 1, done: 4, total: 5, ready: true });
+    expect(newlyDone(iphone, { ...iphone, timeSensitive: true })).toEqual(['timeSensitive']);
+    // Older Android builds send no platform: the Android items.
+    expect(itemDone(all, 'timeSensitive')).toBe(true);
   });
 
   it('knows battery savers by brand', () => {
