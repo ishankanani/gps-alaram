@@ -51,4 +51,4 @@ StopWake 1.0: den første version.
 • Offline stoppesteder for Tyskland, 16 lande mere at hente
 • Favoritter, seneste stop og turhistorik
 • Valgfri konto til synkronisering
-• 11 sprog
+• 19 sprog

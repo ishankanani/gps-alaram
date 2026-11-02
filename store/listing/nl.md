@@ -51,4 +51,4 @@ StopWake 1.0: de eerste versie.
 • Haltes offline voor Duitsland, nog 16 landen te downloaden
 • Favorieten, recente haltes en ritgeschiedenis
 • Optioneel account om te synchroniseren
-• 11 talen
+• 19 talen

@@ -58,6 +58,8 @@ enum NativeStrings {
     "channelAlarmDesc": "The alarm when you reach your stop",
     "channelFallback": "Tracking stopped alarm",
     "channelFallbackDesc": "Rings if your phone stops a trip before you arrive",
+    "channelFallbackVibrate": "Tracking stopped alarm (vibration only)",
+    "channelFallbackSound": "Tracking stopped alarm (sound only)",
     "channelWarning": "Trip warnings",
   ]
 
@@ -111,6 +113,8 @@ enum NativeStrings {
     "channelAlarmDesc": "المنبّه عند وصولك إلى محطتك",
     "channelFallback": "منبّه توقّف التتبّع",
     "channelFallbackDesc": "يرنّ إذا أوقف هاتفك الرحلة قبل وصولك",
+    "channelFallbackVibrate": "منبّه توقّف التتبّع (اهتزاز فقط)",
+    "channelFallbackSound": "منبّه توقّف التتبّع (صوت فقط)",
     "channelWarning": "تنبيهات الرحلة",
   ]
 
@@ -164,6 +168,8 @@ enum NativeStrings {
     "channelAlarmDesc": "Budík, když dorazíš na svou zastávku",
     "channelFallback": "Budík při zastavení sledování",
     "channelFallbackDesc": "Zazvoní, pokud telefon zastaví cestu dřív, než dorazíš",
+    "channelFallbackVibrate": "Budík při zastavení sledování (jen vibrace)",
+    "channelFallbackSound": "Budík při zastavení sledování (jen zvuk)",
     "channelWarning": "Upozornění k cestě",
   ]
 
@@ -217,6 +223,8 @@ enum NativeStrings {
     "channelAlarmDesc": "Alarmen der ringer ved dit stop",
     "channelFallback": "Alarm ved stoppet sporing",
     "channelFallbackDesc": "Ringer hvis din telefon stopper en tur før du er fremme",
+    "channelFallbackVibrate": "Alarm ved stoppet sporing (kun vibration)",
+    "channelFallbackSound": "Alarm ved stoppet sporing (kun lyd)",
     "channelWarning": "Advarsler under turen",
   ]
 
@@ -270,6 +278,8 @@ enum NativeStrings {
     "channelAlarmDesc": "Der Alarm, wenn du deine Haltestelle erreichst",
     "channelFallback": "Alarm bei gestoppter Verfolgung",
     "channelFallbackDesc": "Klingelt, wenn dein Handy eine Fahrt vor der Ankunft beendet",
+    "channelFallbackVibrate": "Alarm bei gestoppter Verfolgung (nur Vibration)",
+    "channelFallbackSound": "Alarm bei gestoppter Verfolgung (nur Ton)",
     "channelWarning": "Fahrtwarnungen",
   ]
 
@@ -323,6 +333,8 @@ enum NativeStrings {
     "channelAlarmDesc": "La alarma al llegar a tu parada",
     "channelFallback": "Alarma de seguimiento detenido",
     "channelFallbackDesc": "Suena si tu teléfono detiene un viaje antes de llegar",
+    "channelFallbackVibrate": "Alarma de seguimiento detenido (solo vibración)",
+    "channelFallbackSound": "Alarma de seguimiento detenido (solo sonido)",
     "channelWarning": "Avisos del viaje",
   ]
 
@@ -376,6 +388,8 @@ enum NativeStrings {
     "channelAlarmDesc": "Herätys, kun saavut pysäkillesi",
     "channelFallback": "Herätys seurannan pysähtyessä",
     "channelFallbackDesc": "Soi, jos puhelin keskeyttää matkan ennen kuin olet perillä",
+    "channelFallbackVibrate": "Herätys seurannan pysähtyessä (vain värinä)",
+    "channelFallbackSound": "Herätys seurannan pysähtyessä (vain ääni)",
     "channelWarning": "Matkavaroitukset",
   ]
 
@@ -429,6 +443,8 @@ enum NativeStrings {
     "channelAlarmDesc": "L’alarme quand vous atteignez votre arrêt",
     "channelFallback": "Alarme de suivi interrompu",
     "channelFallbackDesc": "Sonne si votre téléphone arrête un trajet avant votre arrivée",
+    "channelFallbackVibrate": "Alarme de suivi interrompu (vibration seule)",
+    "channelFallbackSound": "Alarme de suivi interrompu (son seul)",
     "channelWarning": "Alertes de trajet",
   ]
 
@@ -482,6 +498,8 @@ enum NativeStrings {
     "channelAlarmDesc": "स्टॉप पर पहुँचने का अलार्म",
     "channelFallback": "ट्रैकिंग रुकने का अलार्म",
     "channelFallbackDesc": "फ़ोन यात्रा पहले ही रोक दे तो बजता है",
+    "channelFallbackVibrate": "ट्रैकिंग रुकने का अलार्म (सिर्फ़ वाइब्रेशन)",
+    "channelFallbackSound": "ट्रैकिंग रुकने का अलार्म (सिर्फ़ आवाज़)",
     "channelWarning": "यात्रा चेतावनियाँ",
   ]
 
@@ -535,6 +553,8 @@ enum NativeStrings {
     "channelAlarmDesc": "La sveglia quando raggiungi la tua fermata",
     "channelFallback": "Sveglia per monitoraggio interrotto",
     "channelFallbackDesc": "Suona se il telefono interrompe un viaggio prima dell’arrivo",
+    "channelFallbackVibrate": "Sveglia per monitoraggio interrotto (solo vibrazione)",
+    "channelFallbackSound": "Sveglia per monitoraggio interrotto (solo suono)",
     "channelWarning": "Avvisi di viaggio",
   ]
 
@@ -588,6 +608,8 @@ enum NativeStrings {
     "channelAlarmDesc": "目的地に着いたときに鳴るアラーム",
     "channelFallback": "追跡停止アラーム",
     "channelFallbackDesc": "到着前にスマホが追跡を停止した場合に鳴ります",
+    "channelFallbackVibrate": "追跡停止アラーム（振動のみ）",
+    "channelFallbackSound": "追跡停止アラーム（音のみ）",
     "channelWarning": "移動中の警告",
   ]
 
@@ -641,6 +663,8 @@ enum NativeStrings {
     "channelAlarmDesc": "정류장에 도착했을 때 울리는 알람",
     "channelFallback": "추적 중단 알람",
     "channelFallbackDesc": "도착하기 전에 휴대전화가 이동을 중단하면 울립니다",
+    "channelFallbackVibrate": "추적 중단 알람 (진동만)",
+    "channelFallbackSound": "추적 중단 알람 (소리만)",
     "channelWarning": "이동 경고",
   ]
 
@@ -694,6 +718,8 @@ enum NativeStrings {
     "channelAlarmDesc": "Alarmen når du kommer frem til stoppet ditt",
     "channelFallback": "Alarm når sporingen stopper",
     "channelFallbackDesc": "Ringer hvis telefonen stopper en tur før du er fremme",
+    "channelFallbackVibrate": "Alarm når sporingen stopper (bare vibrasjon)",
+    "channelFallbackSound": "Alarm når sporingen stopper (bare lyd)",
     "channelWarning": "Turvarsler",
   ]
 
@@ -747,6 +773,8 @@ enum NativeStrings {
     "channelAlarmDesc": "Het alarm als je je halte bereikt",
     "channelFallback": "Alarm als volgen stopt",
     "channelFallbackDesc": "Gaat af als je telefoon een rit stopt voordat je aankomt",
+    "channelFallbackVibrate": "Alarm als volgen stopt (alleen trillen)",
+    "channelFallbackSound": "Alarm als volgen stopt (alleen geluid)",
     "channelWarning": "Ritwaarschuwingen",
   ]
 
@@ -800,6 +828,8 @@ enum NativeStrings {
     "channelAlarmDesc": "Alarm po dotarciu do przystanku",
     "channelFallback": "Alarm przerwanego śledzenia",
     "channelFallbackDesc": "Dzwoni, jeśli telefon przerwie podróż przed Twoim przyjazdem",
+    "channelFallbackVibrate": "Alarm przerwanego śledzenia (tylko wibracja)",
+    "channelFallbackSound": "Alarm przerwanego śledzenia (tylko dźwięk)",
     "channelWarning": "Ostrzeżenia o podróży",
   ]
 
@@ -853,6 +883,8 @@ enum NativeStrings {
     "channelAlarmDesc": "O alarme ao chegar na sua parada",
     "channelFallback": "Alarme de rastreamento interrompido",
     "channelFallbackDesc": "Toca se o telefone interromper uma viagem antes de você chegar",
+    "channelFallbackVibrate": "Alarme de rastreamento interrompido (somente vibração)",
+    "channelFallbackSound": "Alarme de rastreamento interrompido (somente som)",
     "channelWarning": "Avisos da viagem",
   ]
 
@@ -906,6 +938,8 @@ enum NativeStrings {
     "channelAlarmDesc": "Larmet när du når din hållplats",
     "channelFallback": "Larm vid stoppad spårning",
     "channelFallbackDesc": "Ringer om telefonen stoppar en resa innan du är framme",
+    "channelFallbackVibrate": "Larm vid stoppad spårning (endast vibration)",
+    "channelFallbackSound": "Larm vid stoppad spårning (endast ljud)",
     "channelWarning": "Resevarningar",
   ]
 
@@ -959,6 +993,8 @@ enum NativeStrings {
     "channelAlarmDesc": "Durağına vardığında çalan alarm",
     "channelFallback": "Takip durdu alarmı",
     "channelFallbackDesc": "Telefon, sen varmadan yolculuğu durdurursa çalar",
+    "channelFallbackVibrate": "Takip durdu alarmı (yalnızca titreşim)",
+    "channelFallbackSound": "Takip durdu alarmı (yalnızca ses)",
     "channelWarning": "Yolculuk uyarıları",
   ]
 
@@ -1012,6 +1048,8 @@ enum NativeStrings {
     "channelAlarmDesc": "到达目的站点时响起的闹钟",
     "channelFallback": "追踪中断闹钟",
     "channelFallbackDesc": "如果手机在你到达前中止了行程，将会响铃",
+    "channelFallbackVibrate": "追踪中断闹钟（仅震动）",
+    "channelFallbackSound": "追踪中断闹钟（仅声音）",
     "channelWarning": "行程提醒",
   ]
 }

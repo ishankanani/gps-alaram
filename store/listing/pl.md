@@ -8,7 +8,7 @@ StopWake: budzik na przystanek
 
 ## Krótki opis (maks. 80)
 
-Drzemka w autobusie lub pociągu. StopWake obudzi cię przed przystankiem, offline.
+Drzemka w autobusie lub pociągu. StopWake budzi cię przed przystankiem, offline.
 
 ## Pełny opis (maks. 4000)
 

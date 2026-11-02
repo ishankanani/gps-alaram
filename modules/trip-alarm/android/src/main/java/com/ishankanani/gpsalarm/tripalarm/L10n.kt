@@ -94,6 +94,8 @@ object L10n {
     "channelAlarmDesc" to "The alarm when you reach your stop",
     "channelFallback" to "Tracking stopped alarm",
     "channelFallbackDesc" to "Rings if your phone stops a trip before you arrive",
+    "channelFallbackVibrate" to "Tracking stopped alarm (vibration only)",
+    "channelFallbackSound" to "Tracking stopped alarm (sound only)",
     "channelWarning" to "Trip warnings",
     "channelWarningDesc" to "GPS signal lost or location turned off during a trip",
   )
@@ -148,6 +150,8 @@ object L10n {
     "channelAlarmDesc" to "Der Alarm, wenn du deine Haltestelle erreichst",
     "channelFallback" to "Alarm bei gestoppter Verfolgung",
     "channelFallbackDesc" to "Klingelt, wenn dein Handy eine Fahrt vor der Ankunft beendet",
+    "channelFallbackVibrate" to "Alarm bei gestoppter Verfolgung (nur Vibration)",
+    "channelFallbackSound" to "Alarm bei gestoppter Verfolgung (nur Ton)",
     "channelWarning" to "Fahrtwarnungen",
     "channelWarningDesc" to "GPS-Signal verloren oder Standort während der Fahrt ausgeschaltet",
   )
@@ -202,6 +206,8 @@ object L10n {
     "channelAlarmDesc" to "स्टॉप पर पहुँचने का अलार्म",
     "channelFallback" to "ट्रैकिंग रुकने का अलार्म",
     "channelFallbackDesc" to "फ़ोन यात्रा पहले ही रोक दे तो बजता है",
+    "channelFallbackVibrate" to "ट्रैकिंग रुकने का अलार्म (सिर्फ़ वाइब्रेशन)",
+    "channelFallbackSound" to "ट्रैकिंग रुकने का अलार्म (सिर्फ़ आवाज़)",
     "channelWarning" to "यात्रा चेतावनियाँ",
     "channelWarningDesc" to "यात्रा के दौरान GPS सिग्नल या लोकेशन बंद होने पर",
   )
@@ -256,6 +262,8 @@ object L10n {
     "channelAlarmDesc" to "L’alarme quand vous atteignez votre arrêt",
     "channelFallback" to "Alarme de suivi interrompu",
     "channelFallbackDesc" to "Sonne si votre téléphone arrête un trajet avant votre arrivée",
+    "channelFallbackVibrate" to "Alarme de suivi interrompu (vibration seule)",
+    "channelFallbackSound" to "Alarme de suivi interrompu (son seul)",
     "channelWarning" to "Alertes de trajet",
     "channelWarningDesc" to "Signal GPS perdu ou localisation désactivée pendant un trajet",
   )
@@ -310,6 +318,8 @@ object L10n {
     "channelAlarmDesc" to "Het alarm als je je halte bereikt",
     "channelFallback" to "Alarm als volgen stopt",
     "channelFallbackDesc" to "Gaat af als je telefoon een rit stopt voordat je aankomt",
+    "channelFallbackVibrate" to "Alarm als volgen stopt (alleen trillen)",
+    "channelFallbackSound" to "Alarm als volgen stopt (alleen geluid)",
     "channelWarning" to "Ritwaarschuwingen",
     "channelWarningDesc" to "GPS-signaal kwijt of locatie uitgezet tijdens een rit",
   )
@@ -364,6 +374,8 @@ object L10n {
     "channelAlarmDesc" to "La sveglia quando raggiungi la tua fermata",
     "channelFallback" to "Sveglia per monitoraggio interrotto",
     "channelFallbackDesc" to "Suona se il telefono interrompe un viaggio prima dell’arrivo",
+    "channelFallbackVibrate" to "Sveglia per monitoraggio interrotto (solo vibrazione)",
+    "channelFallbackSound" to "Sveglia per monitoraggio interrotto (solo suono)",
     "channelWarning" to "Avvisi di viaggio",
     "channelWarningDesc" to "Segnale GPS perso o posizione disattivata durante un viaggio",
   )
@@ -418,6 +430,8 @@ object L10n {
     "channelAlarmDesc" to "Larmet när du når din hållplats",
     "channelFallback" to "Larm vid stoppad spårning",
     "channelFallbackDesc" to "Ringer om telefonen stoppar en resa innan du är framme",
+    "channelFallbackVibrate" to "Larm vid stoppad spårning (endast vibration)",
+    "channelFallbackSound" to "Larm vid stoppad spårning (endast ljud)",
     "channelWarning" to "Resevarningar",
     "channelWarningDesc" to "GPS-signalen borta eller platstjänster avstängda under en resa",
   )
@@ -472,6 +486,8 @@ object L10n {
     "channelAlarmDesc" to "Alarmen når du kommer frem til stoppet ditt",
     "channelFallback" to "Alarm når sporingen stopper",
     "channelFallbackDesc" to "Ringer hvis telefonen stopper en tur før du er fremme",
+    "channelFallbackVibrate" to "Alarm når sporingen stopper (bare vibrasjon)",
+    "channelFallbackSound" to "Alarm når sporingen stopper (bare lyd)",
     "channelWarning" to "Turvarsler",
     "channelWarningDesc" to "Mistet GPS-signal eller posisjon slått av under en tur",
   )
@@ -526,6 +542,8 @@ object L10n {
     "channelAlarmDesc" to "Alarmen der ringer ved dit stop",
     "channelFallback" to "Alarm ved stoppet sporing",
     "channelFallbackDesc" to "Ringer hvis din telefon stopper en tur før du er fremme",
+    "channelFallbackVibrate" to "Alarm ved stoppet sporing (kun vibration)",
+    "channelFallbackSound" to "Alarm ved stoppet sporing (kun lyd)",
     "channelWarning" to "Advarsler under turen",
     "channelWarningDesc" to "GPS-signal mistet eller placering slået fra under en tur",
   )
@@ -580,6 +598,8 @@ object L10n {
     "channelAlarmDesc" to "Herätys, kun saavut pysäkillesi",
     "channelFallback" to "Herätys seurannan pysähtyessä",
     "channelFallbackDesc" to "Soi, jos puhelin keskeyttää matkan ennen kuin olet perillä",
+    "channelFallbackVibrate" to "Herätys seurannan pysähtyessä (vain värinä)",
+    "channelFallbackSound" to "Herätys seurannan pysähtyessä (vain ääni)",
     "channelWarning" to "Matkavaroitukset",
     "channelWarningDesc" to "GPS-signaalin katkeaminen tai sijainnin poiskytkentä matkan aikana",
   )
@@ -634,6 +654,8 @@ object L10n {
     "channelAlarmDesc" to "目的地に着いたときに鳴るアラーム",
     "channelFallback" to "追跡停止アラーム",
     "channelFallbackDesc" to "到着前にスマホが追跡を停止した場合に鳴ります",
+    "channelFallbackVibrate" to "追跡停止アラーム（振動のみ）",
+    "channelFallbackSound" to "追跡停止アラーム（音のみ）",
     "channelWarning" to "移動中の警告",
     "channelWarningDesc" to "移動中のGPS信号の途切れや位置情報のオフ",
   )
@@ -688,6 +710,8 @@ object L10n {
     "channelAlarmDesc" to "La alarma al llegar a tu parada",
     "channelFallback" to "Alarma de seguimiento detenido",
     "channelFallbackDesc" to "Suena si tu teléfono detiene un viaje antes de llegar",
+    "channelFallbackVibrate" to "Alarma de seguimiento detenido (solo vibración)",
+    "channelFallbackSound" to "Alarma de seguimiento detenido (solo sonido)",
     "channelWarning" to "Avisos del viaje",
     "channelWarningDesc" to "Señal GPS perdida o ubicación desactivada durante un viaje",
   )
@@ -742,6 +766,8 @@ object L10n {
     "channelAlarmDesc" to "O alarme ao chegar na sua parada",
     "channelFallback" to "Alarme de rastreamento interrompido",
     "channelFallbackDesc" to "Toca se o telefone interromper uma viagem antes de você chegar",
+    "channelFallbackVibrate" to "Alarme de rastreamento interrompido (somente vibração)",
+    "channelFallbackSound" to "Alarme de rastreamento interrompido (somente som)",
     "channelWarning" to "Avisos da viagem",
     "channelWarningDesc" to "Sinal de GPS perdido ou localização desativada durante uma viagem",
   )
@@ -796,6 +822,8 @@ object L10n {
     "channelAlarmDesc" to "Alarm po dotarciu do przystanku",
     "channelFallback" to "Alarm przerwanego śledzenia",
     "channelFallbackDesc" to "Dzwoni, jeśli telefon przerwie podróż przed Twoim przyjazdem",
+    "channelFallbackVibrate" to "Alarm przerwanego śledzenia (tylko wibracja)",
+    "channelFallbackSound" to "Alarm przerwanego śledzenia (tylko dźwięk)",
     "channelWarning" to "Ostrzeżenia o podróży",
     "channelWarningDesc" to "Utrata sygnału GPS lub wyłączona lokalizacja podczas podróży",
   )
@@ -850,6 +878,8 @@ object L10n {
     "channelAlarmDesc" to "Budík, když dorazíš na svou zastávku",
     "channelFallback" to "Budík při zastavení sledování",
     "channelFallbackDesc" to "Zazvoní, pokud telefon zastaví cestu dřív, než dorazíš",
+    "channelFallbackVibrate" to "Budík při zastavení sledování (jen vibrace)",
+    "channelFallbackSound" to "Budík při zastavení sledování (jen zvuk)",
     "channelWarning" to "Upozornění k cestě",
     "channelWarningDesc" to "Ztráta signálu GPS nebo vypnutá poloha během cesty",
   )
@@ -904,6 +934,8 @@ object L10n {
     "channelAlarmDesc" to "Durağına vardığında çalan alarm",
     "channelFallback" to "Takip durdu alarmı",
     "channelFallbackDesc" to "Telefon, sen varmadan yolculuğu durdurursa çalar",
+    "channelFallbackVibrate" to "Takip durdu alarmı (yalnızca titreşim)",
+    "channelFallbackSound" to "Takip durdu alarmı (yalnızca ses)",
     "channelWarning" to "Yolculuk uyarıları",
     "channelWarningDesc" to "Yolculuk sırasında GPS sinyali kaybı veya kapalı konum",
   )
@@ -958,6 +990,8 @@ object L10n {
     "channelAlarmDesc" to "المنبّه عند وصولك إلى محطتك",
     "channelFallback" to "منبّه توقّف التتبّع",
     "channelFallbackDesc" to "يرنّ إذا أوقف هاتفك الرحلة قبل وصولك",
+    "channelFallbackVibrate" to "منبّه توقّف التتبّع (اهتزاز فقط)",
+    "channelFallbackSound" to "منبّه توقّف التتبّع (صوت فقط)",
     "channelWarning" to "تنبيهات الرحلة",
     "channelWarningDesc" to "فقدان إشارة GPS أو إيقاف الموقع أثناء الرحلة",
   )
@@ -1012,6 +1046,8 @@ object L10n {
     "channelAlarmDesc" to "到达目的站点时响起的闹钟",
     "channelFallback" to "追踪中断闹钟",
     "channelFallbackDesc" to "如果手机在你到达前中止了行程，将会响铃",
+    "channelFallbackVibrate" to "追踪中断闹钟（仅震动）",
+    "channelFallbackSound" to "追踪中断闹钟（仅声音）",
     "channelWarning" to "行程提醒",
     "channelWarningDesc" to "行程期间 GPS 信号丢失或定位被关闭",
   )
@@ -1066,6 +1102,8 @@ object L10n {
     "channelAlarmDesc" to "정류장에 도착했을 때 울리는 알람",
     "channelFallback" to "추적 중단 알람",
     "channelFallbackDesc" to "도착하기 전에 휴대전화가 이동을 중단하면 울립니다",
+    "channelFallbackVibrate" to "추적 중단 알람 (진동만)",
+    "channelFallbackSound" to "추적 중단 알람 (소리만)",
     "channelWarning" to "이동 경고",
     "channelWarningDesc" to "이동 중 GPS 신호가 끊기거나 위치가 꺼진 경우",
   )

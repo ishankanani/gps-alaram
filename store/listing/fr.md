@@ -51,4 +51,4 @@ StopWake 1.0 : première version.
 • Arrêts hors ligne pour l'Allemagne, 16 autres pays à télécharger
 • Favoris, arrêts récents et historique des trajets
 • Compte facultatif pour synchroniser
-• 11 langues
+• 19 langues

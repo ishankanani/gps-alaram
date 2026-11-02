@@ -51,4 +51,4 @@ StopWake 1.0: ensimmäinen versio.
 • Saksan pysäkit offline, 16 muuta maata ladattavissa
 • Suosikit, viimeisimmät pysäkit ja matkahistoria
 • Vapaaehtoinen tili synkronointiin
-• 11 kieltä
+• 19 kieltä

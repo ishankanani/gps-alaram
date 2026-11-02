@@ -51,4 +51,4 @@ StopWake 1.0: första versionen.
 • Offline-hållplatser för Tyskland, 16 länder till att ladda ner
 • Favoriter, senaste hållplatser och resehistorik
 • Valfritt konto för synkning
-• 11 språk
+• 19 språk

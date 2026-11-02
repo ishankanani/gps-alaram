@@ -8,7 +8,7 @@ StopWake: Alarme de parada GPS
 
 ## Descrição curta (máx. 80)
 
-Cochile no ônibus ou no trem. O StopWake acorda você antes da sua parada, offline.
+Cochile no ônibus ou no trem. O StopWake acorda você antes da parada, offline.
 
 ## Descrição completa (máx. 4000)
 

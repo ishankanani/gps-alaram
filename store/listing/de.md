@@ -49,8 +49,8 @@ DATENSPARSAM VON ANFANG AN
 • Kein Konto nötig. Ein optionales kostenloses Konto synchronisiert Favoriten und Fahrten zwischen Handys.
 • Kein Standort im Hintergrund: StopWake zeigt immer eine Benachrichtigung, wenn GPS läuft.
 
-11 SPRACHEN
-Deutsch, English, Français, Italiano, Nederlands, Dansk, Svenska, Norsk, Suomi, हिन्दी und 日本語.
+19 SPRACHEN
+Čeština, Dansk, Deutsch, English, Español, Français, Italiano, Nederlands, Norsk, Polski, Português, Suomi, Svenska, Türkçe, العربية, हिन्दी, 日本語, 한국어 und 简体中文.
 
 KOSTENLOS, MIT WERBUNG
 StopWake ist kostenlos und zeigt etwas Werbung, nie auf dem Fahrtbildschirm, beim Wecker oder während er klingelt. Lust auf eine Pause? Ein Video in den Einstellungen und du hast 24 Stunden keine Werbung.
@@ -67,7 +67,7 @@ StopWake 1.0: die erste Version.
 • Herauszoomen und jede Haltestelle sehen, die StopWake kennt
 • Favoriten, zuletzt genutzte Haltestellen und Fahrtverlauf
 • Optionales Konto zum Synchronisieren zwischen Handys
-• 11 Sprachen
+• 19 Sprachen
 
 ## App-Store-Name (max. 30)
 

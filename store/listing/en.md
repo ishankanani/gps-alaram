@@ -49,8 +49,8 @@ PRIVATE BY DESIGN
 • No account needed. An optional free account syncs your favourites and trips between phones.
 • No background location: StopWake shows a notification whenever it uses GPS.
 
-11 LANGUAGES
-English, Deutsch, Français, Italiano, Nederlands, Dansk, Svenska, Norsk, Suomi, हिन्दी and 日本語.
+19 LANGUAGES
+Čeština, Dansk, Deutsch, English, Español, Français, Italiano, Nederlands, Norsk, Polski, Português, Suomi, Svenska, Türkçe, العربية, हिन्दी, 日本語, 한국어 and 简体中文.
 
 FREE, WITH ADS
 StopWake is free and shows a few ads, never on the trip screen, the alarm or while it rings. Want a break? Watch one video in Settings for 24 hours without ads.
@@ -67,7 +67,7 @@ StopWake 1.0: the first release.
 • Zoom out to see every stop StopWake covers
 • Favourites, recent stops and trip history
 • Optional account to sync between phones
-• 11 languages
+• 19 languages
 
 ## App Store name (max 30)
 

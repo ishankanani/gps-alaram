@@ -51,4 +51,4 @@ StopWake 1.0: la prima versione.
 • Fermate offline per la Germania, altri 16 paesi da scaricare
 • Preferiti, fermate recenti e cronologia viaggi
 • Account facoltativo per sincronizzare
-• 11 lingue
+• 19 lingue
