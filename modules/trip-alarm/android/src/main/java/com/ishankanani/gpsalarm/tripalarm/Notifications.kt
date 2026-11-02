@@ -15,6 +15,9 @@ object Notifications {
   const val CHANNEL_TRIP = "trip"
   const val CHANNEL_ALARM = "alarm"
   const val CHANNEL_ALARM_FALLBACK = "alarm_fallback"
+  /** The fallback for "Vibrate only" (no sound) and "Sound only" (no vibration) trips. */
+  const val CHANNEL_ALARM_FALLBACK_VIBRATE = "alarm_fallback_vibrate"
+  const val CHANNEL_ALARM_FALLBACK_SOUND = "alarm_fallback_sound"
   const val CHANNEL_WARNING = "warning"
 
   const val ID_TRIP = 7101
@@ -60,6 +63,34 @@ object Notifications {
         lockscreenVisibility = Notification.VISIBILITY_PUBLIC
       },
     )
+    // A channel's sound and vibration are fixed once created, so each wake style has its own.
+    nm.createNotificationChannel(
+      NotificationChannel(
+        CHANNEL_ALARM_FALLBACK_VIBRATE,
+        textOr("channelFallbackVibrate", "${L10n["channelFallback"]} \uD83D\uDCF3"),
+        NotificationManager.IMPORTANCE_HIGH,
+      ).apply {
+        description = L10n["channelFallbackDesc"]
+        setSound(null, null)
+        enableVibration(true)
+        vibrationPattern = longArrayOf(0, 1_200, 250, 1_200, 250, 1_200, 250, 1_200)
+        setBypassDnd(true)
+        lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+      },
+    )
+    nm.createNotificationChannel(
+      NotificationChannel(
+        CHANNEL_ALARM_FALLBACK_SOUND,
+        textOr("channelFallbackSound", "${L10n["channelFallback"]} \uD83D\uDD14"),
+        NotificationManager.IMPORTANCE_HIGH,
+      ).apply {
+        description = L10n["channelFallbackDesc"]
+        setSound(alarmSoundUri(), alarmAudioAttributes())
+        enableVibration(false)
+        setBypassDnd(true)
+        lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+      },
+    )
     nm.createNotificationChannel(
       NotificationChannel(CHANNEL_WARNING, L10n["channelWarning"], NotificationManager.IMPORTANCE_HIGH).apply {
         description = L10n["channelWarningDesc"]
@@ -67,6 +98,12 @@ object Notifications {
       },
     )
   }
+
+  /**
+   * A native text, or [fallback] while L10n.kt has no such key yet (L10n returns the key itself
+   * for a missing one). channelFallbackVibrate / channelFallbackSound are still to be translated.
+   */
+  private fun textOr(key: String, fallback: String): String = L10n[key].takeIf { it != key } ?: fallback
 
   fun alarmSoundUri() =
     RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
@@ -125,7 +162,12 @@ object Notifications {
     ensureChannels(context)
     val (title, text) = Texts.alarm(Texts.REASON_TRACKING_STOPPED, trip, null)
     val reason = Texts.REASON_TRACKING_STOPPED
-    val b = builder(context, CHANNEL_ALARM_FALLBACK)
+    val channel = when (trip.wakeStyle) {
+      WakeStyle.VIBRATE -> CHANNEL_ALARM_FALLBACK_VIBRATE
+      WakeStyle.SOUND -> CHANNEL_ALARM_FALLBACK_SOUND
+      WakeStyle.SOUND_VIBRATION -> CHANNEL_ALARM_FALLBACK
+    }
+    val b = builder(context, channel)
       .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
       .setContentTitle(title)
       .setContentText(text)
@@ -138,8 +180,8 @@ object Notifications {
     @Suppress("DEPRECATION")
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
       b.setPriority(Notification.PRIORITY_MAX)
-        .setSound(alarmSoundUri(), alarmAudioAttributes())
-        .setVibrate(longArrayOf(0, 900, 500, 900, 500, 900))
+      if (trip.wakeStyle.sound) b.setSound(alarmSoundUri(), alarmAudioAttributes())
+      if (trip.wakeStyle.vibrate) b.setVibrate(longArrayOf(0, 900, 500, 900, 500, 900))
     }
     val n = b.build()
     n.flags = n.flags or Notification.FLAG_INSISTENT

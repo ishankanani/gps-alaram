@@ -36,6 +36,8 @@ class TripOptions(
   @Field var minutesBefore: Int? = null,
   @Field var label: String = "",
   @Field var strength: String = "normal",
+  /** soundVibration (default), vibrate or sound. */
+  @Field var wakeStyle: String? = null,
   @Field var useMiles: Boolean = false,
   /** Set all three for a demo ride: simulated movement from this point instead of GPS. */
   @Field var demoFromLatitude: Double? = null,
@@ -101,10 +103,10 @@ class TripAlarmModule : Module() {
       Notifications.ensureChannels(context)
     }
 
-    AsyncFunction("testAlarm") { strength: String ->
+    AsyncFunction("testAlarm") { strength: String, wakeStyle: String? ->
       val ctx = context
       if (!AlarmPlayer.isRinging) {
-        AlarmPlayer.start(ctx, AlarmStrength.parse(strength))
+        AlarmPlayer.start(ctx, AlarmStrength.parse(strength), WakeStyle.parse(wakeStyle))
         val intent = AlarmActivity.intent(ctx, Texts.REASON_TEST)
         (appContext.currentActivity ?: ctx).startActivity(intent)
       }
@@ -193,6 +195,7 @@ class TripAlarmModule : Module() {
       demoFromLat = options.demoFromLatitude?.takeIf { it in -90.0..90.0 },
       demoFromLon = options.demoFromLongitude?.takeIf { it in -180.0..180.0 },
       demoSpeedMps = options.demoSpeedMps?.takeIf { it in 1.0..100.0 },
+      wakeStyle = WakeStyle.parse(options.wakeStyle),
     )
     TripService.start(ctx, trip)
     return trip.toMap()

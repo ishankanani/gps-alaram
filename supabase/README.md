@@ -9,6 +9,7 @@ trip history), plans and the whole admin area run on a Supabase project. The Nod
 | `migrations/20261019000001_schema.sql` | Tables, helpers, triggers, Row Level Security |
 | `migrations/20261019000002_plans_and_me.sql` | Plan logic, the user's RPCs, promo redemption, export, account deletion, sync, public config |
 | `migrations/20261019000003_admin.sql` | Admin RPCs (each checks the admin role, validates, writes the audit log) and execute privileges |
+| `migrations/20261102000001_more_languages.sql` | Adds ar, cs, es, ko, pl, pt, tr and zh to every list of app languages (profile check, sign-up, PATCH /me, admin edit, announcements). Safe to run twice |
 | `seed.sql` | Demo data for a development project (12 demo accounts that can't sign in) |
 | `tests/` | A local check: `local-stub.sql` stands in for Supabase's `auth` schema, `rls-test.sql` tests RLS and the RPCs |
 
@@ -19,10 +20,10 @@ trip history), plans and the whole admin area run on a Supabase project. The Nod
 
 ## 2. Run the migrations
 
-Either way works; run the three files **in order**.
+Either way works; run the four files **in order**.
 
 - **SQL editor**: Dashboard → SQL Editor → New query, paste `migrations/20261019000001_schema.sql`,
-  Run; then `…02…`, then `…03…`. For a development project you may also run `seed.sql`.
+  Run; then `…02…`, `…03…` and `…20261102…`. For a development project you may also run `seed.sql`.
 - **CLI**: `npx supabase login`, `npx supabase link --project-ref <ref>`, `npx supabase db push`
   (runs every file in `migrations/`). `npx supabase db reset` against a local stack also runs `seed.sql`.
 

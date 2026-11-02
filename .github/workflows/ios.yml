@@ -1,0 +1,216 @@
+name: iOS
+
+# The iPhone app (store/APP_STORE_GUIDE.md).
+#
+# On every push and pull request:
+#   - engine:    the Swift trip engine tests (modules/trip-alarm/ios-engine-tests, `swift test`,
+#                incl. 1000 simulated trips) and a check that the generated native strings are current.
+#   - simulator: expo prebuild, pod install and an unsigned Release build for the iOS simulator
+#                (compiles every Swift file of the trip alarm module and bundles the JavaScript).
+#                The .app is kept as an artifact for `xcrun simctl install`.
+#
+# By hand (Actions > iOS > Run workflow, "signed"): a signed App Store IPA, optionally uploaded
+# to TestFlight. It needs these repository secrets (Settings > Secrets and variables > Actions):
+#   ASC_KEY_ID          App Store Connect API key id (Users and Access > Integrations > Keys), role Admin
+#                       or App Manager with access to certificates, identifiers and profiles
+#   ASC_ISSUER_ID       the issuer id shown above the keys
+#   ASC_KEY_P8_BASE64   the downloaded AuthKey_<id>.p8, base64 encoded (`base64 -i AuthKey_XXXX.p8`)
+#   APPLE_TEAM_ID       the 10-character team id (developer.apple.com > Membership)
+# Xcode signs automatically with the API key (-allowProvisioningUpdates): it creates the
+# distribution certificate and the App Store profile on first use. Optional repository variables:
+# ADMOB_IOS_APP_ID and ADMOB_IOS_* units (docs/ads.md), SUPABASE_URL / SUPABASE_ANON_KEY,
+# IOS_CRITICAL_ALERTS=1 once Apple granted the Critical Alerts entitlement; secret REVENUECAT_IOS_KEY.
+# The build number is the run number, so every upload is newer than the last.
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      signed:
+        description: Build a signed App Store IPA (needs the App Store Connect secrets)
+        type: boolean
+        default: false
+      testflight:
+        description: Upload the signed IPA to TestFlight
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  engine:
+    name: Swift engine tests
+    runs-on: macos-15
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Native strings are generated from L10n.kt
+        run: |
+          node tools/export-native-strings.mjs
+          node modules/trip-alarm/tools/gen-ios-strings.mjs --check
+          git diff --exit-code -- modules/trip-alarm/shared || { echo "::error::Run node tools/export-native-strings.mjs and commit the result"; exit 1; }
+      - name: Run the Swift tests (incl. 1000 simulated trips)
+        working-directory: modules/trip-alarm/ios-engine-tests
+        run: swift test
+
+  simulator:
+    name: Simulator build (unsigned)
+    runs-on: macos-15
+    needs: engine
+    timeout-minutes: 90
+    env:
+      EXPO_PUBLIC_SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+      EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ vars.SUPABASE_ANON_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Build the offline stops database
+        run: npm run build:stations
+      - name: Xcode
+        run: xcodebuild -version
+      - name: Generate the iOS project
+        run: npx expo prebuild --platform ios --no-install
+      - name: Install pods
+        working-directory: ios
+        run: pod install
+      - name: Build for the simulator
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -workspace ios/StopWake.xcworkspace \
+            -scheme StopWake \
+            -configuration Release \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            -quiet \
+            build
+      - name: Zip the app
+        run: ditto -c -k --keepParent build/Build/Products/Release-iphonesimulator/StopWake.app "StopWake-simulator-${GITHUB_SHA::7}.zip"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: StopWake-simulator
+          path: StopWake-simulator-*.zip
+          retention-days: 14
+
+  ipa:
+    name: Signed IPA
+    if: github.event_name == 'workflow_dispatch' && inputs.signed
+    runs-on: macos-15
+    needs: engine
+    timeout-minutes: 120
+    env:
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
+      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      # Read by app.config.js.
+      IOS_BUILD_NUMBER: ${{ github.run_number }}
+      IOS_CRITICAL_ALERTS: ${{ vars.IOS_CRITICAL_ALERTS }}
+      EXPO_PUBLIC_SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+      EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ vars.SUPABASE_ANON_KEY }}
+      # AdMob (docs/ads.md). Empty = Google's test ads: never ship those to the App Store.
+      EXPO_PUBLIC_ADMOB_IOS_APP_ID: ${{ vars.ADMOB_IOS_APP_ID }}
+      EXPO_PUBLIC_ADMOB_IOS_BANNER: ${{ vars.ADMOB_IOS_BANNER }}
+      EXPO_PUBLIC_ADMOB_IOS_INTERSTITIAL: ${{ vars.ADMOB_IOS_INTERSTITIAL }}
+      EXPO_PUBLIC_ADMOB_IOS_REWARDED: ${{ vars.ADMOB_IOS_REWARDED }}
+      EXPO_PUBLIC_ADMOB_IOS_APP_OPEN: ${{ vars.ADMOB_IOS_APP_OPEN }}
+      EXPO_PUBLIC_REVENUECAT_IOS_KEY: ${{ secrets.REVENUECAT_IOS_KEY }}
+    steps:
+      - name: Check the signing secrets
+        run: |
+          for name in ASC_KEY_ID ASC_ISSUER_ID ASC_KEY_P8_BASE64 APPLE_TEAM_ID; do
+            if [ -z "${!name}" ]; then
+              echo "::error::The repository secret $name is missing (see store/APP_STORE_GUIDE.md)"
+              exit 1
+            fi
+          done
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Build the offline stops database
+        run: npm run build:stations
+      - name: Use the real AdMob app id when it is set
+        # The ad library's iOS build script also reads its app id from the top level of app.json.
+        run: |
+          if [ -n "$EXPO_PUBLIC_ADMOB_IOS_APP_ID" ]; then
+            node -e 'const f="app.json",j=require("./"+f);j["react-native-google-mobile-ads"].ios_app_id=process.env.EXPO_PUBLIC_ADMOB_IOS_APP_ID;require("fs").writeFileSync(f,JSON.stringify(j,null,2)+"\n")'
+          else
+            echo "::warning::ADMOB_IOS_APP_ID is not set: this build shows Google's test ads"
+          fi
+      - name: Generate the iOS project
+        run: npx expo prebuild --platform ios --no-install
+      - name: Install pods
+        working-directory: ios
+        run: pod install
+      - name: App Store Connect API key
+        run: |
+          mkdir -p ~/.appstoreconnect/private_keys
+          echo "$ASC_KEY_P8_BASE64" | base64 --decode > ~/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID}.p8
+          echo "ASC_KEY_PATH=$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID}.p8" >> "$GITHUB_ENV"
+      - name: Archive
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -workspace ios/StopWake.xcworkspace \
+            -scheme StopWake \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -archivePath "$RUNNER_TEMP/StopWake.xcarchive" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$ASC_KEY_PATH" \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
+            DEVELOPMENT_TEAM="$APPLE_TEAM_ID" \
+            CODE_SIGN_STYLE=Automatic \
+            -quiet \
+            archive
+      - name: Export the IPA
+        run: |
+          cat > "$RUNNER_TEMP/ExportOptions.plist" <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>destination</key><string>export</string>
+            <key>teamID</key><string>${APPLE_TEAM_ID}</string>
+            <key>signingStyle</key><string>automatic</string>
+            <key>uploadSymbols</key><true/>
+          </dict>
+          </plist>
+          EOF
+          xcodebuild -exportArchive \
+            -archivePath "$RUNNER_TEMP/StopWake.xcarchive" \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" \
+            -exportPath "$RUNNER_TEMP/export" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$ASC_KEY_PATH" \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID"
+          cp "$RUNNER_TEMP/export/StopWake.ipa" "StopWake-${GITHUB_RUN_NUMBER}.ipa"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: StopWake-ipa
+          path: StopWake-*.ipa
+          retention-days: 30
+      - name: Upload to TestFlight
+        if: inputs.testflight
+        # altool finds the key in ~/.appstoreconnect/private_keys by its id.
+        run: xcrun altool --upload-app --type ios --file "StopWake-${GITHUB_RUN_NUMBER}.ipa" --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER_ID"

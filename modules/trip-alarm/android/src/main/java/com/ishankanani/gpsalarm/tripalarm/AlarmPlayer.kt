@@ -1,5 +1,6 @@
 package com.ishankanani.gpsalarm.tripalarm
 
+import android.annotation.TargetApi
 import android.content.Context
 import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
@@ -25,13 +26,17 @@ import kotlin.math.min
 /**
  * Plays the alarm on the alarm stream (so it rings in silent and vibrate mode), raises the alarm
  * volume to the chosen strength, ramps the player volume up, vibrates with alarm attributes and,
- * for heavy sleepers, blinks the flashlight. One alarm at a time, shared by trips and the test
- * button. Call from the main thread.
+ * for heavy sleepers, blinks the flashlight. The wake style leaves out the sound ("Vibrate only":
+ * a stronger, near-continuous vibration instead) or the vibration ("Sound only"). One alarm at a
+ * time, shared by trips and the test button. Call from the main thread.
  */
 object AlarmPlayer {
   private const val TAG = "AlarmPlayer"
   private const val AUTO_SILENCE_MS = 10 * 60_000L
   private val VIBRATION = longArrayOf(0, 900, 500)
+  /** Vibrate only: long full-strength pulses with short gaps, repeated. */
+  private val VIBRATION_STRONG = longArrayOf(0, 1_200, 250, 1_200, 250, 1_200, 700)
+  private val VIBRATION_STRONG_AMPLITUDES = intArrayOf(0, 255, 0, 255, 0, 255, 0)
 
   private val handler = Handler(Looper.getMainLooper())
   private var player: MediaPlayer? = null
@@ -49,7 +54,12 @@ object AlarmPlayer {
   var isRinging = false
     private set
 
-  fun start(context: Context, strength: AlarmStrength, onAutoSilence: (() -> Unit)? = null) {
+  fun start(
+    context: Context,
+    strength: AlarmStrength,
+    style: WakeStyle = WakeStyle.SOUND_VIBRATION,
+    onAutoSilence: (() -> Unit)? = null,
+  ) {
     if (isRinging) return
     isRinging = true
     startedAt = SystemClock.elapsedRealtime()
@@ -58,10 +68,12 @@ object AlarmPlayer {
     appContext = app
 
     acquireWakeLock(app)
-    raiseAlarmVolume(app, strength)
-    requestAudioFocus(app)
-    if (!startPlayer(app, strength)) startTone()
-    startVibration(app)
+    if (style.sound) {
+      raiseAlarmVolume(app, strength)
+      requestAudioFocus(app)
+      if (!startPlayer(app, strength)) startTone()
+    }
+    if (style.vibrate) startVibration(app, strong = !style.sound)
     if (strength.flash) startFlash(app)
     handler.postDelayed(autoSilence, AUTO_SILENCE_MS)
   }
@@ -230,7 +242,7 @@ object AlarmPlayer {
   }
 
   @Suppress("DEPRECATION")
-  private fun startVibration(context: Context) {
+  private fun startVibration(context: Context, strong: Boolean) {
     val v = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
       context.getSystemService(VibratorManager::class.java)?.defaultVibrator
     } else {
@@ -239,18 +251,25 @@ object AlarmPlayer {
     } ?: return
     if (!v.hasVibrator()) return
     vibrator = v
+    val timings = if (strong) VIBRATION_STRONG else VIBRATION
     when {
       Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU ->
-        v.vibrate(
-          VibrationEffect.createWaveform(VIBRATION, 0),
-          VibrationAttributes.createForUsage(VibrationAttributes.USAGE_ALARM),
-        )
+        v.vibrate(waveform(v, timings, strong), VibrationAttributes.createForUsage(VibrationAttributes.USAGE_ALARM))
       Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ->
-        v.vibrate(VibrationEffect.createWaveform(VIBRATION, 0), alarmAttributes())
+        v.vibrate(waveform(v, timings, strong), alarmAttributes())
       else ->
-        v.vibrate(VIBRATION, 0, alarmAttributes())
+        v.vibrate(timings, 0, alarmAttributes())
     }
   }
+
+  /** Full strength for vibrate only where the motor can vary it, else the default strength. */
+  @TargetApi(Build.VERSION_CODES.O)
+  private fun waveform(v: Vibrator, timings: LongArray, strong: Boolean): VibrationEffect =
+    if (strong && v.hasAmplitudeControl()) {
+      VibrationEffect.createWaveform(timings, VIBRATION_STRONG_AMPLITUDES, 0)
+    } else {
+      VibrationEffect.createWaveform(timings, 0)
+    }
 
   private fun startFlash(context: Context) {
     val cameras = context.getSystemService(CameraManager::class.java) ?: return

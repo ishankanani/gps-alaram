@@ -23,6 +23,21 @@ enum class AlarmStrength(
   }
 }
 
+/**
+ * How the alarm wakes you: sound and vibration (the default, and what every trip saved before this
+ * option does), a silent strong repeating vibration, or sound without vibration.
+ */
+enum class WakeStyle(val sound: Boolean, val vibrate: Boolean, val jsName: String) {
+  SOUND_VIBRATION(sound = true, vibrate = true, jsName = "soundVibration"),
+  VIBRATE(sound = false, vibrate = true, jsName = "vibrate"),
+  SOUND(sound = true, vibrate = false, jsName = "sound");
+
+  companion object {
+    fun parse(value: String?): WakeStyle =
+      entries.firstOrNull { it.jsName == value || it.name.equals(value, ignoreCase = true) } ?: SOUND_VIBRATION
+  }
+}
+
 enum class TripState { TRACKING, RINGING, SNOOZED }
 
 /** Everything needed to run (or resume) a trip. Survives process death via [TripStore]. */
@@ -41,6 +56,7 @@ data class ActiveTrip(
   val demoFromLat: Double? = null,
   val demoFromLon: Double? = null,
   val demoSpeedMps: Double? = null,
+  val wakeStyle: WakeStyle = WakeStyle.SOUND_VIBRATION,
 ) {
   val config: TripConfig get() = TripConfig(latitude, longitude, radiusM, mode, minutesBefore)
   val isDemo: Boolean get() = demoSpeedMps != null && demoFromLat != null && demoFromLon != null
@@ -59,6 +75,7 @@ data class ActiveTrip(
     .put("demoFromLat", demoFromLat ?: JSONObject.NULL)
     .put("demoFromLon", demoFromLon ?: JSONObject.NULL)
     .put("demoSpeedMps", demoSpeedMps ?: JSONObject.NULL)
+    .put("wakeStyle", wakeStyle.jsName)
 
   fun toMap(): Map<String, Any?> = mapOf(
     "id" to id,
@@ -69,6 +86,7 @@ data class ActiveTrip(
     "mode" to mode.name.lowercase(),
     "minutesBefore" to minutesBefore,
     "strength" to strength.name.lowercase(),
+    "wakeStyle" to wakeStyle.jsName,
     "useMiles" to useMiles,
     "startedAt" to startedAtWallMs.toDouble(),
     "demo" to isDemo,
@@ -89,6 +107,8 @@ data class ActiveTrip(
       demoFromLat = json.optDoubleOrNull("demoFromLat"),
       demoFromLon = json.optDoubleOrNull("demoFromLon"),
       demoSpeedMps = json.optDoubleOrNull("demoSpeedMps"),
+      // Trips saved before the option have none: the default.
+      wakeStyle = WakeStyle.parse(if (json.isNull("wakeStyle")) null else json.optString("wakeStyle")),
     )
 
     private fun JSONObject.optDoubleOrNull(key: String): Double? = if (isNull(key)) null else optDouble(key)

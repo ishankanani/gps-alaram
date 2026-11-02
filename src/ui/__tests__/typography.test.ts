@@ -27,10 +27,21 @@ describe('typography', () => {
     expect(textStyle('labelM', { os: 'android', weight: 'bold' }).fontFamily).toBe('Inter_700Bold');
   });
 
+  it('gives Korean, Chinese and Arabic more line height and no tracking (Arabic letters must stay joined)', () => {
+    expect(textStyle('titleL', { os: 'android', lang: 'ko' })).toMatchObject({ lineHeight: 37, letterSpacing: 0 });
+    expect(textStyle('titleL', { os: 'android', lang: 'zh' })).toMatchObject({ lineHeight: 37, letterSpacing: 0 });
+    expect(textStyle('titleL', { os: 'android', lang: 'ar' })).toMatchObject({ lineHeight: 38, letterSpacing: 0 });
+    expect(textStyle('titleL', { os: 'android', lang: 'tr' }).letterSpacing).not.toBe(0);
+  });
+
   it('writes PlanBadge in capitals only in Latin scripts, and makes initials', () => {
     expect(usesLatinCase('de')).toBe(true);
     expect(usesLatinCase('hi')).toBe(false);
     expect(usesLatinCase('ja')).toBe(false);
+    for (const lang of ['ko', 'zh', 'ar']) expect(usesLatinCase(lang), lang).toBe(false);
+    // The uppercase transform turns Turkish "i" into "I", not "İ".
+    expect(usesLatinCase('tr')).toBe(false);
+    for (const lang of ['es', 'pt', 'pl', 'cs']) expect(usesLatinCase(lang), lang).toBe(true);
     expect(initialsOf('Anna Keller')).toBe('AK');
     expect(initialsOf(null, 'anna.keller@example.com')).toBe('AK');
     expect(initialsOf('', '')).toBe('');
@@ -82,6 +93,9 @@ describe('DateField parts', () => {
   it('orders the parts by language and accepts only real dates', () => {
     expect(datePartOrder('de')).toEqual(['day', 'month', 'year']);
     expect(datePartOrder('ja')).toEqual(['year', 'month', 'day']);
+    expect(datePartOrder('ko')).toEqual(['year', 'month', 'day']);
+    expect(datePartOrder('zh')).toEqual(['year', 'month', 'day']);
+    expect(datePartOrder('ar')).toEqual(['day', 'month', 'year']);
     expect(dateFromParts('31', '12', '2026')?.getDate()).toBe(31);
     expect(dateFromParts('31', '2', '2026')).toBeNull();
     expect(dateFromParts('1', '1', '26')).toBeNull();

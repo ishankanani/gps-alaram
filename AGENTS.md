@@ -26,9 +26,13 @@ Run lint and typecheck before declaring any task done.
 ## This project
 
 - StopWake: a GPS alarm that wakes you before your stop. Android first; see README.md.
-- Anything that decides when to ring lives in native Kotlin (`modules/trip-alarm`), not in JS.
-  The trip engine (`android/.../engine`) is pure Kotlin with no Android imports; keep it that way
-  and run `npm run test:engine` after touching it.
+- Anything that decides when to ring lives in native code (`modules/trip-alarm`), not in JS.
+  The trip engine exists twice with the same rules: `android/.../engine` (pure Kotlin, no Android
+  imports) and `ios/Engine` (pure Swift, Foundation only; `ios/Support` holds the other
+  Foundation-only iOS helpers). Change both together and run `npm run test:engine` and
+  `npm run test:engine:ios` (`swift test`; it runs on Linux too). The iOS module's notification
+  texts are generated from `L10n.kt`: `node tools/export-native-strings.mjs && node
+  modules/trip-alarm/tools/gen-ios-strings.mjs`.
 - Navigation is React Navigation 7 (no Expo Router): routes and params in `src/navigation/types.ts`,
   tabs Map / Saved / Activity / Account, the admin group only for admins. App-wide state (saved
   data, the trip lifecycle with the native module, language, setup, session role) lives in the

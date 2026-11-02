@@ -1,0 +1,8 @@
+{
+  "ios": {
+    "NSLocationWhenInUseUsageDescription": "يستخدم StopWake موقعك أثناء سير رحلة بدأتها، ليوقظك قبل محطتك.",
+    "NSLocationAlwaysAndWhenInUseUsageDescription": "يحتاج StopWake إلى موقعك فقط أثناء سير رحلة بدأتها. مع خيار «دائمًا» يمكنه استئناف الرحلة إذا أغلق iOS التطبيق في الطريق.",
+    "NSLocationAlwaysUsageDescription": "يحتاج StopWake إلى موقعك فقط أثناء سير رحلة بدأتها. مع خيار «دائمًا» يمكنه استئناف الرحلة إذا أغلق iOS التطبيق في الطريق.",
+    "NSUserTrackingUsageDescription": "اختيارك يحدد ما إذا كان يجوز تخصيص الإعلانات. تُبقي الإعلانات StopWake مجانيًا، ويعمل منبّه الرحلة بالطريقة نفسها في الحالتين."
+  }
+}

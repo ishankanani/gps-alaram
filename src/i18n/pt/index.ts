@@ -2,6 +2,7 @@ import type { Dictionary } from '../en';
 import { account } from './account';
 import { activity } from './activity';
 import { ads } from './ads';
+import { alarm } from './alarm';
 import { core } from './core';
 import { errors } from './errors';
 import { map } from './map';
@@ -29,4 +30,5 @@ export const pt: Dictionary = {
   ...settings,
   ...onboarding,
   ...ads,
+  ...alarm,
 };

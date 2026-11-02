@@ -7,7 +7,7 @@ import { haptics, ListItem, Screen, Section } from '../../ui';
 
 /**
  * Language (ui-direction-a 4.3 Settings; a modal from onboarding, a card from Settings): follow the
- * phone, or one of the 11 languages by its own name. A choice applies at once (the whole app
+ * phone, or one of the 19 languages by its own name. A choice applies at once (the whole app
  * re-renders in it, the alarm screen too) and closes the list.
  */
 export function LanguageScreen({ navigation, route }: RootScreenProps<'Language'>) {

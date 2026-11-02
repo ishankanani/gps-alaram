@@ -20,12 +20,12 @@ before launch is still **20 real trips with zero missed stops**.
 | --- | --- |
 | Map of Germany with every stop (about 272,000), coloured by type and named on the map | Commute schedules, multi-stop trips, sharing your arrival, watch (next for Pro) |
 | 16 more countries as in-app downloads, built monthly from OpenStreetMap | Hard-to-dismiss challenges (type the stop name, shake) |
-| Tap a stop, then **Start alarm**: two taps | iOS (AlarmKit), needed for wave 4 |
+| Tap a stop, then **Start alarm**: two taps | iPhone: built, not yet on the App Store ([guide](store/APP_STORE_GUIDE.md)); Live Activity and Critical Alerts next |
 | Offline stop search across all installed countries: *Muenchen*, *München*, *Munchen*, *Hbf*, *Str.* | Own map and geocoder servers (uses the public OpenFreeMap and Photon) |
 | Address search worldwide, long-press anywhere to drop a pin | Play Store signing key, Play Console products and the RevenueCat key |
 | Wake by distance (100 m – 2 km) or time (1–15 min before) | Ads for free users (planned about three months after launch) |
 | Trains and S-Bahn default to minutes, with a warning when 100–200 m is too short | |
-| 11 languages: Dansk, Deutsch, English, Français, Italiano, Nederlands, Norsk, Suomi, Svenska, हिन्दी, 日本語 | |
+| 19 languages: Čeština, Dansk, Deutsch, English, Español, Français, Italiano, Nederlands, Norsk, Polski, Português, Suomi, Svenska, Türkçe, العربية (right to left), हिन्दी, 日本語, 한국어, 简体中文 | |
 | Live trip map with your trail and heading; an estimated position (≈) when GPS is lost underground | |
 | Demo ride: a simulated trip to any stop, to see the map move and hear the alarm | |
 | Offline map download (25 km around you) and a 256 MB map cache | |
@@ -57,7 +57,7 @@ Until the workflow has run on the current UI, `docs/screenshots` may still hold 
 ## Google Play
 
 Release builds (signed AAB + APK, GitHub pre-release) come from `.github/workflows/release.yml`; the
-store graphics, listing texts in 11 languages, Play Console answers and a step-by-step guide are in
+store graphics, listing texts in 19 languages, Play Console answers and a step-by-step guide are in
 [`store/`](store/PLAY_CONSOLE_GUIDE.md). The privacy policy, terms and account deletion pages in `site/`
 are published by `.github/workflows/pages.yml` to https://ishankanani.github.io/gps-alaram/.
 
@@ -78,10 +78,10 @@ are published by `.github/workflows/pages.yml` to https://ishankanani.github.io/
  Map (MapLibre, OpenFreeMap)              TripService  (foreground service, type "location")
  Stops DBs (SQLite, offline) ─ startTrip ▶  │  GPS + network fixes (LocationManager)
  Search, sheet, live trip    ◀─ events ──   ▼
- 11 languages, Pro (RevenueCat)           TripEngine  (pure Kotlin, unit tested)
+ 19 languages, Pro (RevenueCat)           TripEngine  (pure Kotlin, unit tested)
                                             │  trigger rules · adaptive rate · watchdog
                                             ▼
-                                          AlarmPlayer + AlarmActivity  (texts in 11 languages)
+                                          AlarmPlayer + AlarmActivity  (texts in 19 languages)
                                             alarm stream, escalating, over the lock screen
 ```
 
@@ -194,7 +194,9 @@ npm install
 npm run build:stations # generate the offline stops database (about 5 s)
 npm run check          # typecheck, lint, JS tests (the search tests use the generated database)
 npm run test:engine    # trip engine tests on the JVM, including 1000 simulated trips
+npm run test:engine:ios # the Swift port of the engine, same scenarios (`swift test`, macOS or Linux)
 npx expo run:android   # build and run on a connected phone (needs the Android SDK)
+npx expo run:ios       # the same on an iPhone or the simulator (needs a Mac with Xcode)
 ```
 
 **On an emulator.** The **Screenshots** workflow (Actions tab, *Run workflow*) builds the app,
@@ -219,7 +221,7 @@ src/screens/                 Onboarding, Home (map, sheet, search), Setup, Track
 src/map/                     home map, trip map, GeoJSON helpers
 src/lib/stations/            stops databases: spelling rules, search, country catalog and packs
 src/lib/                     address search, wake options, Pro, formatting, local storage
-src/i18n/                    the 11 languages
+src/i18n/                    the 19 languages
 src/ui/                      theme, colours, shared components
 tools/build-stations.ts      builds assets/stations/germany-stops.db
 tools/build-coverage.ts      builds the coverage dots of the zoomed-out map and the store numbers
@@ -229,6 +231,10 @@ modules/trip-alarm/
   android/…/tripalarm/       TripService, AlarmPlayer, AlarmActivity, receivers, L10n, JS bridge
   android/…/engine/          TripEngine, SpeedEstimator, Geo (no Android imports)
   engine-tests/              JVM test project for the engine
+  ios/                       TripController (CoreLocation), TripNotifications (the alarm), JS bridge
+  ios/Engine, ios/Support    the engine in Swift and Foundation-only helpers (texts, sounds, gunzip)
+  ios-engine-tests/          Swift package that tests them (`swift test`)
+  shared/native-strings.json L10n.kt exported for iOS; tools/gen-ios-strings.mjs turns it into Swift
   src/                       typed JS wrapper
 ```
 

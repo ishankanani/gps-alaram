@@ -1,0 +1,8 @@
+{
+  "ios": {
+    "NSLocationWhenInUseUsageDescription": "StopWake nutzt deinen Standort, während eine von dir gestartete Fahrt läuft, um dich vor deiner Haltestelle zu wecken.",
+    "NSLocationAlwaysAndWhenInUseUsageDescription": "StopWake braucht deinen Standort nur während einer von dir gestarteten Fahrt. Mit „Immer“ kann die App eine Fahrt fortsetzen, wenn iOS sie unterwegs schließt.",
+    "NSLocationAlwaysUsageDescription": "StopWake braucht deinen Standort nur während einer von dir gestarteten Fahrt. Mit „Immer“ kann die App eine Fahrt fortsetzen, wenn iOS sie unterwegs schließt.",
+    "NSUserTrackingUsageDescription": "Deine Wahl entscheidet, ob Werbung personalisiert werden darf. Werbung hält StopWake kostenlos; der Fahrtalarm funktioniert in jedem Fall gleich."
+  }
+}

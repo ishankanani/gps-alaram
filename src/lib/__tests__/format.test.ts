@@ -42,4 +42,15 @@ describe('format', () => {
     expect(formatBytes(4_230_000, 'sv')).toBe('4,2 MB');
     expect(formatBytes(4_230_000, 'ja')).toBe('4.2 MB');
   });
+
+  it('writes the decimal comma and thousands separator of the newer languages', () => {
+    for (const lang of ['es', 'pt', 'pl', 'cs', 'tr']) expect(formatDistance(1234, false, lang), lang).toBe('1,2 km');
+    for (const lang of ['ar', 'ko', 'zh']) expect(formatDistance(1234, false, lang), lang).toBe('1.2 km');
+    expect(formatCount(1234567, 'es')).toBe('1.234.567');
+    expect(formatCount(1234567, 'tr')).toBe('1.234.567');
+    expect(formatCount(12345, 'pl')).toBe('12\u00a0345');
+    expect(formatCount(12345, 'cs')).toBe('12\u00a0345');
+    expect(formatCount(12345, 'ar')).toBe('12,345');
+    expect(formatCount(12345, 'zh')).toBe('12,345');
+  });
 });

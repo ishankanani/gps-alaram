@@ -1,0 +1,8 @@
+{
+  "ios": {
+    "NSLocationWhenInUseUsageDescription": "StopWake 仅在你启动的行程进行期间使用你的位置，以便在到站前叫醒你。",
+    "NSLocationAlwaysAndWhenInUseUsageDescription": "StopWake 仅在你启动的行程进行期间需要你的位置。选择“始终”后，如果 iOS 在途中关闭了应用，它可以接着继续行程。",
+    "NSLocationAlwaysUsageDescription": "StopWake 仅在你启动的行程进行期间需要你的位置。选择“始终”后，如果 iOS 在途中关闭了应用，它可以接着继续行程。",
+    "NSUserTrackingUsageDescription": "你的选择决定广告是否可以个性化。广告让 StopWake 保持免费；无论如何选择，行程闹钟的工作方式都相同。"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "ios": {
+    "NSLocationWhenInUseUsageDescription": "StopWake käyttää sijaintiasi aloittamasi matkan aikana herättääkseen sinut ennen pysäkkiäsi.",
+    "NSLocationAlwaysAndWhenInUseUsageDescription": "StopWake tarvitsee sijaintiasi vain aloittamasi matkan aikana. Asetuksella ”Aina” sovellus voi jatkaa matkaa, jos iOS sulkee sen matkalla.",
+    "NSLocationAlwaysUsageDescription": "StopWake tarvitsee sijaintiasi vain aloittamasi matkan aikana. Asetuksella ”Aina” sovellus voi jatkaa matkaa, jos iOS sulkee sen matkalla.",
+    "NSUserTrackingUsageDescription": "Valintasi ratkaisee, saako mainoksia kohdentaa sinulle. Mainokset pitävät StopWaken ilmaisena; matkaherätys toimii samoin kummassakin tapauksessa."
+  }
+}

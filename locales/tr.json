@@ -1,0 +1,8 @@
+{
+  "ios": {
+    "NSLocationWhenInUseUsageDescription": "StopWake, başlattığın bir yolculuk sürerken konumunu kullanır ve seni durağından önce uyandırır.",
+    "NSLocationAlwaysAndWhenInUseUsageDescription": "StopWake konumuna yalnızca başlattığın bir yolculuk sürerken ihtiyaç duyar. “Her Zaman” seçeneğiyle iOS uygulamayı yolda kapatırsa yolculuğa kaldığı yerden devam edebilir.",
+    "NSLocationAlwaysUsageDescription": "StopWake konumuna yalnızca başlattığın bir yolculuk sürerken ihtiyaç duyar. “Her Zaman” seçeneğiyle iOS uygulamayı yolda kapatırsa yolculuğa kaldığı yerden devam edebilir.",
+    "NSUserTrackingUsageDescription": "Seçimin, reklamların kişiselleştirilip kişiselleştirilemeyeceğine karar verir. Reklamlar StopWake’i ücretsiz tutar; yolculuk alarmı her iki durumda da aynı çalışır."
+  }
+}

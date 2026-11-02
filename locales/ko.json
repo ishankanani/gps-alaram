@@ -1,0 +1,8 @@
+{
+  "ios": {
+    "NSLocationWhenInUseUsageDescription": "StopWake는 사용자가 시작한 이동이 진행되는 동안 위치를 사용해 정류장 전에 깨워 드려요.",
+    "NSLocationAlwaysAndWhenInUseUsageDescription": "StopWake는 사용자가 시작한 이동이 진행되는 동안에만 위치가 필요해요. “항상”을 선택하면 이동 중에 iOS가 앱을 종료해도 이동을 다시 이어갈 수 있어요.",
+    "NSLocationAlwaysUsageDescription": "StopWake는 사용자가 시작한 이동이 진행되는 동안에만 위치가 필요해요. “항상”을 선택하면 이동 중에 iOS가 앱을 종료해도 이동을 다시 이어갈 수 있어요.",
+    "NSUserTrackingUsageDescription": "선택에 따라 광고를 맞춤으로 표시할지 정해져요. 광고 덕분에 StopWake를 무료로 쓸 수 있으며, 어떤 쪽을 선택해도 이동 알람은 똑같이 작동해요."
+  }
+}

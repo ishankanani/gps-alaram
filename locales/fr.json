@@ -1,0 +1,8 @@
+{
+  "ios": {
+    "NSLocationWhenInUseUsageDescription": "StopWake utilise votre position pendant un trajet que vous avez lancé, pour vous réveiller avant votre arrêt.",
+    "NSLocationAlwaysAndWhenInUseUsageDescription": "StopWake n’a besoin de votre position que pendant un trajet que vous avez lancé. Avec « Toujours », l’app peut reprendre le trajet si iOS la ferme en route.",
+    "NSLocationAlwaysUsageDescription": "StopWake n’a besoin de votre position que pendant un trajet que vous avez lancé. Avec « Toujours », l’app peut reprendre le trajet si iOS la ferme en route.",
+    "NSUserTrackingUsageDescription": "Votre choix décide si les publicités peuvent être personnalisées. Elles gardent StopWake gratuit ; l’alarme de trajet fonctionne de la même façon dans tous les cas."
+  }
+}

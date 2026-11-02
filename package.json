@@ -51,6 +51,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run src",
     "test:engine": "cd modules/trip-alarm/engine-tests && ./gradlew test --no-daemon",
+    "test:engine:ios": "cd modules/trip-alarm/ios-engine-tests && swift test",
     "check": "npm run typecheck && npm run typecheck:server && npm run lint && npm test && npm run test:server",
     "server": "node --disable-warning=ExperimentalWarning server/main.ts",
     "server:seed": "node --disable-warning=ExperimentalWarning server/cli.ts seed --demo --reset --extra-guests=160",

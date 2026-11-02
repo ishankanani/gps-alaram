@@ -1,0 +1,8 @@
+{
+  "ios": {
+    "NSLocationWhenInUseUsageDescription": "StopWake usa la tua posizione durante un viaggio che hai avviato, per svegliarti prima della tua fermata.",
+    "NSLocationAlwaysAndWhenInUseUsageDescription": "StopWake ha bisogno della tua posizione solo durante un viaggio che hai avviato. Con “Sempre” può riprendere il viaggio se iOS chiude l’app lungo il percorso.",
+    "NSLocationAlwaysUsageDescription": "StopWake ha bisogno della tua posizione solo durante un viaggio che hai avviato. Con “Sempre” può riprendere il viaggio se iOS chiude l’app lungo il percorso.",
+    "NSUserTrackingUsageDescription": "La tua scelta decide se gli annunci possono essere personalizzati. Gli annunci mantengono StopWake gratuita; la sveglia di viaggio funziona allo stesso modo in ogni caso."
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "ios": {
+    "NSLocationWhenInUseUsageDescription": "StopWakeは、あなたが開始した移動中に位置情報を使い、降りる駅や停留所の手前で起こします。",
+    "NSLocationAlwaysAndWhenInUseUsageDescription": "StopWakeが位置情報を使うのは、あなたが開始した移動中だけです。「常に」を選ぶと、途中でiOSがアプリを終了しても移動の追跡を再開できます。",
+    "NSLocationAlwaysUsageDescription": "StopWakeが位置情報を使うのは、あなたが開始した移動中だけです。「常に」を選ぶと、途中でiOSがアプリを終了しても移動の追跡を再開できます。",
+    "NSUserTrackingUsageDescription": "広告をあなたに合わせて表示してよいかを選びます。広告によってStopWakeは無料で使えます。どちらを選んでも移動アラームの動作は変わりません。"
+  }
+}

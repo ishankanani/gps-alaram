@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { translator } from '../../../i18n';
+import { DICTIONARIES, translator, type Lang } from '../../../i18n';
 import { dayLabel, dayTime, formatClock, formatPercent, formatSpan, fullDate, monthLabel, nbsp, plural, pluralForm } from '../format';
 
 // Hoisted above the imports by vitest: the history module reads files, the dictionaries the locale.
@@ -44,6 +44,30 @@ describe('activity formatting', () => {
     expect(plural(de, 'de', 'onboarding.setup.toFix', 2)).toBe('2 Punkte zu beheben');
   });
 
+  it('agrees with Intl.PluralRules for every language and whole count', () => {
+    for (const lang of Object.keys(DICTIONARIES) as Lang[]) {
+      const rules = new Intl.PluralRules(lang);
+      for (let n = 0; n <= 400; n++) expect(pluralForm(lang, n), `${lang} ${n}`).toBe(rules.select(n));
+    }
+  });
+
+  it('has the Polish, Czech and Arabic plural forms in the dictionaries', () => {
+    const pl = translator('pl');
+    expect(plural(pl, 'pl', 'settings.offlineMaps.value', 1, { size: '3 MB' })).toBe('1 obszar · 3 MB');
+    expect(plural(pl, 'pl', 'settings.offlineMaps.value', 3, { size: '3 MB' })).toBe('3 obszary · 3 MB');
+    expect(plural(pl, 'pl', 'settings.offlineMaps.value', 12, { size: '3 MB' })).toBe('12 obszarów · 3 MB');
+    expect(plural(pl, 'pl', 'settings.offlineMaps.value', 22, { size: '3 MB' })).toBe('22 obszary · 3 MB');
+    const cs = translator('cs');
+    expect(plural(cs, 'cs', 'onboarding.setup.toFix', 3)).toBe('3 věci k opravě');
+    expect(plural(cs, 'cs', 'onboarding.setup.toFix', 5)).toBe('5 věcí k opravě');
+    const ar = translator('ar');
+    expect(plural(ar, 'ar', 'onboarding.setup.toFix', 2)).toBe('2 عنصران للإصلاح');
+    expect(plural(ar, 'ar', 'onboarding.setup.toFix', 11)).toBe('11 عنصرًا للإصلاح');
+    // A language that spells out only one and other uses .other for the rest.
+    expect(plural(translator('es'), 'es', 'onboarding.setup.toFix', 3)).toBe('3 cosas por corregir');
+    expect(plural(translator('zh'), 'zh', 'onboarding.setup.toFix', 1)).toBe('1 项待修复');
+  });
+
   it('formats spans, percentages and units', () => {
     expect(formatSpan(20_000)).toBe('<1 min');
     expect(formatSpan(23 * 60_000)).toBe('23 min');
@@ -51,6 +75,10 @@ describe('activity formatting', () => {
     expect(formatSpan(120 * 60_000)).toBe('2 h');
     expect(formatPercent(91.7, 'en')).toBe('92%');
     expect(formatPercent(91.7, 'de')).toBe('92 %');
+    expect(formatPercent(91.7, 'tr')).toBe('%92');
+    expect(formatPercent(91.7, 'cs')).toBe('92\u00a0%');
+    expect(formatPercent(91.7, 'pl')).toBe('92%');
+    expect(formatPercent(91.7, 'ar')).toBe('92%');
     expect(nbsp('14.2 km · 23 min')).toBe('14.2 km · 23 min');
   });
 });

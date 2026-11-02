@@ -442,7 +442,7 @@ class TripService : Service() {
     handler.removeCallbacks(tickRunnable)
     cancelBackupAlarm()
 
-    AlarmPlayer.start(this, currentTrip.strength) { onAutoSilenced() }
+    AlarmPlayer.start(this, currentTrip.strength, currentTrip.wakeStyle) { onAutoSilenced() }
     val (title, text) = Texts.alarm(reason, currentTrip, lastStatus)
     // With the app on screen a full-screen intent only shows a heads-up (which would cover the alarm
     // screen), so the alarm screen is opened directly and the notification stays quiet.

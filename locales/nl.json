@@ -1,0 +1,8 @@
+{
+  "ios": {
+    "NSLocationWhenInUseUsageDescription": "StopWake gebruikt je locatie terwijl een rit die jij hebt gestart loopt, om je vóór je halte te wekken.",
+    "NSLocationAlwaysAndWhenInUseUsageDescription": "StopWake heeft je locatie alleen nodig tijdens een rit die jij hebt gestart. Met ‘Altijd’ kan de app een rit hervatten als iOS hem onderweg sluit.",
+    "NSLocationAlwaysUsageDescription": "StopWake heeft je locatie alleen nodig tijdens een rit die jij hebt gestart. Met ‘Altijd’ kan de app een rit hervatten als iOS hem onderweg sluit.",
+    "NSUserTrackingUsageDescription": "Jouw keuze bepaalt of advertenties gepersonaliseerd mogen worden. Advertenties houden StopWake gratis; het ritalarm werkt hoe dan ook hetzelfde."
+  }
+}

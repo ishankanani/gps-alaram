@@ -26,6 +26,9 @@ module.exports = ({ config }) => {
   if (LOCAL_HTTP.test(url)) plugins.push('./plugins/with-local-cleartext');
   // Upload-key signing and R8 for Play builds (no effect without the key's Gradle properties).
   plugins.push('./plugins/with-release-signing');
+  // iOS: Critical Alerts only once Apple granted the entitlement (store/APP_STORE_GUIDE.md).
+  const criticalAlerts = (process.env.IOS_CRITICAL_ALERTS ?? '').trim() === '1';
+  plugins.push(['./plugins/with-ios-trip-alarm', { criticalAlerts }]);
 
   // AdMob (docs/ads.md): the real app ids when the build sets them, else Google's test ids from app.json.
   const admobAndroid = (process.env.EXPO_PUBLIC_ADMOB_ANDROID_APP_ID ?? '').trim();
@@ -44,5 +47,9 @@ module.exports = ({ config }) => {
   const android =
     Number.isInteger(versionCode) && versionCode > 0 ? { ...config.android, versionCode } : config.android;
 
-  return { ...config, android, plugins: withAdmob };
+  // The App Store build number: the iOS workflow passes its run number (store/APP_STORE_GUIDE.md).
+  const buildNumber = Number.parseInt((process.env.IOS_BUILD_NUMBER ?? '').trim(), 10);
+  const ios = Number.isInteger(buildNumber) && buildNumber > 0 ? { ...config.ios, buildNumber: String(buildNumber) } : config.ios;
+
+  return { ...config, android, ios, plugins: withAdmob };
 };

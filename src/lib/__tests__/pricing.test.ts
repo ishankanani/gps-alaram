@@ -38,6 +38,12 @@ describe('prices by country', () => {
     expect(all('BR', 'en')).toBe('US$1.99 · US$9.99 · US$14.99');
   });
 
+  it('uses English style for Arabic, Korean and Chinese wherever they live', () => {
+    for (const lang of ['ar', 'ko', 'zh']) expect(all('DE', lang), lang).toBe('€1.99 · €9.99 · €14.99');
+    // Spanish, Portuguese, Polish, Czech and Turkish keep the local style.
+    expect(all('DE', 'es')).toBe(`1,99${NBSP}€ · 9,99${NBSP}€ · 14,99${NBSP}€`);
+  });
+
   it('uses English style for English, Hindi and Japanese wherever they live', () => {
     expect(all('DE', 'en')).toBe('€1.99 · €9.99 · €14.99');
     expect(all('CH', 'en')).toBe(`CHF${NBSP}2.20 · CHF${NBSP}11.00 · CHF${NBSP}16.00`);

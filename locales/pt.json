@@ -1,0 +1,8 @@
+{
+  "ios": {
+    "NSLocationWhenInUseUsageDescription": "O StopWake usa sua localização enquanto uma viagem iniciada por você está em andamento, para acordar você antes da sua parada.",
+    "NSLocationAlwaysAndWhenInUseUsageDescription": "O StopWake só precisa da sua localização enquanto uma viagem iniciada por você está em andamento. Com “Sempre”, ele pode retomar uma viagem se o iOS fechar o app no caminho.",
+    "NSLocationAlwaysUsageDescription": "O StopWake só precisa da sua localização enquanto uma viagem iniciada por você está em andamento. Com “Sempre”, ele pode retomar uma viagem se o iOS fechar o app no caminho.",
+    "NSUserTrackingUsageDescription": "Sua escolha decide se os anúncios podem ser personalizados. Os anúncios mantêm o StopWake gratuito; o alarme de viagem funciona do mesmo jeito nos dois casos."
+  }
+}

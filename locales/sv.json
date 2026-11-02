@@ -1,0 +1,8 @@
+{
+  "ios": {
+    "NSLocationWhenInUseUsageDescription": "StopWake använder din plats medan en resa som du har startat pågår, för att väcka dig före din hållplats.",
+    "NSLocationAlwaysAndWhenInUseUsageDescription": "StopWake behöver bara din plats under en resa som du har startat. Med ”Alltid” kan appen fortsätta resan om iOS stänger den på vägen.",
+    "NSLocationAlwaysUsageDescription": "StopWake behöver bara din plats under en resa som du har startat. Med ”Alltid” kan appen fortsätta resan om iOS stänger den på vägen.",
+    "NSUserTrackingUsageDescription": "Ditt val avgör om annonser får anpassas efter dig. Annonser håller StopWake gratis; reselarmet fungerar likadant i båda fallen."
+  }
+}

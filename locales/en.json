@@ -1,0 +1,8 @@
+{
+  "ios": {
+    "NSLocationWhenInUseUsageDescription": "StopWake uses your location while a trip you started is running, to wake you before your stop.",
+    "NSLocationAlwaysAndWhenInUseUsageDescription": "StopWake only needs your location while a trip you started is running. With “Always”, it can pick a trip up again if iOS closes the app on the way.",
+    "NSLocationAlwaysUsageDescription": "StopWake only needs your location while a trip you started is running. With “Always”, it can pick a trip up again if iOS closes the app on the way.",
+    "NSUserTrackingUsageDescription": "Your choice decides whether ads may be personalised. Ads keep StopWake free; the trip alarm works the same either way."
+  }
+}

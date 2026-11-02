@@ -1,0 +1,8 @@
+{
+  "ios": {
+    "NSLocationWhenInUseUsageDescription": "StopWake używa twojej lokalizacji podczas trwania rozpoczętej przez ciebie podróży, aby obudzić cię przed przystankiem.",
+    "NSLocationAlwaysAndWhenInUseUsageDescription": "StopWake potrzebuje twojej lokalizacji tylko podczas trwania rozpoczętej przez ciebie podróży. Przy opcji „Zawsze” może wznowić podróż, jeśli iOS zamknie aplikację w trakcie.",
+    "NSLocationAlwaysUsageDescription": "StopWake potrzebuje twojej lokalizacji tylko podczas trwania rozpoczętej przez ciebie podróży. Przy opcji „Zawsze” może wznowić podróż, jeśli iOS zamknie aplikację w trakcie.",
+    "NSUserTrackingUsageDescription": "Twój wybór decyduje, czy reklamy mogą być spersonalizowane. Reklamy sprawiają, że StopWake jest darmowy; alarm podróży działa tak samo w obu przypadkach."
+  }
+}

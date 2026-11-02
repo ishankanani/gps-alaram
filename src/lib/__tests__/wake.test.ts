@@ -2,7 +2,16 @@ import { describe, expect, it } from 'vitest';
 
 import type { Place } from '../geocode';
 import { DEFAULT_PREFERENCES } from '../prefs';
-import { DEMO_SPEED_MPS, defaultWake, demoRide, rememberWake, tooShortForTrain, tripOptions, TIME_BACKSTOP_RADIUS_M } from '../wake';
+import {
+  DEMO_SPEED_MPS,
+  defaultWake,
+  demoRide,
+  rememberWake,
+  tooShortForTrain,
+  tripOptions,
+  TIME_BACKSTOP_RADIUS_M,
+  wakeStyleOf,
+} from '../wake';
 
 const place: Place = { id: 'stop:Ulm Hbf', name: 'Ulm Hbf', context: '', latitude: 48.4, longitude: 9.98 };
 
@@ -48,6 +57,24 @@ describe('wake options', () => {
   it('remembers distance, minutes and strength', () => {
     const w = { ...defaultWake('bus', DEFAULT_PREFERENCES), radiusM: 500, minutesBefore: 5, strength: 'heavy' as const };
     expect(rememberWake(DEFAULT_PREFERENCES, w)).toMatchObject({ radiusM: 500, minutesBefore: 5, strength: 'heavy' });
+  });
+
+  it('wakes with sound and vibration unless the rider chose otherwise, and remembers the choice', () => {
+    expect(defaultWake('bus', DEFAULT_PREFERENCES).wakeStyle).toBe('soundVibration');
+    const quiet = { ...DEFAULT_PREFERENCES, wakeStyle: 'vibrate' as const };
+    const w = defaultWake('train', quiet);
+    expect(w.wakeStyle).toBe('vibrate');
+    expect(tripOptions(place, w, false).wakeStyle).toBe('vibrate');
+    expect(rememberWake(DEFAULT_PREFERENCES, { ...w, wakeStyle: 'sound' }).wakeStyle).toBe('sound');
+  });
+
+  it('reads saved wake styles from older or newer builds safely', () => {
+    expect(wakeStyleOf(undefined)).toBe('soundVibration');
+    expect(wakeStyleOf('disco')).toBe('soundVibration');
+    expect(wakeStyleOf('sound')).toBe('sound');
+    // Preferences saved before the option existed have no wakeStyle at all.
+    const { wakeStyle: _dropped, ...old } = DEFAULT_PREFERENCES;
+    expect(defaultWake('bus', old as typeof DEFAULT_PREFERENCES).wakeStyle).toBe('soundVibration');
   });
 
   it('starts a demo ride so the alarm rings about 40 s in, on the side the user is on', () => {

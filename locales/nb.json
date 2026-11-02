@@ -1,0 +1,8 @@
+{
+  "ios": {
+    "NSLocationWhenInUseUsageDescription": "StopWake bruker posisjonen din mens en tur du har startet pågår, for å vekke deg før holdeplassen din.",
+    "NSLocationAlwaysAndWhenInUseUsageDescription": "StopWake trenger bare posisjonen din under en tur du har startet. Med «Alltid» kan appen fortsette turen hvis iOS lukker den underveis.",
+    "NSLocationAlwaysUsageDescription": "StopWake trenger bare posisjonen din under en tur du har startet. Med «Alltid» kan appen fortsette turen hvis iOS lukker den underveis.",
+    "NSUserTrackingUsageDescription": "Valget ditt avgjør om annonser kan tilpasses deg. Annonser holder StopWake gratis; turalarmen fungerer likt uansett."
+  }
+}

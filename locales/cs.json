@@ -1,0 +1,8 @@
+{
+  "ios": {
+    "NSLocationWhenInUseUsageDescription": "StopWake používá tvou polohu, dokud běží tebou spuštěná cesta, aby tě probudil před zastávkou.",
+    "NSLocationAlwaysAndWhenInUseUsageDescription": "StopWake potřebuje tvou polohu jen během tebou spuštěné cesty. S volbou „Vždy“ může cestu obnovit, pokud iOS aplikaci cestou zavře.",
+    "NSLocationAlwaysUsageDescription": "StopWake potřebuje tvou polohu jen během tebou spuštěné cesty. S volbou „Vždy“ může cestu obnovit, pokud iOS aplikaci cestou zavře.",
+    "NSUserTrackingUsageDescription": "Tvá volba rozhoduje, zda smí být reklamy personalizované. Reklamy udržují StopWake zdarma; budík na cesty funguje v obou případech stejně."
+  }
+}
