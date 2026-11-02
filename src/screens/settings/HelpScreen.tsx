@@ -9,15 +9,15 @@ import { Icon, ListItem, Screen, Section, useToast } from '../../ui';
 import { batteryHelpUrl } from '../setup/checklist';
 import { openPage, useAppLinks, versionInfo } from './appLinks';
 
-/** The phone's brand and Android version, for the support mail and the battery page. */
-function deviceInfo(): { manufacturer: string; android: string } {
+/** The phone's brand and system version, for the support mail and the battery page. */
+function deviceInfo(): { manufacturer: string; system: string } {
   let manufacturer = '';
   try {
     manufacturer = TripAlarm?.getSetupStatus().manufacturer ?? '';
   } catch {
     manufacturer = '';
   }
-  return { manufacturer, android: String(Platform.Version) };
+  return { manufacturer, system: `${Platform.OS === 'ios' ? 'iOS' : 'Android'} ${String(Platform.Version)}` };
 }
 
 /**
@@ -35,7 +35,7 @@ export function HelpScreen({ navigation }: RootScreenProps<'Help'>) {
     if (!to) return;
     const { version, build } = versionInfo();
     const subject = links.publicId ? tr('settings.help.mailSubject', { id: links.publicId }) : tr('settings.help.mailSubjectNoId');
-    const body = `\n\n—\nStopWake ${version}${build ? ` (${build})` : ''} · Android ${device.android}${device.manufacturer ? ` · ${device.manufacturer}` : ''}${links.publicId ? ` · ${links.publicId}` : ''}`;
+    const body = `\n\n—\nStopWake ${version}${build ? ` (${build})` : ''} · ${device.system}${device.manufacturer ? ` · ${device.manufacturer}` : ''}${links.publicId ? ` · ${links.publicId}` : ''}`;
     const url = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     try {
       await Linking.openURL(url);
@@ -61,15 +61,18 @@ export function HelpScreen({ navigation }: RootScreenProps<'Help'>) {
           onPress={() => navigation.navigate('Setup', { entry: 'settings' })}
           testID="help-didnt-ring"
         />
-        <ListItem
-          icon="battery-heart-variant"
-          title={tr('settings.help.battery')}
-          subtitle={tr('settings.help.batteryBody')}
-          subtitleLines={2}
-          accessibilityHint={tr('settings.opensBrowser')}
-          onPress={() => void openPage(batteryHelpUrl(device.manufacturer))}
-          testID="help-battery"
-        />
+        {/* Battery savers that close apps by brand (dontkillmyapp.com) are an Android thing. */}
+        {Platform.OS !== 'ios' ? (
+          <ListItem
+            icon="battery-heart-variant"
+            title={tr('settings.help.battery')}
+            subtitle={tr('settings.help.batteryBody')}
+            subtitleLines={2}
+            accessibilityHint={tr('settings.opensBrowser')}
+            onPress={() => void openPage(batteryHelpUrl(device.manufacturer))}
+            testID="help-battery"
+          />
+        ) : null}
       </Section>
 
       <Section title={tr('settings.help.learn')}>
