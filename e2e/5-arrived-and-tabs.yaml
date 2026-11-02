@@ -28,6 +28,24 @@ appId: com.ishankanani.gpsalarm
     visible:
       id: map-home
     timeout: 20000
+# The map returns to the stop sheet, which hides the tab bar: close it (and any search) first.
+- runFlow:
+    when:
+      visible:
+        id: stop-close
+    commands:
+      - tapOn:
+          id: stop-close
+- runFlow:
+    when:
+      notVisible:
+        id: tab-SavedTab
+    commands:
+      - back
+- extendedWaitUntil:
+    visible:
+      id: tab-SavedTab
+    timeout: 10000
 
 - tapOn:
     id: tab-SavedTab
