@@ -97,16 +97,21 @@ holds the app signing key).
 **Grow users → Store presence → Main store listing** (and *Store listings → Add translations* for each language):
 
 - App name, short description, full description: `listing/<lang>.md` (Play language codes: en-US, de-DE,
-  fr-FR, it-IT, nl-NL, da-DK, sv-SE, no-NO, fi-FI, hi-IN, ja-JP). `node store/tools/check-listing.mjs` checks the lengths.
-- App icon: `graphics/icon-512.png` (512 × 512, 32-bit PNG).
-- Feature graphic: `graphics/feature-graphic-1024x500.png`.
-- Phone screenshots: `screenshots/en/*.png` (and `screenshots/de/*.png` for the German listing), 1080 × 1920.
-  They are produced by **Actions → Screenshots → Run workflow** (an emulator drives the app, see `e2e/`), which
-  commits the raw shots to `docs/screenshots` and the framed ones to `store/screenshots/<lang>/`. To frame
-  your own phone screenshots instead: name them `en-03-stop.png`, `en-04-trip.png`, … (see `SHOTS` in
-  `tools/compose-screenshots.mjs`), then
+  fr-FR, it-IT, nl-NL, da-DK, sv-SE, no-NO, fi-FI, hi-IN, ja-JP). `node store/tools/check-listing.mjs` checks the lengths
+  (also of the App Store fields in `listing/en.md` and `listing/de.md`, and of the screenshot captions).
+- App icon: `graphics/icon-512.png` (512 × 512, 32-bit PNG). Logo variants and a 48 px comparison:
+  `graphics/variants/` (B, the folded map, is the default; sources in `src/variants/` and `src/glyph.svg.part`).
+- Feature graphic: `graphics/feature-graphic-1024x500.png` (German listing: `graphics/feature-graphic-de-1024x500.png`).
+- Phone screenshots: `screenshots/play/en/01…08-*.png` (and `screenshots/play/de/` for the German listing),
+  1080 × 1920, in the store order of `listing/screenshots.json`; Play shows 8. The App Store sets are
+  `screenshots/ios-6.9/` (1320 × 2868) and `screenshots/ios-6.5/` (1284 × 2778), upload 01 to 10.
+  `screenshots/b/` has the same screens with the alternative captions for a store listing experiment
+  (store/GROWTH.md). They are produced by **Actions → Screenshots → Run workflow** (an emulator drives the
+  app, see `e2e/`), which commits the raw shots to `docs/screenshots` and the framed ones to
+  `store/screenshots/`. To frame your own phone screenshots instead: name them like the `raw` entries of
+  `listing/screenshots.json` (`en-05-alarm.png`, `en-04-trip.png`, …), then
   `npm i --no-save playwright && npx playwright install chromium && node store/tools/compose-screenshots.mjs <folder>`.
-  Play needs at least 2 (shows up to 8).
+  The coverage infographic needs no raw shot. Play needs at least 2.
 - **Store settings**: category *Maps & Navigation*, tags, contact email, website (play-console-answers.md).
 
 ## 7. App content (Policy → App content)

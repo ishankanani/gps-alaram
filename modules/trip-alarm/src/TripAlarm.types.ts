@@ -1,5 +1,10 @@
 export type AlarmMode = 'arrive' | 'leave';
 export type AlarmStrength = 'gentle' | 'normal' | 'heavy';
+/**
+ * How the alarm wakes you: sound and vibration (the default), a silent strong repeating
+ * vibration, or sound without vibration.
+ */
+export type WakeStyle = 'soundVibration' | 'vibrate' | 'sound';
 export type GpsHealth = 'waiting' | 'good' | 'weak' | 'lost';
 export type TrackingTier = 'far' | 'mid' | 'near';
 export type TripState = 'tracking' | 'ringing' | 'snoozed' | 'stopped';
@@ -20,6 +25,8 @@ export type TripOptions = {
   minutesBefore?: number | null;
   label: string;
   strength: AlarmStrength;
+  /** Default 'soundVibration' (what every build before this option did). */
+  wakeStyle?: WakeStyle;
   useMiles: boolean;
   /** A demo ride: simulated movement from here to the stop at this speed, instead of GPS. */
   demoFromLatitude?: number | null;
@@ -36,6 +43,8 @@ export type ActiveTrip = {
   mode: AlarmMode;
   minutesBefore: number | null;
   strength: AlarmStrength;
+  /** Missing from builds before the option: treat as 'soundVibration'. */
+  wakeStyle?: WakeStyle;
   useMiles: boolean;
   startedAt: number;
   demo?: boolean;
@@ -64,11 +73,25 @@ export type SetupStatus = {
   location: 'precise' | 'approximate' | 'none';
   locationServices: boolean;
   notifications: boolean;
+  /** iOS: same as timeSensitive. */
   fullScreenAlarm: boolean;
+  /** iOS: always true (no such permission). */
   exactAlarms: boolean;
+  /** iOS: Low Power Mode is off. */
   batteryUnrestricted: boolean;
   manufacturer: string;
+  /** Android API level; iOS major version. */
   sdkInt: number;
+  /** Missing on Android builds before iOS support: treat as 'android'. */
+  platform?: 'android' | 'ios';
+  /** iOS: Time Sensitive notifications are allowed (they break through Focus). */
+  timeSensitive?: boolean;
+  /** iOS: notifications may play a sound. */
+  notificationSound?: boolean;
+  /** iOS: Critical Alerts are built in and allowed (ring through the silent switch). */
+  criticalAlerts?: boolean;
+  /** iOS: "Always" location (lets the app pick a trip up again after iOS closed it). */
+  locationAlways?: boolean;
 };
 
 export type SettingsKind =

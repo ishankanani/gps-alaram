@@ -9,6 +9,7 @@ import type {
   TripLogFile,
   TripOptions,
   TripStatus,
+  WakeStyle,
 } from './TripAlarm.types';
 
 declare class TripAlarmModule extends NativeModule<TripAlarmEvents> {
@@ -20,7 +21,8 @@ declare class TripAlarmModule extends NativeModule<TripAlarmEvents> {
   getActiveTrip(): TripStatus | null;
   /** Language of the alarm screen and notifications, one of the app's language codes. */
   setLanguage(code: string): void;
-  testAlarm(strength: AlarmStrength): Promise<void>;
+  /** Plays the alarm as a trip would (Android: the alarm screen; iOS: about 5 s of sound and vibration). */
+  testAlarm(strength: AlarmStrength, wakeStyle?: WakeStyle): Promise<void>;
   getSetupStatus(): SetupStatus;
   requestNotificationPermission(): Promise<{ granted: boolean }>;
   openSettings(kind: SettingsKind): boolean;
@@ -30,5 +32,5 @@ declare class TripAlarmModule extends NativeModule<TripAlarmEvents> {
   gunzip(source: string, destination: string): Promise<number>;
 }
 
-/** Null where the native module is not built in (iOS for now, web, Expo Go). */
+/** Null where the native module is not built in (web, Expo Go). */
 export default requireOptionalNativeModule<TripAlarmModule>('TripAlarm');

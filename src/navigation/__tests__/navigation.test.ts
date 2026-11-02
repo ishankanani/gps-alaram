@@ -13,6 +13,8 @@ describe('navigation', () => {
     expect(screens.Paywall).toBe('pro');
     expect(screens.Redeem).toBe('redeem/:code?');
     expect(screens.Trip).toBe('trip');
+    const tabs = screens.Tabs;
+    expect(typeof tabs === 'object' && tabs.screens?.MapTab).toEqual({ path: 'stop/:stopId', alias: ['map/:view'] });
     expect(screens).not.toHaveProperty('AdminUser');
     expect(admin.config?.screens).toHaveProperty('AdminUser', 'admin/user/:userId');
     expect(buildLinking({ enabled: false, admin: false }).enabled).toBe(false);

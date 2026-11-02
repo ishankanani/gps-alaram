@@ -79,7 +79,7 @@ export function overrideToRow(o: PriceOverride): PriceRow | null {
 
 export type ConfigQuery = { country?: string | null; lang?: string | null; version?: string | null };
 
-const LANGS: readonly ApiLang[] = ['da', 'de', 'en', 'fi', 'fr', 'hi', 'it', 'ja', 'nb', 'nl', 'sv'];
+const LANGS: readonly ApiLang[] = ['ar', 'cs', 'da', 'de', 'en', 'es', 'fi', 'fr', 'hi', 'it', 'ja', 'ko', 'nb', 'nl', 'pl', 'pt', 'sv', 'tr', 'zh'];
 
 /** The announcement for this phone, or null (server/src/domain/config.ts visibleAnnouncement). */
 export function visibleAnnouncement(a: unknown, q: { country: string; lang: ApiLang; version: string | null }, now: number): Announcement | null {

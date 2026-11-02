@@ -56,7 +56,8 @@
     "server:seed": "node --disable-warning=ExperimentalWarning server/cli.ts seed --demo --reset --extra-guests=160",
     "typecheck:server": "tsc -p server",
     "test:server": "node --disable-warning=ExperimentalWarning --test \"server/test/**/*.test.ts\"",
-    "build:stations": "node --disable-warning=ExperimentalWarning --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tools/build-stations.ts"
+    "build:stations": "node --disable-warning=ExperimentalWarning --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tools/build-stations.ts",
+    "build:coverage": "node --disable-warning=ExperimentalWarning --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tools/build-coverage.ts"
   },
   "private": true
 }

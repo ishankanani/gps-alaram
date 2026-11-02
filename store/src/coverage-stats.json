@@ -1,0 +1,438 @@
+{
+  "builtAt": "2026-11-02T15:52:51.770Z",
+  "countries": 17,
+  "stops": 1400444,
+  "rows": 1405833,
+  "kinds": {
+    "bus": 1316894,
+    "tram": 14811,
+    "metro": 3649,
+    "train": 41387,
+    "ferry": 6582
+  },
+  "servedBy": {
+    "bus": 1339569,
+    "tram": 16465,
+    "metro": 4787,
+    "train": 41387,
+    "ferry": 6783
+  },
+  "sources": {
+    "de": "db-hafas-stations (built in)",
+    "at": "stop-packs release, built 2026-10-09T20:10:52.215Z",
+    "ch": "stop-packs release, built 2026-10-09T20:10:22.231Z",
+    "lu": "stop-packs release, built 2026-10-09T20:09:25.751Z",
+    "nl": "stop-packs release, built 2026-10-09T20:12:15.061Z",
+    "be": "stop-packs release, built 2026-10-09T20:13:06.904Z",
+    "gb": "stop-packs release, built 2026-10-09T20:13:31.947Z",
+    "ie": "stop-packs release, built 2026-10-09T20:10:01.668Z",
+    "se": "stop-packs release, built 2026-10-09T20:11:01.600Z",
+    "no": "stop-packs release, built 2026-10-09T20:13:14.027Z",
+    "dk": "stop-packs release, built 2026-10-09T20:11:07.132Z",
+    "fi": "stop-packs release, built 2026-10-09T20:11:42.680Z",
+    "fr": "stop-packs release, built 2026-10-09T20:21:07.524Z",
+    "us-northeast": "stop-packs release, built 2026-10-09T20:14:23.633Z",
+    "us-midwest": "stop-packs release, built 2026-10-09T20:17:15.659Z",
+    "us-south": "stop-packs release, built 2026-10-09T20:18:45.582Z",
+    "us-west": "stop-packs release, built 2026-10-09T20:17:30.772Z",
+    "ca": "stop-packs release, built 2026-10-09T20:23:55.414Z",
+    "au": "stop-packs release, built 2026-10-09T20:15:38.718Z",
+    "jp": "stop-packs release, built 2026-10-09T20:18:47.913Z"
+  },
+  "byCountry": [
+    {
+      "country": "de",
+      "flag": "🇩🇪",
+      "packs": [
+        "de"
+      ],
+      "stops": 272635,
+      "rows": 272635,
+      "kinds": {
+        "bus": 232868,
+        "tram": 5047,
+        "metro": 962,
+        "train": 16407,
+        "ferry": 230
+      },
+      "servedBy": {
+        "bus": 238613,
+        "tram": 5412,
+        "metro": 986,
+        "train": 16407,
+        "ferry": 251
+      }
+    },
+    {
+      "country": "us",
+      "flag": "🇺🇸",
+      "packs": [
+        "us-northeast",
+        "us-midwest",
+        "us-south",
+        "us-west"
+      ],
+      "stops": 230596,
+      "rows": 230602,
+      "kinds": {
+        "bus": 224167,
+        "tram": 2158,
+        "metro": 867,
+        "train": 2651,
+        "ferry": 753
+      },
+      "servedBy": {
+        "bus": 225895,
+        "tram": 2382,
+        "metro": 1108,
+        "train": 2651,
+        "ferry": 775
+      }
+    },
+    {
+      "country": "gb",
+      "flag": "🇬🇧",
+      "packs": [
+        "gb"
+      ],
+      "stops": 180349,
+      "rows": 180352,
+      "kinds": {
+        "bus": 175568,
+        "tram": 472,
+        "metro": 224,
+        "train": 3620,
+        "ferry": 465
+      },
+      "servedBy": {
+        "bus": 177394,
+        "tram": 541,
+        "metro": 318,
+        "train": 3620,
+        "ferry": 489
+      }
+    },
+    {
+      "country": "fr",
+      "flag": "🇫🇷",
+      "packs": [
+        "fr"
+      ],
+      "stops": 142896,
+      "rows": 143820,
+      "kinds": {
+        "bus": 137227,
+        "tram": 1628,
+        "metro": 470,
+        "train": 3153,
+        "ferry": 418
+      },
+      "servedBy": {
+        "bus": 139962,
+        "tram": 1825,
+        "metro": 575,
+        "train": 3153,
+        "ferry": 432
+      }
+    },
+    {
+      "country": "jp",
+      "flag": "🇯🇵",
+      "packs": [
+        "jp"
+      ],
+      "stops": 102499,
+      "rows": 102499,
+      "kinds": {
+        "bus": 92606,
+        "tram": 608,
+        "metro": 471,
+        "train": 8063,
+        "ferry": 751
+      },
+      "servedBy": {
+        "bus": 96182,
+        "tram": 832,
+        "metro": 972,
+        "train": 8063,
+        "ferry": 781
+      }
+    },
+    {
+      "country": "au",
+      "flag": "🇦🇺",
+      "packs": [
+        "au"
+      ],
+      "stops": 89581,
+      "rows": 89582,
+      "kinds": {
+        "bus": 86505,
+        "tram": 947,
+        "metro": 19,
+        "train": 1788,
+        "ferry": 322
+      },
+      "servedBy": {
+        "bus": 87634,
+        "tram": 1002,
+        "metro": 38,
+        "train": 1788,
+        "ferry": 328
+      }
+    },
+    {
+      "country": "ca",
+      "flag": "🇨🇦",
+      "packs": [
+        "ca"
+      ],
+      "stops": 80144,
+      "rows": 80179,
+      "kinds": {
+        "bus": 78375,
+        "tram": 543,
+        "metro": 169,
+        "train": 675,
+        "ferry": 382
+      },
+      "servedBy": {
+        "bus": 78884,
+        "tram": 584,
+        "metro": 202,
+        "train": 675,
+        "ferry": 384
+      }
+    },
+    {
+      "country": "fi",
+      "flag": "🇫🇮",
+      "packs": [
+        "fi"
+      ],
+      "stops": 79843,
+      "rows": 80172,
+      "kinds": {
+        "bus": 79065,
+        "tram": 209,
+        "metro": 29,
+        "train": 216,
+        "ferry": 324
+      },
+      "servedBy": {
+        "bus": 79391,
+        "tram": 223,
+        "metro": 30,
+        "train": 216,
+        "ferry": 332
+      }
+    },
+    {
+      "country": "no",
+      "flag": "🇳🇴",
+      "packs": [
+        "no"
+      ],
+      "stops": 51889,
+      "rows": 51916,
+      "kinds": {
+        "bus": 50188,
+        "tram": 142,
+        "metro": 99,
+        "train": 409,
+        "ferry": 1051
+      },
+      "servedBy": {
+        "bus": 50822,
+        "tram": 161,
+        "metro": 105,
+        "train": 409,
+        "ferry": 1060
+      }
+    },
+    {
+      "country": "at",
+      "flag": "🇦🇹",
+      "packs": [
+        "at"
+      ],
+      "stops": 35664,
+      "rows": 36244,
+      "kinds": {
+        "bus": 33688,
+        "tram": 652,
+        "metro": 75,
+        "train": 1046,
+        "ferry": 203
+      },
+      "servedBy": {
+        "bus": 34751,
+        "tram": 746,
+        "metro": 101,
+        "train": 1046,
+        "ferry": 211
+      }
+    },
+    {
+      "country": "se",
+      "flag": "🇸🇪",
+      "packs": [
+        "se"
+      ],
+      "stops": 32969,
+      "rows": 32970,
+      "kinds": {
+        "bus": 31097,
+        "tram": 248,
+        "metro": 38,
+        "train": 967,
+        "ferry": 619
+      },
+      "servedBy": {
+        "bus": 31883,
+        "tram": 271,
+        "metro": 103,
+        "train": 967,
+        "ferry": 633
+      }
+    },
+    {
+      "country": "be",
+      "flag": "🇧🇪",
+      "packs": [
+        "be"
+      ],
+      "stops": 31097,
+      "rows": 31367,
+      "kinds": {
+        "bus": 29903,
+        "tram": 675,
+        "metro": 77,
+        "train": 366,
+        "ferry": 76
+      },
+      "servedBy": {
+        "bus": 30598,
+        "tram": 731,
+        "metro": 82,
+        "train": 366,
+        "ferry": 78
+      }
+    },
+    {
+      "country": "nl",
+      "flag": "🇳🇱",
+      "packs": [
+        "nl"
+      ],
+      "stops": 29444,
+      "rows": 29648,
+      "kinds": {
+        "bus": 28088,
+        "tram": 649,
+        "metro": 98,
+        "train": 253,
+        "ferry": 356
+      },
+      "servedBy": {
+        "bus": 28599,
+        "tram": 707,
+        "metro": 107,
+        "train": 253,
+        "ferry": 360
+      }
+    },
+    {
+      "country": "ch",
+      "flag": "🇨🇭",
+      "packs": [
+        "ch"
+      ],
+      "stops": 23819,
+      "rows": 24657,
+      "kinds": {
+        "bus": 21725,
+        "tram": 573,
+        "metro": 13,
+        "train": 1106,
+        "ferry": 402
+      },
+      "servedBy": {
+        "bus": 22704,
+        "tram": 752,
+        "metro": 15,
+        "train": 1106,
+        "ferry": 433
+      }
+    },
+    {
+      "country": "dk",
+      "flag": "🇩🇰",
+      "packs": [
+        "dk"
+      ],
+      "stops": 8782,
+      "rows": 8801,
+      "kinds": {
+        "bus": 7965,
+        "tram": 172,
+        "metro": 38,
+        "train": 430,
+        "ferry": 177
+      },
+      "servedBy": {
+        "bus": 8283,
+        "tram": 204,
+        "metro": 45,
+        "train": 430,
+        "ferry": 183
+      }
+    },
+    {
+      "country": "ie",
+      "flag": "🇮🇪",
+      "packs": [
+        "ie"
+      ],
+      "stops": 5489,
+      "rows": 7616,
+      "kinds": {
+        "bus": 5197,
+        "tram": 64,
+        "metro": 0,
+        "train": 177,
+        "ferry": 51
+      },
+      "servedBy": {
+        "bus": 5262,
+        "tram": 67,
+        "metro": 0,
+        "train": 177,
+        "ferry": 51
+      }
+    },
+    {
+      "country": "lu",
+      "flag": "🇱🇺",
+      "packs": [
+        "lu"
+      ],
+      "stops": 2748,
+      "rows": 2773,
+      "kinds": {
+        "bus": 2662,
+        "tram": 24,
+        "metro": 0,
+        "train": 60,
+        "ferry": 2
+      },
+      "servedBy": {
+        "bus": 2712,
+        "tram": 25,
+        "metro": 0,
+        "train": 60,
+        "ferry": 2
+      }
+    }
+  ]
+}

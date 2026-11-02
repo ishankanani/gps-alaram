@@ -84,6 +84,8 @@ class AlarmActivity : Activity() {
       setBackgroundColor(BACKGROUND)
       setPadding(dp(24), dp(72), dp(24), dp(40))
       fitsSystemWindows = true
+      // The direction follows the app language (not the phone's): Arabic mirrors the slider.
+      layoutDirection = if (L10n.isRtl) View.LAYOUT_DIRECTION_RTL else View.LAYOUT_DIRECTION_LTR
     }
     root.addView(
       TextView(this).apply {
@@ -157,7 +159,10 @@ class AlarmActivity : Activity() {
     // The whole gesture is swallowed, not just the touch-down, so a stray move cannot start a drag.
     var ignoreGesture = false
     seek.setOnTouchListener { v, event ->
-      if (event.actionMasked == MotionEvent.ACTION_DOWN) ignoreGesture = event.x > v.width * 0.3f
+      if (event.actionMasked == MotionEvent.ACTION_DOWN) {
+        // The thumb starts at the near end: the left, or the right in right-to-left layouts.
+        ignoreGesture = if (L10n.isRtl) event.x < v.width * 0.7f else event.x > v.width * 0.3f
+      }
       ignoreGesture
     }
     frame.addView(seek, FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT))

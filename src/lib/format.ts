@@ -1,5 +1,5 @@
 /** Languages that write 1,2 km. */
-const DECIMAL_COMMA = new Set(['de', 'fr', 'nl', 'it', 'sv', 'nb', 'da', 'fi']);
+const DECIMAL_COMMA = new Set(['de', 'fr', 'nl', 'it', 'sv', 'nb', 'da', 'fi', 'es', 'pt', 'pl', 'cs', 'tr']);
 
 function decimal(value: number, lang: string): string {
   const text = value.toFixed(1);
@@ -37,8 +37,11 @@ export function formatBytes(bytes: number, lang = 'en'): string {
   return `${Math.round(bytes / 1_000_000)} MB`;
 }
 
-/** Thousands separators: 12.345 in German, 12 345 in French and the Nordic languages. */
-const THOUSANDS: Record<string, string> = { de: '.', nl: '.', it: '.', da: '.', fr: '\u00a0', sv: '\u00a0', nb: '\u00a0', fi: '\u00a0' };
+/** Thousands separators: 12.345 in German, 12 345 in French, the Nordic languages, Polish and Czech. */
+const THOUSANDS: Record<string, string> = {
+  de: '.', nl: '.', it: '.', da: '.', es: '.', pt: '.', tr: '.',
+  fr: '\u00a0', sv: '\u00a0', nb: '\u00a0', fi: '\u00a0', pl: '\u00a0', cs: '\u00a0',
+};
 
 /** 12345 as 12,345 in English. */
 export function formatCount(n: number, lang = 'en'): string {

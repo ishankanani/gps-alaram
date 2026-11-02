@@ -1,5 +1,9 @@
 {
-  "platforms": ["android"],
+  "platforms": ["apple", "android"],
+  "apple": {
+    "modules": ["TripAlarmModule"],
+    "appDelegateSubscribers": ["TripAlarmAppDelegate"]
+  },
   "android": {
     "modules": ["com.ishankanani.gpsalarm.tripalarm.TripAlarmModule"]
   }

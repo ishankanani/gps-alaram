@@ -18,6 +18,8 @@ import type { Bounds, Stop } from '../lib/stations/search';
 import type { StopKind } from '../lib/stations/text';
 import { StopPin } from '../ui/components/StopPin';
 import { useTheme } from '../ui/theme';
+import { COVERAGE_MAX_ZOOM, coverageView, expandZoom, type CoverageData, type CoverageView } from './coverage';
+import coverageJson from './coverage/data.json';
 import { circlePolygon, stopsToGeoJSON, type InitialView, type LatLon } from './geo';
 import { useMapStyle } from './useMapStyle';
 
@@ -85,6 +87,31 @@ const STOP_RADIUS: ExpressionSpecification = [
   ['case', ['>=', ['get', 'rank'], 380], 11, 8],
 ];
 
+/** Every stop of Germany and the country packs, aggregated by tools/build-coverage.ts (about 310 KB). */
+const COVERAGE = coverageJson as CoverageData;
+
+/** Coverage dots by density class (0 to 3), a little bigger as you zoom in. */
+const COVERAGE_RADIUS: ExpressionSpecification = [
+  'interpolate',
+  ['linear'],
+  ['zoom'],
+  2,
+  ['+', 1.1, ['*', 0.55, ['get', 'c']]],
+  8,
+  ['+', 2, ['*', 0.9, ['get', 'c']]],
+];
+
+/** Light, denser places darker; fades out just before the real stops take over. */
+const COVERAGE_OPACITY: ExpressionSpecification = [
+  'interpolate',
+  ['linear'],
+  ['zoom'],
+  COVERAGE_MAX_ZOOM - 0.6,
+  ['+', 0.3, ['*', 0.14, ['get', 'c']]],
+  COVERAGE_MAX_ZOOM,
+  0,
+];
+
 /** 2.7: map stop dots get 16 dp of extra touch area on each side. */
 const HITBOX = { top: 16, right: 16, bottom: 16, left: 16 };
 
@@ -99,7 +126,8 @@ function initialViewState(view: InitialView) {
 
 /**
  * The home map (4.3 Map home): the calm base map, every stop as a dot with its name, the user's
- * position, the selected stop's StopPin and the amber wake zone. Rotation and pitch are off, the
+ * position, the selected stop's StopPin and the amber wake zone. Zoomed out (country or continent),
+ * the coverage dots show every stop StopWake knows instead; tapping one zooms in. Rotation and pitch are off, the
  * attribution lives in a map control of the screen, and the map fades in over `map.placeholder`
  * once its style has loaded, so it never flashes a light default in dark mode.
  */
@@ -126,6 +154,7 @@ export function HomeMap({
   const zoomNow = useRef('zoom' in initialView ? initialView.zoom : 5);
   const [fade] = useState(() => new Animated.Value(0));
   const [initial] = useState(() => initialViewState(initialView));
+  const [coverage, setCoverage] = useState<CoverageView>(() => coverageView(COVERAGE, [0, 0, 0, 0], Number.NaN));
   const stopsById = useMemo(() => new globalThis.Map(stops.map((s) => [s.id, s])), [stops]);
   const stopData = useMemo(() => stopsToGeoJSON(stops), [stops]);
   const zoneData = useMemo(
@@ -163,9 +192,21 @@ export function HomeMap({
     },
   }));
 
+  /** Swaps the coverage dots only when other chunks are needed (after the camera stops). */
+  function showCoverage(bounds: [number, number, number, number], zoom: number) {
+    const next = coverageView(COVERAGE, bounds, zoom);
+    setCoverage((now) => (now.key === next.key ? now : next));
+  }
+
   function onLoaded() {
     if (!loaded.current) {
       loaded.current = true;
+      // The first camera position, before any region change.
+      void Promise.all([map.current?.getBounds(), map.current?.getZoom()])
+        .then(([bounds, zoom]) => {
+          if (bounds && zoom != null) showCoverage(bounds, zoom);
+        })
+        .catch(() => {});
       const next = pending.current;
       pending.current = null;
       if (next) {
@@ -182,6 +223,14 @@ export function HomeMap({
     const id = event.nativeEvent.features[0]?.properties?.id;
     const stop = typeof id === 'number' ? stopsById.get(id) : undefined;
     if (stop) onPressStop(stop);
+  }
+
+  /** A coverage dot: zoom in there, towards the real stops. */
+  function onCoveragePress(event: NativeSyntheticEvent<PressEventWithFeatures>) {
+    event.stopPropagation();
+    const geometry = event.nativeEvent.features[0]?.geometry;
+    const [longitude, latitude] = geometry?.type === 'Point' ? geometry.coordinates : event.nativeEvent.lngLat;
+    fly({ latitude, longitude }, { zoom: expandZoom(COVERAGE, zoomNow.current) });
   }
 
   const labelPaint = (color: string) => ({ 'text-color': color, 'text-halo-color': m.halo, 'text-halo-width': 1.6 });
@@ -210,6 +259,7 @@ export function HomeMap({
             onRegionDidChange={(e) => {
               const v = e.nativeEvent;
               zoomNow.current = v.zoom;
+              showCoverage(v.bounds, v.zoom);
               onViewChange({
                 bounds: v.bounds,
                 zoom: v.zoom,
@@ -226,6 +276,16 @@ export function HomeMap({
                 <Layer id="wake-zone-line" type="line" paint={{ 'line-color': m.zoneLine, 'line-width': 2 }} />
               </GeoJSONSource>
             ) : null}
+
+            {/* Under everything else; empty from COVERAGE_MAX_ZOOM on, where the real stops show. */}
+            <GeoJSONSource id="coverage" data={coverage.collection} onPress={onCoveragePress} hitbox={HITBOX}>
+              <Layer
+                id="coverage-dot"
+                type="circle"
+                maxzoom={COVERAGE_MAX_ZOOM}
+                paint={{ 'circle-color': m.coverage, 'circle-radius': COVERAGE_RADIUS, 'circle-opacity': COVERAGE_OPACITY }}
+              />
+            </GeoJSONSource>
 
             <GeoJSONSource id="stops" data={stopData} onPress={onStopPress} hitbox={HITBOX}>
               <Layer

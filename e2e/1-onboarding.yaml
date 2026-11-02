@@ -1,4 +1,4 @@
-# First start: onboarding and the Get ready checklist, up to the map.
+# First start: onboarding and the Get ready checklist, up to the map; then kilometres in Settings.
 # Run by e2e/screenshots.sh, which puts the phone at Odeonsplatz in Munich first.
 # Screenshots are named <lang>-<nn>-<screen>; store/tools/compose-screenshots.mjs frames them.
 appId: com.ishankanani.gpsalarm
@@ -36,3 +36,40 @@ appId: com.ishankanani.gpsalarm
     visible:
       id: map-home
     timeout: 30000
+
+# Kilometres, like a rider in Germany: the emulator's region is the US, so the app starts in miles
+# (the app locale en-DE set by e2e/screenshots.sh does not change the measurement system).
+- tapOn:
+    id: tab-AccountTab
+- extendedWaitUntil:
+    visible:
+      id: screen-AccountTab
+    timeout: 10000
+- tapOn:
+    id: account-settings
+- extendedWaitUntil:
+    visible:
+      id: settings-units
+    timeout: 10000
+- tapOn:
+    id: settings-units
+- extendedWaitUntil:
+    visible:
+      id: sheet-option-km
+    timeout: 10000
+- tapOn:
+    id: sheet-option-km
+- waitForAnimationToEnd
+- runFlow:
+    when:
+      visible:
+        id: sheet-option-km
+    commands:
+      - back
+- back
+- tapOn:
+    id: tab-MapTab
+- extendedWaitUntil:
+    visible:
+      id: map-home
+    timeout: 15000

@@ -4,6 +4,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { DialogProvider } from '../ui/components/ConfirmDialog';
 import { ToastProvider } from '../ui/components/Toast';
 import { ThemeProvider, type AppearancePreference } from '../ui/theme';
+import { DirectionSync } from './direction';
 import { LanguageProvider } from './language';
 import { SavedDataProvider, useSavedData } from './saved';
 import { TripProvider } from './trip';
@@ -36,6 +37,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
           <AppThemeProvider>
             <DialogProvider>
               <ToastProvider>
+                <DirectionSync />
                 <TripProvider>{children}</TripProvider>
               </ToastProvider>
             </DialogProvider>

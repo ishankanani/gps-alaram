@@ -6,7 +6,8 @@ import type { PriceFormat, PriceRow } from '../lib/pricing.ts';
 export type { PriceFormat, PriceRow };
 
 export type IsoDate = string;
-export type ApiLang = 'da' | 'de' | 'en' | 'fi' | 'fr' | 'hi' | 'it' | 'ja' | 'nb' | 'nl' | 'sv';
+export type ApiLang =
+  | 'ar' | 'cs' | 'da' | 'de' | 'en' | 'es' | 'fi' | 'fr' | 'hi' | 'it' | 'ja' | 'ko' | 'nb' | 'nl' | 'pl' | 'pt' | 'sv' | 'tr' | 'zh';
 export type Platform = 'android' | 'ios';
 export type PlanId = 'free' | 'monthly' | 'yearly' | 'lifetime';
 export type PaidPlan = Exclude<PlanId, 'free'>;

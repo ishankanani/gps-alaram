@@ -1,6 +1,7 @@
 import type { Strings } from '../en';
 import { account } from './account';
 import { activity } from './activity';
+import { alarm } from './alarm';
 import { ads } from './ads';
 import { core } from './core';
 import { errors } from './errors';
@@ -29,4 +30,5 @@ export const ja: Partial<Strings> = {
   ...settings,
   ...onboarding,
   ...ads,
+  ...alarm,
 };

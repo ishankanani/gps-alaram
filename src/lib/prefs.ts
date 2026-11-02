@@ -1,4 +1,4 @@
-import type { AlarmMode, AlarmStrength } from '../../modules/trip-alarm/src';
+import type { AlarmMode, AlarmStrength, WakeStyle } from '../../modules/trip-alarm/src';
 import type { Lang } from '../i18n';
 import type { Place } from './geocode';
 
@@ -17,6 +17,8 @@ export type Preferences = {
   radiusM: number;
   minutesBefore: number;
   strength: AlarmStrength;
+  /** Sound + vibration, vibrate only or sound only. */
+  wakeStyle: WakeStyle;
   mode: AlarmMode;
   useMiles: boolean;
   appearance: AppearanceChoice;
@@ -35,6 +37,7 @@ export const DEFAULT_PREFERENCES: Preferences = {
   radiusM: 300,
   minutesBefore: 2,
   strength: 'normal',
+  wakeStyle: 'soundVibration',
   mode: 'arrive',
   useMiles: false,
   appearance: 'system',

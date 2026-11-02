@@ -112,6 +112,8 @@ export type MapPalette = {
   placeholder: string;
   /** Your position on the trip map: indigo in both schemes. */
   puck: string;
+  /** The coverage dots (every stop StopWake knows) on the zoomed-out home map. */
+  coverage: string;
 };
 
 export const MAP_COLORS: Record<Scheme, MapPalette> = {
@@ -149,6 +151,7 @@ export const MAP_COLORS: Record<Scheme, MapPalette> = {
     aheadOpacity: 0.9,
     placeholder: '#EEF0F3',
     puck: '#4146D8',
+    coverage: '#4146D8',
   },
   dark: {
     land: '#121821',
@@ -184,6 +187,7 @@ export const MAP_COLORS: Record<Scheme, MapPalette> = {
     aheadOpacity: 0.7,
     placeholder: '#121821',
     puck: '#4146D8',
+    coverage: '#8E94FF',
   },
 };
 

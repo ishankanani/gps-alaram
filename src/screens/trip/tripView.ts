@@ -1,7 +1,7 @@
 import type { ActiveTrip, TripEndedEvent, TripStatus } from '../../../modules/trip-alarm/src/TripAlarm.types';
 import type { Key, Params } from '../../i18n';
 import type { TripFeedback, TripRing } from '../../lib/history';
-import type { WakeOptions } from '../../lib/wake';
+import { wakeStyleOf, type WakeOptions } from '../../lib/wake';
 import type { BadgeTone } from '../../ui/components/Badge';
 
 // Pure helpers of the Trip and Arrived screens (no react-native), tested in __tests__.
@@ -121,7 +121,7 @@ export function arrivedVariant(event: Pick<TripEndedEvent, 'reason'> | null, sto
 
 /** The wake choices of a finished trip, to start it again. */
 export function wakeOfTrip(
-  trip: Pick<ActiveTrip, 'mode' | 'minutesBefore' | 'radiusM' | 'strength'>,
+  trip: Pick<ActiveTrip, 'mode' | 'minutesBefore' | 'radiusM' | 'strength' | 'wakeStyle'>,
   fallbackRadiusM: number,
 ): WakeOptions {
   const byTime = trip.mode === 'arrive' && !!trip.minutesBefore;
@@ -132,6 +132,7 @@ export function wakeOfTrip(
     minutesBefore: trip.minutesBefore ?? 2,
     mode: trip.mode,
     strength: trip.strength,
+    wakeStyle: wakeStyleOf(trip.wakeStyle),
   };
 }
 

@@ -1,9 +1,32 @@
-<g id="glyph" transform="translate(0,-20)">
-  <path d="M512 892 C 438 780 262 640 262 452 A250 250 0 1 1 762 452 C 762 640 586 780 512 892 Z" fill="#FFFFFF"/>
-  <circle cx="512" cy="452" r="118" fill="#FFB020"/>
-  <circle cx="512" cy="452" r="46" fill="#3539C2"/>
-  <g fill="none" stroke="#FFB020" stroke-width="46" stroke-linecap="round">
-    <path d="M 838 260 A 380 380 0 0 1 838 644"/>
-    <path d="M 186 260 A 380 380 0 0 0 186 644"/>
+<g id="glyph">
+  <!-- A folded paper map with a transit line and its stations; the amber pin is your stop, ringing.
+       Readable at 48 px: the white map and the amber pin. Station dots are details for bigger sizes. -->
+  <defs>
+    <clipPath id="glyph-map"><path d="M150 360 L391 310 L633 360 L874 310 L874 810 L633 860 L391 810 L150 860 Z"/></clipPath>
+  </defs>
+  <path d="M150 360 L391 310 L391 810 L150 860 Z" fill="#FFFFFF"/>
+  <path d="M391 310 L633 360 L633 860 L391 810 Z" fill="#DFE1FC"/>
+  <path d="M633 360 L874 310 L874 810 L633 860 Z" fill="#FFFFFF"/>
+  <g clip-path="url(#glyph-map)">
+    <g fill="none" stroke="#C9CCF7" stroke-width="18" stroke-linecap="round">
+      <path d="M100 500 L920 580"/><path d="M270 280 L330 900"/><path d="M520 280 L560 900"/><path d="M100 720 L920 450"/>
+    </g>
+    <path d="M190 790 C 280 720 290 620 400 610 S 530 690 610 640 S 650 590 680 560" fill="none" stroke="#4146D8" stroke-width="38" stroke-linecap="round"/>
+    <g fill="#FFFFFF" stroke="#4146D8" stroke-width="18">
+      <circle cx="205" cy="776" r="36"/><circle cx="400" cy="610" r="36"/><circle cx="560" cy="664" r="36"/>
+    </g>
+    <g fill="#4146D8"><circle cx="776" cy="720" r="26"/><circle cx="300" cy="450" r="26"/><circle cx="470" cy="440" r="26"/><circle cx="800" cy="440" r="22"/></g>
+  </g>
+  <g transform="translate(680 572)">
+    <ellipse cx="0" cy="0" rx="58" ry="20" fill="#2B2FA3" opacity="0.3"/>
+    <g transform="translate(-307.2 -535.2) scale(0.6)">
+      <path d="M512 892 C 438 780 262 640 262 452 A250 250 0 1 1 762 452 C 762 640 586 780 512 892 Z" fill="#FFB020" stroke="#3539C2" stroke-width="26"/>
+      <circle cx="512" cy="452" r="104" fill="#FFFFFF"/>
+      <circle cx="512" cy="452" r="48" fill="#3539C2"/>
+    </g>
+    <g fill="none" stroke="#FFB020" stroke-width="34" stroke-linecap="round">
+      <path d="M 196 -420 A 220 220 0 0 1 196 -180"/>
+      <path d="M -196 -420 A 220 220 0 0 0 -196 -180"/>
+    </g>
   </g>
 </g>

@@ -11,8 +11,11 @@ import type { IconName } from '../ui/components/Icon';
 
 /** The four tabs (4.2). Search and stop are MapSheet modes, not routes. */
 export type TabParamList = {
-  /** "Show on map" from anywhere: opens stop mode for this stop (or place id). */
-  MapTab: { stopId?: string } | undefined;
+  /**
+   * "Show on map" from anywhere: opens stop mode for this stop (or place id). `view`
+   * ("latitude,longitude,zoom") moves the map there instead, for example to a whole country.
+   */
+  MapTab: { stopId?: string; view?: string } | undefined;
   SavedTab: undefined;
   ActivityTab: undefined;
   AccountTab: undefined;

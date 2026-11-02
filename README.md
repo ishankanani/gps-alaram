@@ -37,7 +37,8 @@ before launch is still **20 real trips with zero missed stops**.
 
 From the release APK on an Android 14 emulator, taken by the **Screenshots** workflow while it
 rides a simulated trip through Munich in English and a demo trip in German (see `e2e/`). The same
-run frames them for Google Play in `store/screenshots/<lang>/` (`store/tools/compose-screenshots.mjs`).
+run frames them for Google Play and the App Store in `store/screenshots/<play|ios-6.9|ios-6.5>/<lang>/`
+(`store/tools/compose-screenshots.mjs`, captions in `store/listing/screenshots.json`).
 Until the workflow has run on the current UI, `docs/screenshots` may still hold older pictures.
 
 <p>
@@ -118,6 +119,16 @@ OpenStreetMap extracts:
    Switzerland, Luxembourg, Denmark's S-tog) the badges say so; elsewhere they say Train and Metro.
 4. The packs are gzipped and published with `packs.json` (sizes, counts, build dates) to the
    `stop-packs` release.
+
+### Coverage on the map
+
+Zoomed out (below zoom 8.5), the home map shows every stop StopWake knows, built in or
+downloadable, as light density dots; tapping one zooms in towards the real stops.
+`npm run build:coverage` (`tools/build-coverage.ts`) aggregates the Germany database and every
+pack of the `stop-packs` release into Web Mercator grid cells at four resolutions and writes
+`src/map/coverage/data.json` (about 310 KB, 220 KB compressed in the APK; decoded per visible
+chunk by `src/map/coverage.ts`, at most about 7,000 dots on screen) and the numbers for the store,
+`store/src/coverage-stats.json`. Both are committed; run it again after the packs are rebuilt.
 
 | Wave | Pack | Stops | Download |
 | --- | --- | ---: | ---: |
@@ -211,6 +222,7 @@ src/lib/                     address search, wake options, Pro, formatting, loca
 src/i18n/                    the 11 languages
 src/ui/                      theme, colours, shared components
 tools/build-stations.ts      builds assets/stations/germany-stops.db
+tools/build-coverage.ts      builds the coverage dots of the zoomed-out map and the store numbers
 tools/osm-stops.py, build-osm-pack.ts   build the country packs (see the Stop packs workflow)
 e2e/                         emulator flows and the screenshot script (Maestro)
 modules/trip-alarm/

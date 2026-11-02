@@ -15,7 +15,7 @@ import { ErrorState, FlagBox, FormError } from './components/parts';
 import { countryName } from './lib/countries';
 import { isEmail, LANGUAGE_NAMES } from './lib/settings';
 
-const LANGS: ApiLang[] = ['da', 'de', 'en', 'fi', 'fr', 'hi', 'it', 'ja', 'nb', 'nl', 'sv'];
+const LANGS: ApiLang[] = ['ar', 'cs', 'da', 'de', 'en', 'es', 'fi', 'fr', 'hi', 'it', 'ja', 'ko', 'nb', 'nl', 'pl', 'pt', 'sv', 'tr', 'zh'];
 
 type Form = { displayName: string; email: string; country: string | null; language: ApiLang | null };
 

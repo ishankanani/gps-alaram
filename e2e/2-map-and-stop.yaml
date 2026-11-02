@@ -1,5 +1,5 @@
-# The map around Odeonsplatz (browse sheet with nearby stops), search, and the stop sheet for
-# München Hbf, up to a running trip.
+# The map around Odeonsplatz (browse sheet with nearby stops), Europe zoomed out with the coverage
+# dots (every stop StopWake knows), search, and the stop sheet for München Hbf, up to a running trip.
 appId: com.ishankanani.gpsalarm
 ---
 - extendedWaitUntil:
@@ -12,6 +12,22 @@ appId: com.ishankanani.gpsalarm
 - waitForAnimationToEnd:
     timeout: 20000
 - takeScreenshot: en-01-map
+
+# stopwake://map/{lat},{lon},{zoom}: Western and Central Europe at zoom 3.55 (the second coverage
+# level), then back to where the phone is.
+- openLink: stopwake://map/51.0,8.5,3.55
+- extendedWaitUntil:
+    visible:
+      id: map-home
+    timeout: 15000
+- waitForAnimationToEnd:
+    timeout: 20000
+- takeScreenshot: en-01-overview
+- tapOn:
+    id: map-locate
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 10000
 
 - tapOn:
     id: sheet-search

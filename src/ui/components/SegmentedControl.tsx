@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Animated, PixelRatio, Pressable, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
+import { Animated, I18nManager, PixelRatio, Pressable, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 
 import { useI18n } from '../../i18n';
 import { haptics } from '../haptics';
@@ -46,6 +46,8 @@ export function SegmentedControl<T extends string | number | boolean | null>({
   const [width, setWidth] = useState(0);
   const index = Math.max(0, options.findIndex((o) => o.value === value));
   const [x] = useState(() => new Animated.Value(0));
+  // The thumb starts at the start edge; translateX is physical, so it runs the other way in RTL.
+  const dir = I18nManager.isRTL ? -1 : 1;
   const segment = width > 0 ? (width - PADDING * 2) / options.length : 0;
   const showIcons = PixelRatio.getFontScale() <= 1.15;
   const duration = t.motion.duration.base;
@@ -56,13 +58,13 @@ export function SegmentedControl<T extends string | number | boolean | null>({
     if (!placed.current) {
       // The first layout puts the thumb in place without sliding it there.
       placed.current = true;
-      x.setValue(index * segment);
+      x.setValue(dir * index * segment);
       return;
     }
-    const anim = Animated.timing(x, { toValue: index * segment, duration, easing: t.motion.easing.standard, useNativeDriver: true });
+    const anim = Animated.timing(x, { toValue: dir * index * segment, duration, easing: t.motion.easing.standard, useNativeDriver: true });
     anim.start();
     return () => anim.stop();
-  }, [index, segment, duration, x, t.motion.easing.standard]);
+  }, [index, segment, dir, duration, x, t.motion.easing.standard]);
 
   return (
     <View

@@ -1,4 +1,4 @@
-import type { AlarmMode, AlarmStrength, TripOptions } from '../../modules/trip-alarm/src';
+import type { AlarmMode, AlarmStrength, TripOptions, WakeStyle } from '../../modules/trip-alarm/src';
 import type { Place } from './geocode';
 import type { StopKind } from './stations/text';
 import type { Preferences, WakeBy } from './prefs';
@@ -9,7 +9,16 @@ export type WakeOptions = {
   minutesBefore: number;
   mode: AlarmMode;
   strength: AlarmStrength;
+  wakeStyle: WakeStyle;
 };
+
+export const WAKE_STYLES: readonly WakeStyle[] = ['soundVibration', 'vibrate', 'sound'];
+export const DEFAULT_WAKE_STYLE: WakeStyle = 'soundVibration';
+
+/** A saved or synced value from an older or newer build: anything unknown is the default. */
+export function wakeStyleOf(value: unknown): WakeStyle {
+  return WAKE_STYLES.includes(value as WakeStyle) ? (value as WakeStyle) : DEFAULT_WAKE_STYLE;
+}
 
 export const DISTANCE_CHOICES = [100, 200, 300, 500, 1000, 2000];
 export const MINUTE_CHOICES = [1, 2, 3, 5, 10, 15];
@@ -31,6 +40,7 @@ export function defaultWake(kind: StopKind | 'place', prefs: Preferences): WakeO
     minutesBefore: prefs.minutesBefore,
     mode: 'arrive',
     strength: prefs.strength,
+    wakeStyle: wakeStyleOf(prefs.wakeStyle),
   };
 }
 
@@ -49,6 +59,7 @@ export function tripOptions(place: Place, w: WakeOptions, useMiles: boolean): Tr
     minutesBefore: byTime ? w.minutesBefore : null,
     label: place.name,
     strength: w.strength,
+    wakeStyle: w.wakeStyle,
     useMiles,
   };
 }
@@ -101,7 +112,7 @@ export function demoRide(
   };
 }
 
-/** Remembers the choices for next time (the wake-by default stays per stop kind). */
+/** Remembers the choices (distance, minutes, strength, wake style) for next time (the wake-by default stays per stop kind). */
 export function rememberWake(prefs: Preferences, w: WakeOptions): Preferences {
-  return { ...prefs, radiusM: w.radiusM, minutesBefore: w.minutesBefore, strength: w.strength };
+  return { ...prefs, radiusM: w.radiusM, minutesBefore: w.minutesBefore, strength: w.strength, wakeStyle: w.wakeStyle };
 }

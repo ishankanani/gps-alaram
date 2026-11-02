@@ -6,8 +6,9 @@ import type { RootStackParamList } from './types';
 export const SCHEME = 'stopwake';
 
 /**
- * Deep links (4.1): stopwake://stop/{id}, stopwake://redeem/{code}, stopwake://pro, stopwake://trip
- * (the trip notification) and, for admins only, stopwake://admin/user/{id}. Links are off until
+ * Deep links (4.1): stopwake://stop/{id}, stopwake://map/{latitude},{longitude},{zoom},
+ * stopwake://redeem/{code}, stopwake://pro, stopwake://trip (the trip notification) and, for admins
+ * only, stopwake://admin/user/{id}. Links are off until
  * onboarding is done, so a link never skips it.
  */
 export function buildLinking({ enabled, admin }: { enabled: boolean; admin: boolean }): LinkingOptions<RootStackParamList> {
@@ -19,7 +20,7 @@ export function buildLinking({ enabled, admin }: { enabled: boolean; admin: bool
       screens: {
         Tabs: {
           screens: {
-            MapTab: 'stop/:stopId',
+            MapTab: { path: 'stop/:stopId', alias: ['map/:view'] },
             SavedTab: 'saved',
             ActivityTab: 'activity',
             AccountTab: 'account',

@@ -1,0 +1,146 @@
+{
+  "$comment": "Screenshot captions for Google Play and the App Store, framed by store/tools/compose-screenshots.mjs and checked by store/tools/check-listing.mjs (headline at most 30 characters, subline at most 70). Order is the store order: Play shows the first 8, the App Store the first 10. 'a' is the default set, 'b' the A/B alternative (store experiments, see store/GROWTH.md). 'raw' is the screenshot e2e/screenshots.sh takes (<lang>-<raw>.png); 'coverage' is drawn from the coverage numbers instead. Voice: the rider's worry first, the feature second.",
+  "order": [
+    { "id": "alarm", "raw": "05-alarm" },
+    { "id": "trip", "raw": "04-trip" },
+    { "id": "stop", "raw": "03-stop" },
+    { "id": "overview", "raw": "01-overview" },
+    { "id": "coverage", "raw": null },
+    { "id": "search", "raw": "02-search" },
+    { "id": "saved", "raw": "07-saved" },
+    { "id": "arrived", "raw": "06-arrived" },
+    { "id": "countries", "raw": "12-countries" },
+    { "id": "settings", "raw": "10-settings" },
+    { "id": "activity", "raw": "08-activity" },
+    { "id": "trip-detail", "raw": "11-trip-detail" },
+    { "id": "map", "raw": "01-map" },
+    { "id": "account", "raw": "09-account" },
+    { "id": "onboarding", "raw": "00-onboarding" }
+  ],
+  "captions": {
+    "en": {
+      "alarm": {
+        "a": ["Never miss your stop again", "A real alarm, even on silent, right before you arrive"],
+        "b": ["Night shift? Sleep on the bus", "It rings in time, so your eyes can close on the way home"]
+      },
+      "trip": {
+        "a": ["Doze off. We'll wake you.", "Lock your phone. StopWake follows your ride by GPS"],
+        "b": ["Stop counting stations", "Read, nap or scroll without checking the window"]
+      },
+      "stop": {
+        "a": ["Set it once. Then let go.", "Wake 2 minutes or 300 m before your stop"],
+        "b": ["Two taps to peace of mind", "Pick your stop and when to wake. That's it."]
+      },
+      "overview": {
+        "a": ["Your stop is already here", "1.4M stops in 17 countries, ready offline"],
+        "b": ["Every stop. Every city.", "Bus, tram, metro, train and ferry on one map"]
+      },
+      "coverage": {
+        "a": ["Wherever life takes you", "Built in for Germany, one download for 16 more countries"],
+        "b": ["New city? Already covered.", "Foreign stop names, familiar alarm"]
+      },
+      "search": {
+        "a": ["Find any stop, even offline", "A few letters are enough, also underground without signal"],
+        "b": ["Hauptbahnhof? Hbf? Both work.", "Stops are found in any spelling, accents optional"]
+      },
+      "saved": {
+        "a": ["Same commute? One tap.", "Your daily stops, ready when you are half asleep"],
+        "b": ["The school run, on autopilot", "Save the stops your family rides every day"]
+      },
+      "arrived": {
+        "a": ["Off at the right stop", "No panic, no ride back, no lost 20 minutes"],
+        "b": ["Arrive calm, not rushed", "Get up, stretch, step off. On time."]
+      },
+      "countries": {
+        "a": ["Travel without the worry", "Download a country's stops before you go"],
+        "b": ["Abroad, no roaming? Fine.", "Stops of 17 countries work without mobile data"]
+      },
+      "settings": {
+        "a": ["Made for heavy sleepers", "Choose how strong it rings, with sound and vibration"],
+        "b": ["Tuned to how you sleep", "Gentle for a nap, Heavy sleeper after a long day"]
+      },
+      "activity": {
+        "a": ["Every ride, on record", "See when it rang and how far you went"],
+        "b": ["Proof it works, every day", "Your rides stay on your phone"]
+      },
+      "trip-detail": {
+        "a": ["It rang right on time", "Distance, ride time and the moment it woke you"],
+        "b": ["Trust, one ride at a time", "Every alarm is logged, so you know what to expect"]
+      },
+      "map": {
+        "a": ["Your stops, right around you", "Nearby stops appear the moment you open the app"],
+        "b": ["Lost in a new city? Breathe.", "See the stops around you, then set your alarm"]
+      },
+      "account": {
+        "a": ["No account needed", "An optional sign-in brings your stops to a new phone"],
+        "b": ["Private by design", "Location only during a trip, decided on your phone"]
+      },
+      "onboarding": {
+        "a": ["Close your eyes. We watch.", "StopWake keeps track of your stop, so you don't have to"],
+        "b": ["Give your attention back", "Stop watching every station go by"]
+      }
+    },
+    "de": {
+      "alarm": {
+        "a": ["Nie wieder Station verpasst", "Ein echter Wecker, auch lautlos, kurz vor deinem Ziel"],
+        "b": ["Nachtschicht? Schlaf im Bus.", "Er klingelt rechtzeitig, damit du die Augen zumachen kannst"]
+      },
+      "trip": {
+        "a": ["Döse ein. Wir wecken dich.", "Handy sperren. StopWake verfolgt deine Fahrt per GPS"],
+        "b": ["Schluss mit Stationen zählen", "Lesen, dösen, scrollen, ohne aus dem Fenster zu schauen"]
+      },
+      "stop": {
+        "a": ["Einmal einstellen. Loslassen.", "Weckt dich 2 Minuten oder 300 m vor der Haltestelle"],
+        "b": ["Zwei Tipps zur Gelassenheit", "Haltestelle wählen, Weckzeit wählen. Fertig."]
+      },
+      "overview": {
+        "a": ["Deine Haltestelle ist schon da", "1,4 Mio. Haltestellen in 17 Ländern, offline bereit"],
+        "b": ["Jede Haltestelle. Jede Stadt.", "Bus, Tram, U-Bahn, Zug und Fähre auf einer Karte"]
+      },
+      "coverage": {
+        "a": ["Überall, wohin du fährst", "Deutschland ist eingebaut, 16 Länder per Download"],
+        "b": ["Neue Stadt? Schon abgedeckt.", "Fremde Haltestellennamen, vertrauter Wecker"]
+      },
+      "search": {
+        "a": ["Jede Haltestelle, auch offline", "Ein paar Buchstaben reichen, auch ohne Netz im Tunnel"],
+        "b": ["Hauptbahnhof? Hbf? Passt.", "Findet Haltestellen in jeder Schreibweise"]
+      },
+      "saved": {
+        "a": ["Gleicher Weg? Ein Tipp.", "Deine täglichen Haltestellen, bereit auch im Halbschlaf"],
+        "b": ["Der Kita-Weg auf Autopilot", "Speichere die Haltestellen, die deine Familie fährt"]
+      },
+      "arrived": {
+        "a": ["Richtig ausgestiegen", "Keine Panik, kein Zurückfahren, keine 20 Minuten extra"],
+        "b": ["Entspannt ankommen", "Aufstehen, strecken, aussteigen. Pünktlich."]
+      },
+      "countries": {
+        "a": ["Reisen ohne Sorge", "Lade die Haltestellen eines Landes vor der Reise"],
+        "b": ["Ausland ohne Roaming? Passt.", "Haltestellen aus 17 Ländern, ganz ohne mobile Daten"]
+      },
+      "settings": {
+        "a": ["Für Tiefschläfer gemacht", "Wähle, wie stark er klingelt, mit Ton und Vibration"],
+        "b": ["So, wie du schläfst", "Sanft fürs Nickerchen, Tiefschläfer nach langem Tag"]
+      },
+      "activity": {
+        "a": ["Jede Fahrt im Blick", "Wann es geklingelt hat und wie weit du gefahren bist"],
+        "b": ["Jeden Tag bewiesen", "Deine Fahrten bleiben auf deinem Handy"]
+      },
+      "trip-detail": {
+        "a": ["Pünktlich geweckt", "Strecke, Fahrzeit und der Moment, in dem es klingelte"],
+        "b": ["Vertrauen, Fahrt für Fahrt", "Jeder Alarm wird festgehalten, damit du weißt, was kommt"]
+      },
+      "map": {
+        "a": ["Haltestellen direkt um dich", "Die nächsten Haltestellen erscheinen sofort beim Öffnen"],
+        "b": ["Neu in der Stadt? Durchatmen.", "Sieh die Haltestellen um dich und stell den Wecker"]
+      },
+      "account": {
+        "a": ["Kein Konto nötig", "Optional anmelden und Haltestellen aufs neue Handy holen"],
+        "b": ["Privat von Anfang an", "Standort nur während der Fahrt, entschieden auf deinem Handy"]
+      },
+      "onboarding": {
+        "a": ["Augen zu. Wir passen auf.", "StopWake achtet auf deine Haltestelle, nicht du"],
+        "b": ["Deine Aufmerksamkeit zurück", "Nie mehr jede Station mitzählen"]
+      }
+    }
+  }
+}

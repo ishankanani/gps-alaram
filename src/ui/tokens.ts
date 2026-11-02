@@ -235,7 +235,7 @@ export const NUMERIC_VARIANTS: readonly TypeVariant[] = ['numXL', 'numL', 'numM'
 export const HEADER_VARIANTS: readonly TypeVariant[] = ['display', 'titleL', 'titleM', 'titleS'];
 
 /** Scripts that need more room: line height factor, and letter spacing forced to 0. */
-export const SCRIPT_LINE_HEIGHT: Readonly<Record<string, number>> = { hi: 1.25, ja: 1.15 };
+export const SCRIPT_LINE_HEIGHT: Readonly<Record<string, number>> = { hi: 1.25, ja: 1.15, ko: 1.15, zh: 1.15, ar: 1.2 };
 
 // ---- Spacing, radius, layout ----
 

@@ -186,6 +186,18 @@ export function parsePlaceLink(id: string): { kind: 'stop'; name: string } | { k
   return null;
 }
 
+/**
+ * stopwake://map/{latitude},{longitude},{zoom}: the map at a place and zoom, for example the
+ * coverage of a whole country (the store screenshots open it). Zoom 1 to 18.
+ */
+export function parseMapView(text: string): { latitude: number; longitude: number; zoom: number } | null {
+  const m = /^(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?),\s*(\d+(?:\.\d+)?)$/.exec(text.trim());
+  if (!m) return null;
+  const [latitude, longitude, zoom] = [Number(m[1]), Number(m[2]), Number(m[3])];
+  if (Math.abs(latitude) > 85 || Math.abs(longitude) > 180 || zoom < 1 || zoom > 18) return null;
+  return { latitude, longitude, zoom };
+}
+
 /** Moved far enough to look for nearby stops again (critiques: battery). */
 export function movedEnough(from: { latitude: number; longitude: number } | null, to: { latitude: number; longitude: number }, metres = 75): boolean {
   if (!from) return true;

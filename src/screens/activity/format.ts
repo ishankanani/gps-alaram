@@ -1,4 +1,5 @@
-import type { Key, Lang, Params, T } from '../../i18n';
+import { DICTIONARIES, type Key, type Lang, type Params, type T } from '../../i18n';
+import type { PluralBase } from '../../i18n/en';
 import { calendarDaysBetween, type MonthKey, type TripBadge } from '../../lib/history';
 import type { BadgeTone } from '../../ui/components/Badge';
 
@@ -6,21 +7,58 @@ import type { BadgeTone } from '../../ui/components/Badge';
 // (month and weekday names, patterns) instead of Intl, so Hermes and Vitest agree and every
 // language orders the parts its own way. Pure: no React Native.
 
-/** Keys that come in a .one and an .other form. */
-export type PluralBase = {
-  [K in Key]: K extends `${infer B}.one` ? (`${B}.other` extends Key ? B : never) : never;
-}[Key];
+export type { PluralBase };
 
-/** French and Hindi treat 0 as singular; Japanese has one form; the rest use 1 = one. */
-export function pluralForm(lang: Lang, count: number): 'one' | 'other' {
-  if (lang === 'ja') return 'other';
-  if (lang === 'fr' || lang === 'hi') return Math.abs(count) < 2 ? 'one' : 'other';
-  return count === 1 ? 'one' : 'other';
+export type PluralCategory = 'zero' | 'one' | 'two' | 'few' | 'many' | 'other';
+
+/**
+ * The CLDR plural category of a whole number, written out per language (no Intl, so Hermes and
+ * Vitest agree; a test compares every rule with Intl.PluralRules). French, Portuguese and Hindi
+ * treat 0 as singular; Japanese, Korean and Chinese have one form; Polish has one, few, many;
+ * Czech one, few, other; Arabic all six; the rest use 1 = one.
+ */
+export function pluralForm(lang: Lang, count: number): PluralCategory {
+  const n = Math.abs(Math.trunc(count));
+  switch (lang) {
+    case 'ja':
+    case 'ko':
+    case 'zh':
+      return 'other';
+    case 'fr':
+    case 'hi':
+    case 'pt':
+      return n < 2 ? 'one' : 'other';
+    case 'pl': {
+      if (n === 1) return 'one';
+      const last = n % 10;
+      const lastTwo = n % 100;
+      return last >= 2 && last <= 4 && !(lastTwo >= 12 && lastTwo <= 14) ? 'few' : 'many';
+    }
+    case 'cs':
+      if (n === 1) return 'one';
+      return n >= 2 && n <= 4 ? 'few' : 'other';
+    case 'ar': {
+      if (n === 0) return 'zero';
+      if (n === 1) return 'one';
+      if (n === 2) return 'two';
+      const lastTwo = n % 100;
+      if (lastTwo >= 3 && lastTwo <= 10) return 'few';
+      return lastTwo >= 11 ? 'many' : 'other';
+    }
+    default:
+      return n === 1 ? 'one' : 'other';
+  }
 }
 
-/** tr() with the plural form for `count` (passed as {count}). */
+/**
+ * tr() with the plural form for `count` (passed as {count}). A form the language does not spell
+ * out ("few" in a language that only needs one and other) falls back to .other.
+ */
 export function plural(tr: T, lang: Lang, base: PluralBase, count: number, params?: Params): string {
-  return tr(`${base}.${pluralForm(lang, count)}` as Key, { count, ...params });
+  const form = pluralForm(lang, count);
+  const exact = `${base}.${form}`;
+  const spelledOut = form === 'one' || form === 'other' || (DICTIONARIES[lang] as Record<string, string | undefined>)[exact];
+  return tr((spelledOut ? exact : `${base}.other`) as Key, { count, ...params });
 }
 
 function pad2(n: number) {
@@ -86,10 +124,12 @@ export function nbsp(text: string): string {
   return text.replace(/(\d) (?=[^\d\s])/g, '$1 ');
 }
 
-/** "92 %" in German and French, "92%" in English. */
+/** "92 %" in German, French and Czech, "%92" in Turkish, "92%" in English. */
 export function formatPercent(value: number, lang: Lang): string {
   const n = Math.round(value);
-  return lang === 'de' || lang === 'fr' || lang === 'fi' || lang === 'sv' || lang === 'nb' || lang === 'da' ? `${n} %` : `${n}%`;
+  if (lang === 'tr') return `%${n}`;
+  const spaced = ['de', 'fr', 'fi', 'sv', 'nb', 'da', 'cs', 'es'];
+  return spaced.includes(lang) ? `${n} %` : `${n}%`;
 }
 
 /** The outcome badge of a trip row: tone and label. */

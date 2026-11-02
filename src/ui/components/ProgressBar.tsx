@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Animated, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
+import { Animated, I18nManager, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 
 import { useTheme } from '../theme';
 
@@ -15,7 +15,7 @@ type Props = {
 };
 
 /**
- * ProgressBar (3.22). The indicator scales on the native driver (scaleX from the left), and the
+ * ProgressBar (3.22). The indicator scales on the native driver (scaleX from the start edge), and the
  * indeterminate one slides a 32 % segment across. Reduced motion: no animation.
  */
 export function ProgressBar({ progress, status = 'active', variant = 'default', accessibilityLabel, style }: Props) {
@@ -46,6 +46,8 @@ export function ProgressBar({ progress, status = 'active', variant = 'default', 
   }, [determinate, indeterminateDuration, slide]);
 
   const segment = width * 0.32;
+  // Bars fill from the start edge; transforms are physical, so mirror them in RTL.
+  const rtl = I18nManager.isRTL;
   return (
     <View
       accessibilityRole="progressbar"
@@ -59,7 +61,7 @@ export function ProgressBar({ progress, status = 'active', variant = 'default', 
           <Animated.View
             style={[
               StyleSheet.absoluteFill,
-              { backgroundColor: fill, borderRadius: t.radius.pill, transformOrigin: 'left', transform: [{ scaleX: scale }] },
+              { backgroundColor: fill, borderRadius: t.radius.pill, transformOrigin: rtl ? 'right' : 'left', transform: [{ scaleX: scale }] },
             ]}
           />
         ) : width > 0 ? (
@@ -70,7 +72,7 @@ export function ProgressBar({ progress, status = 'active', variant = 'default', 
                 width: segment,
                 backgroundColor: fill,
                 borderRadius: t.radius.pill,
-                transform: [{ translateX: slide.interpolate({ inputRange: [0, 1], outputRange: [-segment, width] }) }],
+                transform: [{ translateX: slide.interpolate({ inputRange: [0, 1], outputRange: rtl ? [segment, -width] : [-segment, width] }) }],
               },
             ]}
           />

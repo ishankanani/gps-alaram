@@ -57,6 +57,7 @@ import {
   isDroppedPin,
   modesReducer,
   nbsp,
+  parseMapView,
   parsePlaceLink,
   pickBanner,
   topMode,
@@ -322,6 +323,26 @@ export function MapHomeScreen({ navigation, route }: TabScreenProps<'MapTab'>) {
     // Only when a new link arrives.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [linkId]);
+
+  // ---- stopwake://map/{lat},{lon},{zoom}: a view, e.g. a whole country with its coverage dots ----
+  const linkView = route.params?.view;
+  useEffect(() => {
+    if (!linkView) return;
+    const target = parseMapView(decodeURIComponent(linkView));
+    // On the next tick, like an event: the link is consumed once.
+    const timer = setTimeout(() => {
+      navigation.setParams({ view: undefined });
+      if (!target) return;
+      movedByUser.current = true;
+      setCentred(false);
+      setSnap('peek');
+      dispatch({ type: 'reset' });
+      map.current?.flyTo(target, { zoom: target.zoom, padding: { bottom: geometry.heights.peek + bottomOffset } });
+    }, 0);
+    return () => clearTimeout(timer);
+    // Only when a new link arrives.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [linkView]);
 
   // ---- Android back: one mode at a time, then an expanded sheet back to half ----
   useFocusEffect(

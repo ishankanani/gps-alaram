@@ -1,7 +1,12 @@
-# The app in German: switch the language in Settings, then the same screens, and a demo trip to
-# München Marienplatz that rings within about a minute (e2e/screenshots.sh catches the alarm).
+# The app in German: switch the language in Settings, then the same screens (Countries, the trip's
+# details and the zoomed-out coverage too), and a demo trip to München Marienplatz that rings
+# within about a minute (e2e/screenshots.sh catches the alarm).
 appId: com.ishankanani.gpsalarm
 ---
+- scrollUntilVisible:
+    element:
+      id: settings-language
+    direction: UP
 - tapOn:
     id: settings-language
 - extendedWaitUntil:
@@ -13,6 +18,23 @@ appId: com.ishankanani.gpsalarm
 - back
 - waitForAnimationToEnd
 - takeScreenshot: de-10-settings
+- scrollUntilVisible:
+    element:
+      id: settings-countries
+    direction: DOWN
+- tapOn:
+    id: settings-countries
+- extendedWaitUntil:
+    visible:
+      id: country-at
+    timeout: 20000
+- waitForAnimationToEnd
+- takeScreenshot: de-12-countries
+- back
+- extendedWaitUntil:
+    visible:
+      id: screen-Settings
+    timeout: 10000
 - back
 
 - tapOn:
@@ -23,6 +45,20 @@ appId: com.ishankanani.gpsalarm
     id: tab-ActivityTab
 - waitForAnimationToEnd
 - takeScreenshot: de-08-activity
+- tapOn:
+    id: "activity-trip-.*"
+    index: 0
+- extendedWaitUntil:
+    visible:
+      id: screen-TripDetail
+    timeout: 10000
+- waitForAnimationToEnd
+- takeScreenshot: de-11-trip-detail
+- back
+- extendedWaitUntil:
+    visible:
+      id: tab-SavedTab
+    timeout: 10000
 - tapOn:
     id: tab-SavedTab
 - waitForAnimationToEnd
@@ -37,6 +73,10 @@ appId: com.ishankanani.gpsalarm
 - waitForAnimationToEnd:
     timeout: 20000
 - takeScreenshot: de-01-map
+- openLink: stopwake://map/51.0,8.5,3.55
+- waitForAnimationToEnd:
+    timeout: 20000
+- takeScreenshot: de-01-overview
 - tapOn:
     id: sheet-search
 - inputText: "Marienplatz"

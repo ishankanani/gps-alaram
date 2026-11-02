@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- Variant C, "round map": a round map tile with two lines and their stations; your stop is the
+       big amber bell, ringing. -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#5459EA"/><stop offset="1" stop-color="#3539C2"/>
+    </linearGradient>
+    <clipPath id="tile"><circle cx="490" cy="540" r="340"/></clipPath>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+  <circle cx="490" cy="540" r="340" fill="#FFFFFF"/>
+  <g clip-path="url(#tile)">
+    <path d="M120 700 C 300 650 400 760 580 730 S 800 640 900 680 L900 940 L120 940 Z" fill="#DDF0FB"/>
+    <g fill="none" stroke="#D8DBF7" stroke-width="18" stroke-linecap="round">
+      <path d="M120 400 L900 320"/><path d="M340 160 L400 940"/><path d="M600 160 L580 940"/><path d="M120 560 L900 600"/>
+    </g>
+    <path d="M300 300 C 380 380 470 430 540 530 S 620 700 760 750" fill="none" stroke="#A9ADF4" stroke-width="30" stroke-linecap="round"/>
+    <path d="M170 790 C 270 670 300 560 420 500 S 580 440 650 380" fill="none" stroke="#4146D8" stroke-width="40" stroke-linecap="round"/>
+    <g fill="#FFFFFF" stroke="#A9ADF4" stroke-width="16"><circle cx="372" cy="364" r="28"/><circle cx="560" cy="580" r="28"/><circle cx="740" cy="744" r="28"/></g>
+    <g fill="#FFFFFF" stroke="#4146D8" stroke-width="18"><circle cx="236" cy="700" r="34"/><circle cx="420" cy="500" r="34"/></g>
+  </g>
+  <circle cx="680" cy="356" r="190" fill="#FFB020" opacity="0.25"/>
+  <circle cx="680" cy="356" r="136" fill="#FFB020" stroke="#FFFFFF" stroke-width="26"/>
+  <g transform="translate(680 356) scale(1.9)" fill="#3539C2">
+    <path d="M0 -44 c-24 0 -38 18 -38 40 v20 l-12 14 h100 l-12 -14 v-20 c0 -22 -14 -40 -38 -40 z"/>
+    <path d="M-12 36 a12 12 0 0 0 24 0 z"/>
+  </g>
+</svg>

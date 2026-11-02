@@ -178,20 +178,28 @@ export function cleanAnnouncement(a: AnnouncementSetting): AnnouncementSetting {
 }
 
 /** The other app languages, for "Add translation". */
-export const ANNOUNCEMENT_LANGS: readonly ApiLang[] = ['de', 'fr', 'it', 'nl', 'da', 'sv', 'nb', 'fi', 'hi', 'ja'];
+export const ANNOUNCEMENT_LANGS: readonly ApiLang[] = ['de', 'fr', 'it', 'nl', 'da', 'sv', 'nb', 'fi', 'es', 'pt', 'pl', 'cs', 'tr', 'ar', 'hi', 'ja', 'ko', 'zh'];
 
 export const LANGUAGE_NAMES: Record<ApiLang, AdminKey> = {
+  ar: 'admin.lang.ar',
+  cs: 'admin.lang.cs',
   da: 'admin.lang.da',
   de: 'admin.lang.de',
   en: 'admin.lang.en',
+  es: 'admin.lang.es',
   fi: 'admin.lang.fi',
   fr: 'admin.lang.fr',
   hi: 'admin.lang.hi',
   it: 'admin.lang.it',
   ja: 'admin.lang.ja',
+  ko: 'admin.lang.ko',
   nb: 'admin.lang.nb',
   nl: 'admin.lang.nl',
+  pl: 'admin.lang.pl',
+  pt: 'admin.lang.pt',
   sv: 'admin.lang.sv',
+  tr: 'admin.lang.tr',
+  zh: 'admin.lang.zh',
 };
 
 /** The newest change among the items: who and when ("Last changed by …"). */

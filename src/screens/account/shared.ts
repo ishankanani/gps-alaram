@@ -13,7 +13,11 @@ import { useI18n, type Key, type Lang, type T } from '../../i18n';
 /** A BCP 47 tag for Intl: the app language with the phone's region (en-DE writes "12 Oct 2027"). */
 export function localeTag(lang: Lang): string {
   const region = deviceRegion();
-  return region ? `${lang}-${region}` : lang;
+  // Chinese is Simplified; Arabic dates stay Gregorian with the digits the rest of the app uses
+  // (a Saudi phone would otherwise bring the Hijri calendar and Arabic-Indic digits).
+  const base = lang === 'zh' ? 'zh-Hans' : lang;
+  const tag = region ? `${base}-${region}` : base;
+  return lang === 'ar' ? `${tag}-u-ca-gregory-nu-latn` : tag;
 }
 
 /** "12 Oct 2027" (long) or "17 Oct" (short), in the app language. */

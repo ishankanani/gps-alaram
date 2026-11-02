@@ -2,7 +2,7 @@ import { interFace, WEIGHT_NAME, type FontFace, type FontWeightName } from './fo
 import { NUMERIC_VARIANTS, SCRIPT_LINE_HEIGHT, typeScale, type TypeVariant } from './tokens';
 
 // Text styles from the type scale, with the per-script rules applied in one place (2.2): Hindi
-// gets 1.25x line height, Japanese 1.15x, both with zero letter spacing (they fall back to the
+// gets 1.25x line height, Japanese, Korean and Chinese 1.15x, Arabic 1.2x, all with zero letter spacing (they fall back to the
 // system Noto fonts). Pure, so it is tested; AppText and TextField turn it into RN styles.
 
 export type TextStyleSpec = FontFace & {
@@ -14,7 +14,7 @@ export type TextStyleSpec = FontFace & {
 
 export type TextStyleOptions = {
   weight?: FontWeightName;
-  /** App language: adjusts line height and tracking for Hindi and Japanese. */
+  /** App language: adjusts line height and tracking for Hindi, Japanese, Korean, Chinese and Arabic. */
   lang?: string;
   /** Platform.OS. */
   os: string;
@@ -36,9 +36,12 @@ export function textStyle(variant: TypeVariant, { weight, lang, os, tabular }: T
   return style;
 }
 
-/** Whether a script is written in capitals at all: PlanBadge is uppercase only in Latin scripts. */
+/**
+ * Whether a language is written with capitals that a plain uppercase transform gets right:
+ * PlanBadge is uppercase only there. Not Turkish (the transform turns "i" into "I", not "İ").
+ */
 export function usesLatinCase(lang: string | undefined): boolean {
-  return lang !== 'hi' && lang !== 'ja';
+  return lang !== 'hi' && lang !== 'ja' && lang !== 'ko' && lang !== 'zh' && lang !== 'ar' && lang !== 'tr';
 }
 
 /** Up to two initials from a display name, or from the local part of an email address. */

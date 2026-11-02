@@ -66,7 +66,7 @@ export const CURRENCY_FORMATS: Readonly<Record<string, PriceFormat>> = {
 };
 
 /** Languages whose speakers expect "€1.99" wherever they live. */
-export const ENGLISH_STYLE_LANGS: readonly string[] = ['en', 'hi', 'ja'];
+export const ENGLISH_STYLE_LANGS: readonly string[] = ['en', 'hi', 'ja', 'ko', 'zh', 'ar'];
 
 export function resolvePrice(country: string | null | undefined, overrides: readonly PriceRow[] = []): PriceRow {
   const rows = new Map(BUILTIN_PRICES.map((r) => [r.country, r]));

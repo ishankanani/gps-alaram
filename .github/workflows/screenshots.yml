@@ -1,9 +1,11 @@
 name: Screenshots
 
 # Runs the app on an Android emulator through a whole trip in English and a demo trip in German
-# (see e2e/), commits the raw screenshots to docs/screenshots and the framed Google Play
-# screenshots (store/tools/compose-screenshots.mjs) to store/screenshots on the branch it ran on.
-# Start it from the Actions tab.
+# (see e2e/), commits the raw screenshots to docs/screenshots and the framed store screenshots
+# (store/tools/compose-screenshots.mjs, captions in store/listing/screenshots.json) to
+# store/screenshots on the branch it ran on: play/ (Google Play, 1080 x 1920), ios-6.9/ and
+# ios-6.5/ (App Store), each per language, and b/ with the alternative captions for store
+# experiments. Start it from the Actions tab.
 on:
   workflow_dispatch:
 
@@ -84,13 +86,16 @@ jobs:
           name: screenshots
           path: screenshots/
           if-no-files-found: ignore
-      - name: Frame the screenshots for Google Play
+      - name: Frame the screenshots for Google Play and the App Store
         if: always()
         run: |
           ls screenshots/*.png >/dev/null 2>&1 || exit 0
           npm i --no-save playwright@1.56.1
           npx playwright install --with-deps chromium
+          # A complete run replaces the framed set (names follow the store order).
+          if [ "${{ steps.drive.outcome }}" = success ]; then rm -rf store/screenshots; fi
           node store/tools/compose-screenshots.mjs screenshots store/screenshots
+          node store/tools/compose-screenshots.mjs screenshots store/screenshots --variant b
       - uses: actions/upload-artifact@v4
         if: always()
         with:

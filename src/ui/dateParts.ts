@@ -3,9 +3,9 @@
 
 export type DatePart = 'day' | 'month' | 'year';
 
-/** The order the parts are typed in: year first in Japanese, day first elsewhere (British English too). */
+/** The order the parts are typed in: year first in Japanese, Korean and Chinese, day first elsewhere (British English too). */
 export function datePartOrder(lang: string | undefined): DatePart[] {
-  return lang === 'ja' ? ['year', 'month', 'day'] : ['day', 'month', 'year'];
+  return lang === 'ja' || lang === 'ko' || lang === 'zh' ? ['year', 'month', 'day'] : ['day', 'month', 'year'];
 }
 
 /** A local calendar date from typed parts, or null while incomplete or impossible (31 Feb). */

@@ -1,19 +1,29 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
-  <!-- Themed (monochrome) icon: one colour; the launcher tints it. The core is cut out. -->
+  <!-- Themed (monochrome) icon: one colour, the launcher tints it. The folded map with the line and
+       its stations cut out, and the ringing pin with a gap around it. Same geometry as glyph.svg.part. -->
   <defs>
-    <mask id="cut" maskUnits="userSpaceOnUse" x="0" y="-100" width="1024" height="1224">
+    <mask id="cut" maskUnits="userSpaceOnUse" x="0" y="0" width="1024" height="1024">
       <rect width="1024" height="1024" fill="#fff"/>
-      <circle cx="512" cy="452" r="118" fill="#000"/>
+      <!-- the folds -->
+      <g stroke="#000" stroke-width="10"><path d="M391 300 L391 820"/><path d="M633 350 L633 870"/></g>
+      <path d="M190 790 C 280 720 290 620 400 610 S 530 690 610 640 S 650 590 680 560" fill="none" stroke="#000" stroke-width="38" stroke-linecap="round"/>
+      <g fill="#000"><circle cx="205" cy="776" r="45"/><circle cx="400" cy="610" r="45"/><circle cx="560" cy="664" r="45"/>
+        <circle cx="776" cy="720" r="26"/><circle cx="300" cy="450" r="26"/><circle cx="470" cy="440" r="26"/></g>
+      <!-- room for the pin -->
+      <g transform="translate(372.8 36.8) scale(0.6)">
+        <path d="M512 892 C 438 780 262 640 262 452 A250 250 0 1 1 762 452 C 762 640 586 780 512 892 Z" fill="#000" stroke="#000" stroke-width="90"/>
+      </g>
     </mask>
   </defs>
   <g transform="translate(512 512) scale(0.6) translate(-512 -512)">
-    <g transform="translate(0,-20)">
-      <path mask="url(#cut)" d="M512 892 C 438 780 262 640 262 452 A250 250 0 1 1 762 452 C 762 640 586 780 512 892 Z" fill="#FFFFFF"/>
-      <circle cx="512" cy="452" r="46" fill="#FFFFFF"/>
-      <g fill="none" stroke="#FFFFFF" stroke-width="46" stroke-linecap="round">
-        <path d="M 838 260 A 380 380 0 0 1 838 644"/>
-        <path d="M 186 260 A 380 380 0 0 0 186 644"/>
-      </g>
+    <path mask="url(#cut)" d="M150 360 L391 310 L633 360 L874 310 L874 810 L633 860 L391 810 L150 860 Z" fill="#FFFFFF"/>
+    <g transform="translate(372.8 36.8) scale(0.6)" fill="#FFFFFF">
+      <path fill-rule="evenodd" d="M512 892 C 438 780 262 640 262 452 A250 250 0 1 1 762 452 C 762 640 586 780 512 892 Z M 408 452 A 104 104 0 1 0 616 452 A 104 104 0 1 0 408 452 Z"/>
+      <circle cx="512" cy="452" r="48"/>
+    </g>
+    <g fill="none" stroke="#FFFFFF" stroke-width="34" stroke-linecap="round" transform="translate(680 572)">
+      <path d="M 196 -420 A 220 220 0 0 1 196 -180"/>
+      <path d="M -196 -420 A 220 220 0 0 0 -196 -180"/>
     </g>
   </g>
 </svg>

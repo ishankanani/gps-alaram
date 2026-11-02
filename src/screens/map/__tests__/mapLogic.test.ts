@@ -9,6 +9,7 @@ import {
   modesReducer,
   movedEnough,
   nbsp,
+  parseMapView,
   parsePlaceLink,
   pickBanner,
   ruleLine,
@@ -118,6 +119,16 @@ describe('links and movement', () => {
     expect(parsePlaceLink('pin:99,11')).toBeNull();
     expect(parsePlaceLink('osm:N123')).toBeNull();
     expect(parsePlaceLink('stop:')).toBeNull();
+  });
+
+  it('reads a map view link', () => {
+    expect(parseMapView('50.5,8.5,3.2')).toEqual({ latitude: 50.5, longitude: 8.5, zoom: 3.2 });
+    expect(parseMapView(' -33.87, 151.21, 6 ')).toEqual({ latitude: -33.87, longitude: 151.21, zoom: 6 });
+    expect(parseMapView('50.5,8.5')).toBeNull();
+    expect(parseMapView('91,8.5,3')).toBeNull();
+    expect(parseMapView('50,8.5,0.5')).toBeNull();
+    expect(parseMapView('50,8.5,19')).toBeNull();
+    expect(parseMapView('stop:Ulm Hbf')).toBeNull();
   });
 
   it('looks for nearby stops again only after a real move', () => {
