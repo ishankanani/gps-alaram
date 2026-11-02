@@ -15,8 +15,25 @@ appId: com.ishankanani.gpsalarm
     timeout: 10000
 - tapOn:
     id: language-de
-- back
 - waitForAnimationToEnd
+# Picking a language may already return to Settings; go back only if the list is still open.
+- runFlow:
+    when:
+      visible:
+        id: language-de
+    commands:
+      - back
+- runFlow:
+    when:
+      notVisible:
+        id: screen-Settings
+    commands:
+      - tapOn:
+          id: account-settings
+- extendedWaitUntil:
+    visible:
+      id: screen-Settings
+    timeout: 10000
 - takeScreenshot: de-10-settings
 - scrollUntilVisible:
     element:

@@ -7,6 +7,7 @@ import PackageDescription
 
 let package = Package(
   name: "TripEngineTests",
+  platforms: [.macOS(.v13), .iOS(.v16)],
   targets: [
     .target(name: "TripAlarmCore", path: "Sources/TripAlarmCore"),
     .testTarget(name: "TripEngineTests", dependencies: ["TripAlarmCore"], path: "Tests/TripEngineTests"),
