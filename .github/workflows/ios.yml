@@ -45,7 +45,7 @@ concurrency:
 jobs:
   engine:
     name: Swift engine tests
-    runs-on: macos-15
+    runs-on: macos-26
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
@@ -63,7 +63,7 @@ jobs:
 
   simulator:
     name: Simulator build (unsigned)
-    runs-on: macos-15
+    runs-on: macos-26
     needs: engine
     timeout-minutes: 90
     env:
@@ -78,6 +78,10 @@ jobs:
       - run: npm ci
       - name: Build the offline stops database
         run: npm run build:stations
+      # Expo SDK 57 needs Swift 6.2 (Xcode 26); App Store uploads need the current SDK too.
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
       - name: Xcode
         run: xcodebuild -version
       - name: Generate the iOS project
@@ -109,7 +113,7 @@ jobs:
   ipa:
     name: Signed IPA
     if: github.event_name == 'workflow_dispatch' && inputs.signed
-    runs-on: macos-15
+    runs-on: macos-26
     needs: engine
     timeout-minutes: 120
     env:
@@ -139,6 +143,9 @@ jobs:
             fi
           done
       - uses: actions/checkout@v4
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
       - uses: actions/setup-node@v4
         with:
           node-version: 22
